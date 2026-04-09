@@ -6,8 +6,17 @@
     <title>개발원가 War Game</title>
     <link rel="stylesheet" href="/static/css/style.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+    <!-- All styles in style.css -->
 </head>
 <body>
+
+<!-- ── Hero Section ── -->
+<section class="hero" id="heroSection">
+    <div class="hero-eyebrow">반도체 개발원가 시뮬레이션</div>
+    <h1 class="hero-title">개발원가 War Game</h1>
+    <p class="hero-subtitle">실시간 원가 시뮬레이션 · AI 코칭 · 팀 대항전</p>
+    <button class="hero-cta" onclick="document.querySelector('.tab-nav').scrollIntoView({behavior:'smooth'})">시작하기</button>
+</section>
 
 <header class="header">
     <div class="header-row">
@@ -25,21 +34,21 @@
     <button class="tab-btn" data-tab="learn">학습</button>
 </nav>
 
-<div class="main">
+<div class="main" id="mainContent">
 
     <!-- ═══ 시뮬레이션 탭 ═══ -->
     <div id="tab-sim" class="tab-content active">
 
-        <!-- 케이스 선택 (6개) -->
+        <!-- 케이스 선택 (가로 스크롤) -->
         <div class="card">
             <div class="card-title">시뮬레이션 유형</div>
-            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px">
-                <button class="btn btn-primary btn-sm case-btn active" data-case="1">1. Loading</button>
-                <button class="btn btn-outline btn-sm case-btn" data-case="2">2. 인건비</button>
-                <button class="btn btn-outline btn-sm case-btn" data-case="3">3. 한계이익률</button>
-                <button class="btn btn-outline btn-sm case-btn" data-case="4">4. 재료비/수율</button>
-                <button class="btn btn-outline btn-sm case-btn" data-case="5">5. 면취수/Mask</button>
-                <button class="btn btn-outline btn-sm case-btn" data-case="6">6. T/T+투자</button>
+            <div class="case-btn-strip">
+                <button class="case-btn active" data-case="1">1. Loading</button>
+                <button class="case-btn" data-case="2">2. 인건비</button>
+                <button class="case-btn" data-case="3">3. 한계이익률</button>
+                <button class="case-btn" data-case="4">4. 재료비/수율</button>
+                <button class="case-btn" data-case="5">5. 면취수/Mask</button>
+                <button class="case-btn" data-case="6">6. T/T+투자</button>
             </div>
         </div>
 
@@ -77,7 +86,18 @@
         <!-- 케이스3 전용: 역산 결과 -->
         <div class="card hidden" id="marginalResultCard">
             <div class="card-title">한계이익률 역산 결과</div>
-            <div id="marginalResult"></div>
+            <div class="marginal-result-grid" id="marginalResult">
+                <!-- app.js가 이 영역을 채움 -->
+            </div>
+            <div class="marginal-progress-wrap" id="marginalProgressWrap" style="display:none">
+                <div class="marginal-progress-label">
+                    <span>허용 변동비 달성률</span>
+                    <span id="marginalProgressPct">0%</span>
+                </div>
+                <div class="marginal-progress-bar">
+                    <div class="marginal-progress-fill" id="marginalProgressFill"></div>
+                </div>
+            </div>
         </div>
 
         <!-- 차트 -->
@@ -114,8 +134,13 @@
     <div id="tab-game" class="tab-content">
 
         <div id="gameLobby">
+            <!-- 일러스트레이션 + 팀 구성 -->
             <div class="card">
-                <div class="card-title">War Game 팀 구성</div>
+                <div class="lobby-illustration">
+                    <div class="lobby-icon">&#9876;&#65039;</div>
+                    <div class="lobby-tagline">팀을 구성하고 원가 경쟁에서 승리하세요<br>3라운드, 팀별 의사결정, AI 실시간 코칭</div>
+                </div>
+                <div class="card-title">팀 구성</div>
                 <div class="lobby-input">
                     <input type="text" id="teamNameInput" placeholder="팀 이름 입력" maxlength="20"
                            onkeypress="if(event.key==='Enter')addTeam()">
@@ -126,14 +151,44 @@
                     게임 시작 (2팀 이상 필요)
                 </button>
             </div>
+
+            <!-- 게임 규칙 -->
             <div class="card">
                 <div class="card-title">게임 규칙</div>
-                <div style="font-size:13px;line-height:1.7;color:var(--text-muted)">
-                    <p><strong>3라운드</strong> 팀 대항전으로 진행됩니다.</p>
-                    <p><strong>R1</strong>: Loading 하락 대응 - 가공비 구조 이해</p>
-                    <p><strong>R2</strong>: 재료비 vs 수율 Trade-off 의사결정</p>
-                    <p><strong>R3</strong>: 복합 위기 상황 대응 (돌발 이벤트 포함)</p>
-                    <p>각 라운드 <strong>3분</strong> 제한시간 내에 원가 파라미터를 조정하여 최대 수익성을 달성하세요.</p>
+                <ul class="rules-list">
+                    <li>
+                        <span class="rule-icon">&#127942;</span>
+                        <span><strong>3라운드</strong> 팀 대항전으로 진행됩니다.</span>
+                    </li>
+                    <li>
+                        <span class="rule-icon">&#128200;</span>
+                        <span><strong>R1</strong>: Loading 하락 대응 — 가공비 구조 이해</span>
+                    </li>
+                    <li>
+                        <span class="rule-icon">&#9878;&#65039;</span>
+                        <span><strong>R2</strong>: 재료비 vs 수율 Trade-off 의사결정</span>
+                    </li>
+                    <li>
+                        <span class="rule-icon">&#9889;</span>
+                        <span><strong>R3</strong>: 복합 위기 상황 대응 (돌발 이벤트 포함)</span>
+                    </li>
+                    <li>
+                        <span class="rule-icon">&#9201;&#65039;</span>
+                        <span>각 라운드 <strong>3분</strong> 제한시간 내에 원가 파라미터를 조정하여 최대 수익성을 달성하세요.</span>
+                    </li>
+                </ul>
+
+                <!-- 게임 안내 확장 섹션 -->
+                <button class="game-info-toggle" id="gameInfoToggle" onclick="toggleGameInfo()">
+                    <span>게임 안내 더보기</span>
+                    <span class="toggle-arrow">&#9660;</span>
+                </button>
+                <div class="game-info-body" id="gameInfoBody">
+                    <p>점수는 라운드별 <strong>영업이익률</strong> 기준으로 산정됩니다.</p>
+                    <p>힌트를 사용할 경우 해당 라운드 점수가 <strong>20% 감점</strong>됩니다.</p>
+                    <p>돌발 이벤트는 R3에서만 발생하며 사전 공지 없이 트리거됩니다.</p>
+                    <p>최종 점수 합산 후 <strong>1위 팀</strong>이 우승자로 선정됩니다.</p>
+                    <p style="margin-top:10px;color:rgba(255,255,255,0.35);font-size:12px">* 게임 데이터는 세션 종료 시 초기화됩니다.</p>
                 </div>
             </div>
         </div>
@@ -190,12 +245,14 @@
 
     <!-- ═══ 학습 탭 ═══ -->
     <div id="tab-learn" class="tab-content">
+
         <div class="card">
             <div class="card-title">COP 원가 구조</div>
             <div class="chart-container" style="height:300px">
                 <canvas id="copStructureChart"></canvas>
             </div>
         </div>
+
         <div class="card">
             <div class="card-title">핵심 공식</div>
             <div style="font-size:14px;line-height:1.8">
@@ -211,19 +268,60 @@
                 <p><strong>한계이익</strong> = Price - 변동비</p>
             </div>
         </div>
+
         <div class="card">
             <div class="card-title">6가지 시뮬레이션 핵심 포인트</div>
-            <div style="font-size:13px;line-height:1.8">
-                <p><strong>1. Loading</strong>: 가동률 &darr; &rarr; 단위당 가공비 &uarr; (고정비 배분)</p>
-                <p><strong>2. 인건비</strong>: 노무비 직접 증가 + SGA 인건비 비중도 연동</p>
-                <p><strong>3. 한계이익률</strong>: 목표율에서 역산하여 허용 변동비 도출</p>
-                <p><strong>4. 재료비/수율</strong>: 재료비 절감 vs 수율 하락 trade-off</p>
-                <p><strong>5. 면취수/Mask</strong>: 면취수 &uarr; &rarr; Panel 비용 &darr;, Mask &uarr; &rarr; Panel 비용 &uarr;</p>
-                <p><strong>6. T/T+투자</strong>: Tact 지연 &rarr; Module 비용 &uarr;, 투자 &rarr; 상각비 &uarr;</p>
+            <div class="feature-strip">
+                <div class="feature-card">
+                    <div class="fc-icon">&#128200;</div>
+                    <div class="fc-title">1. Loading</div>
+                    <div class="fc-desc">가동률 &darr; &rarr; 단위당 가공비 &uarr;<br>(고정비 배분)</div>
+                </div>
+                <div class="feature-card">
+                    <div class="fc-icon">&#128104;&#8205;&#127981;</div>
+                    <div class="fc-title">2. 인건비</div>
+                    <div class="fc-desc">노무비 직접 증가 + SGA 인건비 비중도 연동</div>
+                </div>
+                <div class="feature-card">
+                    <div class="fc-icon">&#127919;</div>
+                    <div class="fc-title">3. 한계이익률</div>
+                    <div class="fc-desc">목표율에서 역산하여 허용 변동비 도출</div>
+                </div>
+                <div class="feature-card">
+                    <div class="fc-icon">&#9878;&#65039;</div>
+                    <div class="fc-title">4. 재료비/수율</div>
+                    <div class="fc-desc">재료비 절감 vs 수율 하락 trade-off</div>
+                </div>
+                <div class="feature-card">
+                    <div class="fc-icon">&#128264;</div>
+                    <div class="fc-title">5. 면취수/Mask</div>
+                    <div class="fc-desc">면취수 &uarr; &rarr; Panel 비용 &darr;<br>Mask &uarr; &rarr; Panel 비용 &uarr;</div>
+                </div>
+                <div class="feature-card">
+                    <div class="fc-icon">&#9201;&#65039;</div>
+                    <div class="fc-title">6. T/T+투자</div>
+                    <div class="fc-desc">Tact 지연 &rarr; Module &uarr;<br>투자 &rarr; 상각비 &uarr;</div>
+                </div>
             </div>
         </div>
+
     </div>
 
+</div>
+
+<!-- Confetti Canvas -->
+<canvas id="confettiCanvas" class="hidden"></canvas>
+
+<!-- Countdown Overlay -->
+<div id="countdownOverlay" class="hidden">
+    <div class="countdown-number" id="countdownNumber"></div>
+    <div class="countdown-label" id="countdownLabel"></div>
+</div>
+
+<!-- Round Transition Overlay -->
+<div id="roundTransition" class="hidden">
+    <div class="rt-label" id="rtLabel"></div>
+    <div class="rt-title" id="rtTitle"></div>
 </div>
 
 <!-- AI 채팅 -->
@@ -245,6 +343,14 @@
     </div>
 </div>
 
+<script>
+    function toggleGameInfo() {
+        const toggle = document.getElementById('gameInfoToggle');
+        const body = document.getElementById('gameInfoBody');
+        toggle.classList.toggle('open');
+        body.classList.toggle('open');
+    }
+</script>
 <script src="/static/js/app.js"></script>
 </body>
 </html>

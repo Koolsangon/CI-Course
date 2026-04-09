@@ -4,18 +4,43 @@
 
 ### 현재 상태
 
-- 프로젝트 기본 폴더 구조 생성 완료
-- CLAUDE.md, plan.md, decision-log.md 초안 작성 완료
-- Git 저장소 초기화 완료 (첫 커밋 전)
+- 개발원가 War Game 프로토타입 구현 완료
+- 원가 계산 엔진: 엑셀 6개 문제 기준 데이터와 정확히 일치 (24/24 테스트 통과)
+- FastAPI 백엔드: 시뮬레이션 API + War Game 세션 관리 + AI 채팅
+- 모바일 반응형 프론트엔드: 시뮬레이션/War Game/학습 3탭 구성
+- AI 어시스턴트: 플러그인 방식 (API 키 없으면 템플릿, 있으면 Claude API)
+
+### 서버 실행 방법
+
+```bash
+cd projects/cost-sim-wargame
+python3 run.py
+# http://localhost:8000 에서 접속
+```
+
+### 프로젝트 구조
+
+```
+projects/cost-sim-wargame/
+├── engine/cost_model.py    # COP 원가 계산 엔진 (엑셀 로직 이식)
+├── api/main.py             # FastAPI 백엔드 (REST + WebSocket)
+├── ai/assistant.py         # AI 어시스턴트 (플러그인 방식)
+├── frontend/
+│   ├── index.html          # 메인 HTML (SPA)
+│   ├── css/style.css       # 모바일 반응형 CSS
+│   └── js/app.js           # 프론트엔드 로직
+└── run.py                  # 서버 실행 스크립트
+```
 
 ### 다음 작업자가 할 일
 
-1. `context/brand-voice.md`에 브랜드 톤과 사내 용어집 작성
-2. `templates/` 폴더에 필요한 양식 추가
-3. `projects/feature-x/`에 첫 과제 원본 자료 배치
-4. `.claude/settings.json` 권한 통제 설정 구체화
+1. AI 연동 활성화: `ANTHROPIC_API_KEY` 환경변수 설정 시 Claude API 자동 활성화
+2. 나머지 4개 시뮬레이션 케이스 추가 (인건비, 한계이익률, 면취수/Mask, T/T+투자비)
+3. 실제 교육 환경에서 모바일 UX 테스트
+4. 다중 동시접속 테스트 (WebSocket 부하)
 
 ### 막힌 부분 / 주의사항
 
-- 아직 구체적인 과제 내용이 정해지지 않아 `projects/feature-x/`는 빈 상태
-- `.claude/settings.json`은 기본 구조만 생성됨, 실제 프로젝트 요구에 맞게 조정 필요
+- 엑셀 4번 문제 Simulation 열(col 15~16)에 빈 셀이 많음 → 학습자가 입력하는 형태로 추정
+- AI 채팅의 템플릿 응답은 기본적인 원가 용어만 커버 → API 연동 시 품질 대폭 향상
+- 인메모리 세션 저장 → 서버 재시작 시 게임 데이터 소실 (프로토타입 수준)

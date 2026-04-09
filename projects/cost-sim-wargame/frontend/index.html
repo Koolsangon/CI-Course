@@ -9,158 +9,89 @@
 </head>
 <body>
 
-<!-- 헤더 -->
 <header class="header">
     <div class="header-row">
         <div>
             <h1>개발원가 War Game</h1>
             <div class="subtitle">효과 분석 Simulation</div>
         </div>
-        <span id="aiBadge" class="ai-badge">AI: Template Mode</span>
+        <span id="aiBadge" class="ai-badge">AI: Template</span>
     </div>
 </header>
 
-<!-- 탭 네비게이션 -->
 <nav class="tab-nav">
     <button class="tab-btn active" data-tab="sim">시뮬레이션</button>
     <button class="tab-btn" data-tab="game">War Game</button>
     <button class="tab-btn" data-tab="learn">학습</button>
 </nav>
 
-<!-- 메인 컨텐츠 -->
 <div class="main">
 
     <!-- ═══ 시뮬레이션 탭 ═══ -->
     <div id="tab-sim" class="tab-content active">
 
-        <!-- 시뮬레이션 유형 선택 -->
+        <!-- 케이스 선택 (6개) -->
         <div class="card">
-            <div class="card-title">시뮬레이션 선택</div>
-            <div class="flex-row">
-                <button class="btn btn-primary btn-sm flex-1 sim-type-btn active" data-type="loading">
-                    Loading 변화
-                </button>
-                <button class="btn btn-outline btn-sm flex-1 sim-type-btn" data-type="material">
-                    재료비/수율
-                </button>
+            <div class="card-title">시뮬레이션 유형</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px">
+                <button class="btn btn-primary btn-sm case-btn active" data-case="1">1. Loading</button>
+                <button class="btn btn-outline btn-sm case-btn" data-case="2">2. 인건비</button>
+                <button class="btn btn-outline btn-sm case-btn" data-case="3">3. 한계이익률</button>
+                <button class="btn btn-outline btn-sm case-btn" data-case="4">4. 재료비/수율</button>
+                <button class="btn btn-outline btn-sm case-btn" data-case="5">5. 면취수/Mask</button>
+                <button class="btn btn-outline btn-sm case-btn" data-case="6">6. T/T+투자</button>
             </div>
         </div>
 
-        <!-- Loading 시뮬레이션 -->
-        <div id="sim-loading" class="sim-panel">
-            <div class="card">
-                <div class="card-title">파라미터 조정</div>
-                <div class="param-group">
-                    <label>
-                        <span>Loading (가동률)</span>
-                        <span class="param-value" id="loadingValue">50%</span>
-                    </label>
-                    <input type="range" id="loadingSlider" min="20" max="100" value="50" step="5">
-                    <div class="text-muted mt-8">기준값: 70% | 현재: <span id="loadingCurrent">50%</span></div>
+        <!-- 케이스별 파라미터 패널 -->
+        <div id="casePanel"></div>
+
+        <!-- Before/After 핵심 비교 -->
+        <div class="card" id="comparisonCard">
+            <div class="card-title">핵심 지표 비교</div>
+            <div class="comparison mb-16">
+                <div class="comparison-col">
+                    <div class="comparison-label">Reference</div>
+                    <div class="comparison-value before" id="refProfit">-</div>
+                    <div class="text-muted">영업이익</div>
+                </div>
+                <div class="comparison-col">
+                    <div class="comparison-label">Simulation</div>
+                    <div class="comparison-value" id="simProfit">-</div>
+                    <div class="text-muted">영업이익</div>
+                    <span class="delta-badge" id="profitDelta"></span>
                 </div>
             </div>
-
-            <!-- Before/After 비교 -->
-            <div class="card">
-                <div class="card-title">핵심 지표 비교</div>
-                <div class="comparison mb-16">
-                    <div class="comparison-col">
-                        <div class="comparison-label">Reference (70%)</div>
-                        <div class="comparison-value before" id="refProfit">$10.3</div>
-                        <div class="text-muted">영업이익</div>
-                    </div>
-                    <div class="comparison-col">
-                        <div class="comparison-label">Simulation</div>
-                        <div class="comparison-value after-negative" id="simProfit">-$17.9</div>
-                        <div class="text-muted">영업이익</div>
-                        <span class="delta-badge delta-down" id="profitDelta">-$28.2</span>
-                    </div>
+            <div class="comparison">
+                <div class="comparison-col">
+                    <div class="comparison-value before" style="font-size:18px" id="refMetric2">-</div>
+                    <div class="text-muted" id="metric2Label">영업이익률</div>
                 </div>
-                <div class="comparison">
-                    <div class="comparison-col">
-                        <div class="comparison-value before" style="font-size:18px" id="refMargin">5.2%</div>
-                        <div class="text-muted">영업이익률</div>
-                    </div>
-                    <div class="comparison-col">
-                        <div class="comparison-value after-negative" style="font-size:18px" id="simMargin">-8.9%</div>
-                        <div class="text-muted">영업이익률</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 차트 -->
-            <div class="card">
-                <div class="card-title">가공비 구조 비교</div>
-                <div class="chart-container">
-                    <canvas id="loadingChart"></canvas>
+                <div class="comparison-col">
+                    <div class="comparison-value" style="font-size:18px" id="simMetric2">-</div>
+                    <div class="text-muted" id="metric2Label2">영업이익률</div>
                 </div>
             </div>
         </div>
 
-        <!-- 재료비/수율 시뮬레이션 -->
-        <div id="sim-material" class="sim-panel hidden">
-            <div class="card">
-                <div class="card-title">파라미터 조정</div>
-                <div class="param-group">
-                    <label>
-                        <span>Module 재료비 변화</span>
-                        <span class="param-value" id="materialValue">-5%</span>
-                    </label>
-                    <input type="range" id="materialSlider" min="-20" max="20" value="-5" step="1">
-                </div>
-                <div class="param-group">
-                    <label>
-                        <span>Module 수율 변화</span>
-                        <span class="param-value" id="yieldValue">-4%p</span>
-                    </label>
-                    <input type="range" id="yieldSlider" min="-10" max="5" value="-4" step="1">
-                    <div class="text-muted mt-8">
-                        기준 수율: 97.2% | 변경 후: <span id="yieldCurrent">93.2%</span>
-                    </div>
-                </div>
-            </div>
+        <!-- 케이스3 전용: 역산 결과 -->
+        <div class="card hidden" id="marginalResultCard">
+            <div class="card-title">한계이익률 역산 결과</div>
+            <div id="marginalResult"></div>
+        </div>
 
-            <!-- Before/After 비교 -->
-            <div class="card">
-                <div class="card-title">핵심 지표 비교</div>
-                <div class="comparison mb-16">
-                    <div class="comparison-col">
-                        <div class="comparison-label">Reference</div>
-                        <div class="comparison-value before" id="matRefProfit">$10.3</div>
-                        <div class="text-muted">영업이익</div>
-                    </div>
-                    <div class="comparison-col">
-                        <div class="comparison-label">Simulation</div>
-                        <div class="comparison-value" id="matSimProfit">$10.5</div>
-                        <div class="text-muted">영업이익</div>
-                        <span class="delta-badge" id="matProfitDelta">+$0.2</span>
-                    </div>
-                </div>
-                <div class="comparison">
-                    <div class="comparison-col">
-                        <div class="comparison-value before" style="font-size:18px" id="matRefMaterial">$90.8</div>
-                        <div class="text-muted">소요재료비</div>
-                    </div>
-                    <div class="comparison-col">
-                        <div class="comparison-value" style="font-size:18px" id="matSimMaterial">$90.6</div>
-                        <div class="text-muted">소요재료비</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 차트 -->
-            <div class="card">
-                <div class="card-title">원가 구조 비교</div>
-                <div class="chart-container">
-                    <canvas id="materialChart"></canvas>
-                </div>
+        <!-- 차트 -->
+        <div class="card">
+            <div class="card-title" id="chartTitle">가공비 구조 비교</div>
+            <div class="chart-container">
+                <canvas id="mainChart"></canvas>
             </div>
         </div>
 
         <!-- 상세 결과 테이블 -->
         <div class="card">
             <div class="card-title">상세 결과</div>
-            <table class="result-table" id="resultTable">
+            <table class="result-table">
                 <thead>
                     <tr>
                         <th class="col-label">항목</th>
@@ -172,7 +103,7 @@
             </table>
         </div>
 
-        <!-- 코칭 메시지 -->
+        <!-- 코칭 -->
         <div id="coachingArea" class="coaching-msg hidden">
             <div class="coaching-label">AI Coach</div>
             <div id="coachingText"></div>
@@ -182,74 +113,71 @@
     <!-- ═══ War Game 탭 ═══ -->
     <div id="tab-game" class="tab-content">
 
-        <!-- 로비 -->
         <div id="gameLobby">
             <div class="card">
                 <div class="card-title">War Game 팀 구성</div>
                 <div class="lobby-input">
-                    <input type="text" id="teamNameInput" placeholder="팀 이름 입력" maxlength="20">
+                    <input type="text" id="teamNameInput" placeholder="팀 이름 입력" maxlength="20"
+                           onkeypress="if(event.key==='Enter')addTeam()">
                     <button class="btn btn-primary btn-sm" onclick="addTeam()" style="width:auto">추가</button>
                 </div>
                 <ul class="team-list" id="teamList"></ul>
                 <button class="btn btn-primary" id="startGameBtn" onclick="createGame()" disabled>
-                    게임 시작 (2팀 이상)
+                    게임 시작 (2팀 이상 필요)
                 </button>
+            </div>
+            <div class="card">
+                <div class="card-title">게임 규칙</div>
+                <div style="font-size:13px;line-height:1.7;color:var(--text-muted)">
+                    <p><strong>3라운드</strong> 팀 대항전으로 진행됩니다.</p>
+                    <p><strong>R1</strong>: Loading 하락 대응 - 가공비 구조 이해</p>
+                    <p><strong>R2</strong>: 재료비 vs 수율 Trade-off 의사결정</p>
+                    <p><strong>R3</strong>: 복합 위기 상황 대응 (돌발 이벤트 포함)</p>
+                    <p>각 라운드 <strong>3분</strong> 제한시간 내에 원가 파라미터를 조정하여 최대 수익성을 달성하세요.</p>
+                </div>
             </div>
         </div>
 
-        <!-- 게임 진행 -->
         <div id="gamePlay" class="hidden">
-            <!-- 라운드 인디케이터 -->
             <div class="round-indicator" id="roundIndicator"></div>
 
-            <!-- 타이머 -->
             <div class="card text-center">
                 <div class="text-muted mb-8">남은 시간</div>
                 <div class="timer" id="gameTimer">03:00</div>
             </div>
 
-            <!-- 시나리오 -->
             <div class="card scenario-card" id="scenarioCard">
                 <div class="text-muted mb-8" id="roundLabel">라운드 1/3</div>
-                <div class="scenario-title" id="scenarioTitle">Loading 하락 위기</div>
+                <div class="scenario-title" id="scenarioTitle"></div>
                 <div class="scenario-desc" id="scenarioDesc"></div>
                 <div class="challenge" id="scenarioChallenge"></div>
                 <button class="hint-btn" onclick="toggleHint()">힌트 보기</button>
                 <div class="hint-text" id="hintText"></div>
             </div>
 
-            <!-- 돌발 이벤트 -->
             <div id="surpriseArea" class="card surprise-card hidden">
                 <div class="surprise-title" id="surpriseTitle"></div>
                 <div class="text-muted mt-8" id="surpriseDesc"></div>
             </div>
 
-            <!-- 팀별 입력 -->
             <div class="card" id="teamInputCard">
-                <div class="card-title">
-                    <span id="currentTeamLabel">팀 의사결정</span>
-                </div>
+                <div class="card-title"><span id="currentTeamLabel">팀 의사결정</span></div>
                 <div id="gameParamSliders"></div>
                 <button class="btn btn-success mt-12" onclick="submitDecision()">의사결정 제출</button>
             </div>
 
-            <!-- 리더보드 -->
             <div class="card">
                 <div class="card-title">리더보드</div>
                 <ul class="leaderboard" id="gameLeaderboard"></ul>
             </div>
 
-            <!-- 라운드 분석 -->
             <div id="roundAnalysis" class="card hidden">
                 <div class="card-title">AI 분석</div>
-                <div id="analysisText" class="text-muted"></div>
-                <button class="btn btn-primary mt-12" id="nextRoundBtn" onclick="nextRound()">
-                    다음 라운드
-                </button>
+                <div id="analysisText" class="text-muted" style="white-space:pre-line"></div>
+                <button class="btn btn-primary mt-12" id="nextRoundBtn" onclick="nextRound()">다음 라운드</button>
             </div>
         </div>
 
-        <!-- 최종 결과 -->
         <div id="gameResult" class="hidden">
             <div class="card text-center">
                 <div style="font-size:48px;margin-bottom:8px">&#127942;</div>
@@ -269,11 +197,11 @@
             </div>
         </div>
         <div class="card">
-            <div class="card-title">핵심 개념</div>
+            <div class="card-title">핵심 공식</div>
             <div style="font-size:14px;line-height:1.8">
                 <p><strong>COP</strong> = COM(제조원가) + SG&amp;A(판관비)</p>
                 <p><strong>COM</strong> = 소요재료비 + 가공비</p>
-                <p><strong>소요재료비</strong> = BOM 재료비 / 누적수율</p>
+                <p><strong>소요재료비</strong> = &Sigma;(공정별 BOM / 해당공정~최종 누적수율)</p>
                 <p><strong>가공비</strong> = Panel(노무비+경비+상각비) + Module(노무비+경비+상각비)</p>
                 <hr style="margin:12px 0;border:none;border-top:1px solid var(--border)">
                 <p><strong>영업이익</strong> = Price - COP</p>
@@ -284,19 +212,21 @@
             </div>
         </div>
         <div class="card">
-            <div class="card-title">Loading과 가공비의 관계</div>
-            <div style="font-size:14px;line-height:1.8">
-                <p>가공비는 <strong>고정비</strong> 성격입니다.</p>
-                <p>Loading(가동률)이 하락하면 같은 고정비를 더 적은 생산량으로 나누므로
-                   단위당 가공비가 <strong>상승</strong>합니다.</p>
-                <p>예: Loading 70% &rarr; 50%일 때, 가공비는 70/50 = <strong>1.4배</strong> 증가</p>
+            <div class="card-title">6가지 시뮬레이션 핵심 포인트</div>
+            <div style="font-size:13px;line-height:1.8">
+                <p><strong>1. Loading</strong>: 가동률 &darr; &rarr; 단위당 가공비 &uarr; (고정비 배분)</p>
+                <p><strong>2. 인건비</strong>: 노무비 직접 증가 + SGA 인건비 비중도 연동</p>
+                <p><strong>3. 한계이익률</strong>: 목표율에서 역산하여 허용 변동비 도출</p>
+                <p><strong>4. 재료비/수율</strong>: 재료비 절감 vs 수율 하락 trade-off</p>
+                <p><strong>5. 면취수/Mask</strong>: 면취수 &uarr; &rarr; Panel 비용 &darr;, Mask &uarr; &rarr; Panel 비용 &uarr;</p>
+                <p><strong>6. T/T+투자</strong>: Tact 지연 &rarr; Module 비용 &uarr;, 투자 &rarr; 상각비 &uarr;</p>
             </div>
         </div>
     </div>
 
 </div>
 
-<!-- AI 채팅 패널 -->
+<!-- AI 채팅 -->
 <div class="chat-panel" id="chatPanel">
     <div class="chat-toggle" onclick="toggleChat()">
         <span class="handle"></span>
@@ -304,8 +234,8 @@
     </div>
     <div class="chat-messages" id="chatMessages">
         <div class="chat-msg assistant">
-            안녕하세요! 개발원가 시뮬레이션에 대해 궁금한 점을 질문해주세요.
-            수율, 가공비, Loading, BOM 등에 대해 설명드릴 수 있습니다.
+            안녕하세요! 개발원가에 대해 질문해주세요.
+            수율, 가공비, Loading, 면취수, Mask, Tact 등에 대해 설명드릴 수 있습니다.
         </div>
     </div>
     <div class="chat-input-row">

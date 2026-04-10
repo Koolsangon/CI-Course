@@ -119,7 +119,13 @@
                         <th class="col-sim">Simulation</th>
                     </tr>
                 </thead>
-                <tbody id="resultBody"></tbody>
+                <tbody id="resultBody">
+                    <tr class="skeleton-row"><td colspan="3"><div class="skeleton-bar"></div></td></tr>
+                    <tr class="skeleton-row"><td colspan="3"><div class="skeleton-bar short"></div></td></tr>
+                    <tr class="skeleton-row"><td colspan="3"><div class="skeleton-bar"></div></td></tr>
+                    <tr class="skeleton-row"><td colspan="3"><div class="skeleton-bar short"></div></td></tr>
+                    <tr class="skeleton-row"><td colspan="3"><div class="skeleton-bar"></div></td></tr>
+                </tbody>
             </table>
         </div>
 
@@ -197,8 +203,11 @@
             <div class="round-indicator" id="roundIndicator"></div>
 
             <div class="card text-center">
-                <div class="text-muted mb-8">남은 시간</div>
-                <div class="timer" id="gameTimer">03:00</div>
+                <div class="timer-wrap">
+                    <div class="text-muted mb-8">남은 시간 <span class="ws-indicator" id="wsIndicator"><span class="ws-dot disconnected" id="wsDot"></span><span id="wsLabel">연결 대기</span></span></div>
+                    <div class="timer" id="gameTimer">03:00</div>
+                    <div class="timer-progress"><div class="timer-progress-fill" id="timerProgressFill" style="width:100%"></div></div>
+                </div>
             </div>
 
             <div class="card scenario-card" id="scenarioCard">
@@ -223,7 +232,9 @@
 
             <div class="card">
                 <div class="card-title">리더보드</div>
-                <ul class="leaderboard" id="gameLeaderboard"></ul>
+                <ul class="leaderboard" id="gameLeaderboard">
+                    <li class="empty-state">팀이 제출하면 여기에 순위가 표시됩니다</li>
+                </ul>
             </div>
 
             <div id="roundAnalysis" class="card hidden">
@@ -309,6 +320,44 @@
 
 </div>
 
+<!-- Toast Container -->
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- Confirm Modal -->
+<div class="modal-backdrop" id="modalBackdrop">
+    <div class="modal-box">
+        <div class="modal-title" id="modalTitle"></div>
+        <div class="modal-message" id="modalMessage"></div>
+        <div class="modal-actions">
+            <button class="modal-cancel" id="modalCancel">취소</button>
+            <button class="modal-confirm" id="modalConfirm">확인</button>
+        </div>
+    </div>
+</div>
+
+<!-- Onboarding Overlay -->
+<div class="onboarding-backdrop" id="onboardingBackdrop">
+    <div class="onboarding-spotlight" id="onboardingSpotlight"></div>
+    <div class="onboarding-tooltip" id="onboardingTooltip">
+        <div class="onboarding-step" id="onboardingStep"></div>
+        <div class="onboarding-text" id="onboardingText"></div>
+        <div class="onboarding-actions">
+            <button class="onboarding-skip" id="onboardingSkip">건너뛰기</button>
+            <div class="onboarding-dots" id="onboardingDots"></div>
+            <button class="onboarding-next" id="onboardingNext">다음</button>
+        </div>
+    </div>
+</div>
+
+<!-- Final Reveal Overlay -->
+<div class="final-reveal-overlay" id="finalRevealOverlay">
+    <div class="final-reveal-title" id="finalRevealTitle">FINAL RESULTS</div>
+    <div id="finalRevealItems"></div>
+    <div class="final-dismiss" id="finalDismiss">
+        <button class="btn btn-primary" onclick="dismissFinalReveal()">결과 화면으로</button>
+    </div>
+</div>
+
 <!-- Confetti Canvas -->
 <canvas id="confettiCanvas" class="hidden"></canvas>
 
@@ -332,8 +381,8 @@
     </div>
     <div class="chat-messages" id="chatMessages">
         <div class="chat-msg assistant">
-            안녕하세요! 개발원가에 대해 질문해주세요.
-            수율, 가공비, Loading, 면취수, Mask, Tact 등에 대해 설명드릴 수 있습니다.
+            안녕하세요! 개발원가에 대해 질문해주세요.<br>
+            <span style="font-size:12px;opacity:0.6">예: 수율, 가공비, Loading, 면취수, Mask, Tact, 인건비, 한계이익</span>
         </div>
     </div>
     <div class="chat-input-row">
@@ -343,14 +392,6 @@
     </div>
 </div>
 
-<script>
-    function toggleGameInfo() {
-        const toggle = document.getElementById('gameInfoToggle');
-        const body = document.getElementById('gameInfoBody');
-        toggle.classList.toggle('open');
-        body.classList.toggle('open');
-    }
-</script>
-<script src="/static/js/app.js"></script>
+<script type="module" src="/static/js/main.js"></script>
 </body>
 </html>

@@ -1,0 +1,292 @@
+/* ────────────────────────────────────────────
+   Base Reset & Scroll
+──────────────────────────────────────────── */
+
+html {
+    scroll-behavior: smooth;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: var(--font-text);
+    background: var(--pure-black);
+    color: var(--text-on-dark);
+    font-size: 17px;
+    font-weight: 400;
+    line-height: 1.47;
+    letter-spacing: -0.374px;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* ────────────────────────────────────────────
+   Hero Section
+──────────────────────────────────────────── */
+
+.hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    background: radial-gradient(
+        ellipse 80% 60% at 50% 40%,
+        rgba(0, 113, 227, 0.12) 0%,
+        transparent 70%
+    ),
+    var(--pure-black);
+    padding: 80px 20px 120px;
+}
+
+.hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(
+        circle at 30% 70%,
+        rgba(41, 151, 255, 0.06) 0%,
+        transparent 50%
+    ),
+    radial-gradient(
+        circle at 70% 20%,
+        rgba(0, 113, 227, 0.08) 0%,
+        transparent 50%
+    );
+    pointer-events: none;
+}
+
+.hero-content {
+    position: relative;
+    z-index: 1;
+    max-width: 680px;
+    animation: fadeInUp 0.9s var(--ease-out) both;
+}
+
+.hero-eyebrow {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    color: var(--link-blue-dark);
+    margin-bottom: 16px;
+}
+
+.hero-title {
+    font-family: var(--font-display);
+    font-size: 56px;
+    font-weight: 700;
+    line-height: 1.07;
+    letter-spacing: -0.28px;
+    color: var(--white);
+    margin-bottom: 20px;
+}
+
+.hero-subtitle {
+    font-size: 21px;
+    font-weight: 300;
+    line-height: 1.38;
+    letter-spacing: -0.374px;
+    color: var(--text-on-dark-secondary);
+    margin-bottom: 40px;
+}
+
+.hero-cta-row {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+/* ────────────────────────────────────────────
+   Hero CTA (bare class without -row suffix)
+──────────────────────────────────────────── */
+
+.hero-cta {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 32px;
+}
+
+/* ────────────────────────────────────────────
+   Header (Apple Glass Nav)
+──────────────────────────────────────────── */
+
+.header {
+    position: sticky;
+    top: 0;
+    z-index: var(--z-header);
+    background: var(--nav-bg);
+    backdrop-filter: saturate(180%) blur(20px);
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+    padding: 0 20px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.header-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    max-width: 980px;
+    margin: 0 auto;
+}
+
+.header h1 {
+    font-family: var(--font-display);
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: -0.224px;
+    color: var(--white);
+}
+
+.subtitle {
+    display: none;
+}
+
+.ai-badge {
+    font-size: 11px;
+    font-weight: 500;
+    padding: 3px 10px;
+    border-radius: var(--radius-pill);
+    background: rgba(255, 255, 255, 0.12);
+    color: rgba(255, 255, 255, 0.7);
+    letter-spacing: -0.12px;
+}
+
+/* ────────────────────────────────────────────
+   Tab Navigation
+──────────────────────────────────────────── */
+
+.tab-nav {
+    display: flex;
+    justify-content: center;
+    gap: 0;
+    background: var(--near-black);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    position: sticky;
+    top: 48px;
+    z-index: var(--z-nav);
+}
+
+.tab-btn {
+    flex: 1;
+    max-width: 200px;
+    padding: 12px 0;
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    color: var(--text-on-dark-tertiary);
+    font-family: var(--font-text);
+    font-size: 14px;
+    font-weight: 400;
+    letter-spacing: -0.224px;
+    cursor: pointer;
+    transition: color 0.2s var(--ease-out), border-color 0.2s var(--ease-out);
+}
+
+.tab-btn:hover {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.tab-btn.active {
+    color: var(--white);
+    border-bottom-color: var(--apple-blue);
+    font-weight: 600;
+}
+
+/* ────────────────────────────────────────────
+   Main Content
+──────────────────────────────────────────── */
+
+.main {
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 0 20px 80px;
+}
+
+/* Tab content with fade transition */
+.tab-content {
+    display: none;
+    opacity: 0;
+}
+
+.tab-content.active {
+    display: block;
+    animation: tabFadeIn 0.3s var(--ease-out) both;
+    opacity: 1;
+}
+
+/* ────────────────────────────────────────────
+   Learn Tab
+──────────────────────────────────────────── */
+
+#tab-learn .card {
+    background: var(--dark-surface-1);
+}
+
+#tab-learn p {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 15px;
+    line-height: 1.53;
+    letter-spacing: -0.224px;
+}
+
+#tab-learn strong {
+    color: var(--white);
+    font-weight: 600;
+}
+
+#tab-learn hr {
+    border: none;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    margin: 16px 0;
+}
+
+/* ────────────────────────────────────────────
+   한계이익률 역산 Result
+──────────────────────────────────────────── */
+
+#marginalResult p {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+#marginalResult strong {
+    color: var(--white);
+}
+
+/* ────────────────────────────────────────────
+   Utilities
+──────────────────────────────────────────── */
+
+.hidden { display: none !important; }
+.text-center { text-align: center; }
+.text-muted {
+    color: var(--text-on-dark-tertiary);
+    font-size: 14px;
+    letter-spacing: -0.224px;
+}
+.mb-4  { margin-bottom: 4px; }
+.mb-8  { margin-bottom: 8px; }
+.mb-12 { margin-bottom: 12px; }
+.mb-16 { margin-bottom: 16px; }
+.mt-4  { margin-top: 4px; }
+.mt-8  { margin-top: 8px; }
+.mt-12 { margin-top: 12px; }
+.mt-16 { margin-top: 16px; }
+.gap-8 { gap: 8px; }
+.flex  { display: flex; }
+.flex-between { display: flex; justify-content: space-between; align-items: center; }

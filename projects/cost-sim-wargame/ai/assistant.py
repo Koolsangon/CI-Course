@@ -15,6 +15,11 @@ from typing import Optional
 ROUND_SCENARIOS = {
     1: {
         "title": "Loading 하락 위기",
+        "briefing": (
+            "긴급 | CEO가 비상 경영회의를 소집했습니다. "
+            "고객사 A가 예고 없이 주문량의 30%를 취소했습니다. "
+            "공장 가동률이 급락하고 있으며, 이대로면 이번 분기 적자가 불가피합니다."
+        ),
         "description": (
             "고객사 A의 주문량이 급감하여 공장 가동률(Loading)이 70%에서 50%로 "
             "하락할 것으로 예상됩니다. 이 상황에서 수익성을 유지하기 위한 "
@@ -22,12 +27,21 @@ ROUND_SCENARIOS = {
         ),
         "challenge": "Loading 50%에서도 흑자를 유지할 수 있는 원가 구조를 설계하라",
         "hint": "가공비는 고정비 성격이므로 Loading 하락 시 단위당 가공비가 상승합니다.",
+        "difficulty": 1,
+        "learning_objective": "고정비 배분 원리 — Loading(가동률)이 단위당 가공비에 미치는 영향을 이해합니다.",
+        "allowed_params": ["loading"],
         "metric": "operating_margin",
         "metric_label": "영업이익률",
         "params": {"loading": 0.50},
     },
     2: {
         "title": "재료비 절감 vs 수율 리스크",
+        "briefing": (
+            "구매팀장이 흥분된 목소리로 보고합니다. "
+            "\"대체 부품으로 Module 재료비 5% 절감이 가능합니다!\" "
+            "하지만 품질팀장이 즉시 반박합니다. "
+            "\"그 부품 쓰면 수율 4%p 떨어집니다. 신중해야 합니다.\""
+        ),
         "description": (
             "구매팀에서 Module 재료비를 5% 절감할 수 있는 대체 부품을 발굴했습니다. "
             "그러나 품질팀에서는 대체 부품 적용 시 Module 수율이 4%p 하락할 "
@@ -36,12 +50,21 @@ ROUND_SCENARIOS = {
         ),
         "challenge": "재료비 5% 절감과 수율 4%p 하락의 trade-off를 분석하고 최적안을 도출하라",
         "hint": "재료비 절감 효과와 수율 하락에 따른 소요재료비 증가를 비교해보세요.",
+        "difficulty": 2,
+        "learning_objective": "Trade-off 의사결정 — 재료비 절감과 수율 하락의 상충 관계를 정량적으로 분석하는 능력을 기릅니다.",
+        "allowed_params": ["loading", "material", "yield_change"],
         "metric": "ebitda",
         "metric_label": "EBITDA",
         "params": {"material_change_pct": -0.05, "module_yield_change": -0.04},
     },
     3: {
         "title": "복합 위기 상황",
+        "briefing": (
+            "오늘 아침, 세 가지 소식이 동시에 날아왔습니다. "
+            "고객사의 판가 인하 요구, 원자재 가격 급등 통보, "
+            "그리고 R&D팀의 공정 개선 성공 보고. "
+            "위기와 기회가 공존하는 이 순간, 당신의 판단이 분기 실적을 결정합니다."
+        ),
         "description": (
             "예상치 못한 복합 위기가 발생했습니다! "
             "① 고객사가 판가 5% 인하를 요청했습니다 (Price $200 → $190). "
@@ -51,11 +74,72 @@ ROUND_SCENARIOS = {
         ),
         "challenge": "판가 인하 + 원자재 상승 속에서도 흑자를 유지하는 전략을 수립하라",
         "hint": "여러 변수를 동시에 조정하여 최적의 조합을 찾아야 합니다.",
+        "difficulty": 3,
+        "learning_objective": "복합 변수 최적화 — 여러 원가 요소가 동시에 변동할 때 종합적인 의사결정 역량을 기릅니다.",
+        "allowed_params": ["loading", "material", "yield_change"],
         "metric": "operating_profit",
         "metric_label": "영업이익",
         "params": {"price": 190, "module_bom_change": 0.10, "cell_yield": 0.97},
     },
 }
+
+STRATEGY_CARDS = [
+    {
+        "id": "process_innovation",
+        "name": "공정혁신 투자",
+        "icon": "🔧",
+        "description": "가공비 8% 절감, 상각비 +$2",
+        "edu_point": "투자-상각비 trade-off",
+        "effects": {"processing_mult": 0.92, "depreciation_add": 2.0},
+    },
+    {
+        "id": "bulk_purchase",
+        "name": "대량구매 계약",
+        "icon": "📦",
+        "description": "BOM 재료비 10% 절감, Loading 조정 불가",
+        "edu_point": "규모의 경제 vs 유연성",
+        "effects": {"bom_mult": 0.90, "lock_loading": True},
+    },
+    {
+        "id": "workforce_reorg",
+        "name": "인력 재배치",
+        "icon": "👥",
+        "description": "노무비 15% 절감, 수율 -2%p",
+        "edu_point": "인건비-품질 trade-off",
+        "effects": {"labor_mult": 0.85, "yield_add": -0.02},
+    },
+    {
+        "id": "line_expansion",
+        "name": "라인 증설",
+        "icon": "⚡",
+        "description": "Loading +15%p, 투자 상각비 +$3",
+        "edu_point": "설비투자 의사결정",
+        "effects": {"loading_add": 0.15, "depreciation_add": 3.0},
+    },
+    {
+        "id": "quality_campaign",
+        "name": "품질 캠페인",
+        "icon": "🎯",
+        "description": "수율 +3%p, 경비 +$1.5",
+        "edu_point": "품질비용 개념",
+        "effects": {"yield_add": 0.03, "expense_add": 1.5},
+    },
+    {
+        "id": "supply_diversify",
+        "name": "공급선 다변화",
+        "icon": "🔄",
+        "description": "서프라이즈 면역, 재료비 +3%",
+        "edu_point": "리스크 관리 비용",
+        "effects": {"surprise_immune": True, "bom_mult": 1.03},
+    },
+]
+
+
+def get_round_cards(count: int = 3) -> list[dict]:
+    """라운드별 랜덤 카드 3장 배분"""
+    selected = random.sample(STRATEGY_CARDS, min(count, len(STRATEGY_CARDS)))
+    return selected
+
 
 SURPRISE_EVENTS = [
     {

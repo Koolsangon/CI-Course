@@ -23,6 +23,21 @@
 | `templates/` | 결과물 양식 뼈대 | 읽기 전용 (수정 시 승인 필요) |
 | `outputs/` | 최종 산출물 결재함 | 쓰기 (삭제/덮어쓰기 시 승인 필요) |
 
+## 검증 명령어
+
+| 검증 항목 | 명령어 | 기대 결과 |
+|-----------|--------|-----------|
+| 엔진 단위 테스트 | `cd projects/cost-sim-wargame && python3 engine/cost_model.py` | 27/27 PASSED |
+| API 서버 기동 | `cd projects/cost-sim-wargame && python3 run.py` | localhost:8000 응답 |
+| API 통합 테스트 | `curl -s http://localhost:8000/api/reference` | JSON 응답 |
+| 스크린샷 테스트 | `cd projects/cost-sim-wargame && python3 tests/capture.py` | screenshots/ 갱신 |
+
+## 검증 원칙
+
+- 구현 세션에서 자체 검증하지 않는다. 구현 후 새 세션에서 검증한다.
+- 검증 시 `templates/verification-checklists.md`의 해당 유형 체크리스트를 사용한다.
+- 검증 결과는 `handoff.md` 측정 섹션에 기록한다.
+
 ## 작업 흐름
 
 1. `plan.md`에서 다음 작업 확인

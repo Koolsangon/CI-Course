@@ -1,0 +1,92 @@
+/* ────────────────────────────────────────────
+   Responsive — all @media query blocks
+──────────────────────────────────────────── */
+
+@media (min-width: 768px) {
+    .sim-layout {
+        grid-template-columns: 1fr 1fr;
+        align-items: start;
+    }
+
+    .sim-layout .sim-params {
+        position: sticky;
+        top: calc(48px + 45px + 12px);
+    }
+}
+
+@media (max-width: 767px) {
+    /* Stack sim layout */
+    .sim-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .sim-layout .sim-params {
+        position: static;
+    }
+
+    .header {
+        padding: 0 16px;
+    }
+
+    .main {
+        padding: 0 16px 80px;
+    }
+
+    .hero-title {
+        font-size: 36px;
+    }
+
+    .hero-subtitle {
+        font-size: 17px;
+    }
+
+    .comparison-value {
+        font-size: 22px;
+    }
+
+    .timer {
+        font-size: 32px;
+    }
+
+    .countdown-number {
+        font-size: 100px;
+    }
+
+    .celebration-title {
+        font-size: 44px;
+    }
+
+    .round-transition-text {
+        font-size: 32px;
+    }
+
+    .card {
+        padding: 20px 16px;
+    }
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+    .main {
+        padding: 0 24px 80px;
+    }
+
+    .hero-title {
+        font-size: 48px;
+    }
+}
+
+@media (min-width: 1024px) {
+    .main {
+        padding: 0 32px 80px;
+    }
+
+    .card {
+        padding: 28px 24px;
+    }
+}
+
+@media (max-width: 480px) {
+    .marginal-result-grid {
+        grid-template-columns: 1fr;
+    }
+}

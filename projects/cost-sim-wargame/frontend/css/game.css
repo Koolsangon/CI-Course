@@ -1,0 +1,1340 @@
+/* ────────────────────────────────────────────
+   War Game — Lobby
+──────────────────────────────────────────── */
+
+.lobby-input {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
+.lobby-input input {
+    flex: 1;
+    background: rgba(255, 255, 255, 0.06);
+    color: var(--white);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    padding: 10px 14px;
+    border-radius: var(--radius-md);
+    font-family: var(--font-text);
+    font-size: 17px;
+    letter-spacing: -0.374px;
+    outline: none;
+    transition: border-color 0.15s var(--ease-out), box-shadow 0.15s var(--ease-out);
+}
+
+.lobby-input input:focus {
+    border-color: var(--apple-blue);
+    box-shadow: 0 0 0 3px rgba(0, 113, 227, 0.2);
+}
+
+.lobby-input input::placeholder {
+    color: rgba(255, 255, 255, 0.3);
+}
+
+.lobby-input .btn-primary {
+    width: auto;
+    padding: 10px 20px;
+}
+
+.team-list {
+    list-style: none;
+    margin-bottom: 16px;
+}
+
+.team-list li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    font-size: 17px;
+    letter-spacing: -0.374px;
+    color: var(--white);
+    animation: slideUp 0.25s var(--ease-out) both;
+}
+
+.team-remove {
+    background: none;
+    border: none;
+    color: rgba(255, 255, 255, 0.3);
+    font-size: 20px;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 50%;
+    transition: color 0.15s, background 0.15s;
+    line-height: 1;
+}
+
+.team-remove:hover {
+    color: var(--red);
+    background: rgba(255, 69, 58, 0.12);
+}
+
+/* ────────────────────────────────────────────
+   Lobby Illustration & Tagline
+──────────────────────────────────────────── */
+
+.lobby-illustration {
+    text-align: center;
+    padding: 20px 0 8px;
+    font-size: 64px;
+    line-height: 1;
+    animation: fadeInUp 0.6s var(--ease-out) both;
+}
+
+.lobby-icon {
+    font-size: 40px;
+    line-height: 1;
+    text-align: center;
+    margin-bottom: 8px;
+}
+
+.lobby-tagline {
+    font-size: 14px;
+    color: var(--text-on-dark-tertiary);
+    letter-spacing: -0.224px;
+    text-align: center;
+    line-height: 1.43;
+    margin-bottom: 20px;
+}
+
+/* War Game Lobby Extras */
+.lobby-illustration {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px 0 8px;
+    margin-bottom: 16px;
+}
+
+.lobby-icon {
+    font-size: 52px;
+    line-height: 1;
+    margin-bottom: 10px;
+}
+
+.lobby-tagline {
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.48);
+    text-align: center;
+    letter-spacing: -0.12px;
+    line-height: 1.5;
+}
+
+/* ────────────────────────────────────────────
+   War Game — Round Indicator
+──────────────────────────────────────────── */
+
+.round-indicator {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    padding: 16px 0;
+}
+
+.round-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.12);
+    transition: background 0.3s var(--ease-out), box-shadow 0.3s var(--ease-out), transform 0.3s var(--ease-spring);
+}
+
+.round-dot.active {
+    background: var(--apple-blue);
+    box-shadow: 0 0 0 3px rgba(0, 113, 227, 0.25);
+    transform: scale(1.2);
+}
+
+.round-dot.completed {
+    background: var(--green);
+    transform: scale(1);
+}
+
+/* ────────────────────────────────────────────
+   War Game — Timer
+──────────────────────────────────────────── */
+
+.timer {
+    font-family: var(--font-display);
+    font-size: 40px;
+    font-weight: 300;
+    line-height: 1.10;
+    letter-spacing: -0.28px;
+    color: var(--white);
+    transition: color 0.3s var(--ease-out);
+    font-variant-numeric: tabular-nums;
+}
+
+.timer.urgent {
+    color: var(--red);
+    animation: countdownPulse 0.8s var(--ease-in-out) infinite;
+}
+
+/* ────────────────────────────────────────────
+   Timer Progress Bar
+──────────────────────────────────────────── */
+
+.timer-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.timer-progress {
+    width: 100%;
+    height: 4px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.timer-progress-fill {
+    height: 100%;
+    border-radius: 2px;
+    transition: width 1s linear, background 0.5s;
+    background: var(--green);
+}
+
+.timer-progress-fill.warning { background: var(--yellow); }
+.timer-progress-fill.urgent  { background: var(--red); }
+
+/* ────────────────────────────────────────────
+   War Game — Scenario Card
+──────────────────────────────────────────── */
+
+.scenario-card {
+    background: var(--dark-surface-3);
+    border-left: 3px solid var(--apple-blue);
+    animation: caseFadeIn 0.3s var(--ease-out) both;
+}
+
+.scenario-title {
+    font-family: var(--font-display);
+    font-size: 21px;
+    font-weight: 700;
+    line-height: 1.14;
+    letter-spacing: -0.28px;
+    color: var(--white);
+    margin-bottom: 8px;
+}
+
+.scenario-desc {
+    font-size: 14px;
+    line-height: 1.43;
+    letter-spacing: -0.224px;
+    color: rgba(255, 255, 255, 0.7);
+    margin-bottom: 12px;
+}
+
+.challenge {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--link-blue-dark);
+    letter-spacing: -0.224px;
+    padding: 10px 14px;
+    background: rgba(41, 151, 255, 0.08);
+    border-radius: var(--radius-md);
+    margin-bottom: 12px;
+}
+
+.hint-btn {
+    background: none;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    color: var(--text-on-dark-tertiary);
+    padding: 6px 16px;
+    border-radius: var(--radius-pill);
+    font-size: 12px;
+    font-weight: 400;
+    letter-spacing: -0.12px;
+    cursor: pointer;
+    transition: color 0.15s, border-color 0.15s;
+}
+
+.hint-btn:hover {
+    color: var(--white);
+    border-color: rgba(255, 255, 255, 0.24);
+}
+
+.hint-text {
+    font-size: 14px;
+    color: var(--text-on-dark-tertiary);
+    letter-spacing: -0.224px;
+    margin-top: 10px;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.35s var(--ease-out), opacity 0.35s var(--ease-out);
+    opacity: 0;
+}
+
+.hint-text.show {
+    max-height: 120px;
+    opacity: 1;
+}
+
+/* ────────────────────────────────────────────
+   War Game — Surprise Events
+──────────────────────────────────────────── */
+
+.surprise-card {
+    background: rgba(255, 69, 58, 0.08);
+    border-left: 3px solid var(--red);
+    animation: shake 0.6s var(--ease-in-out);
+}
+
+.surprise-title {
+    font-family: var(--font-display);
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--red);
+    letter-spacing: -0.374px;
+}
+
+/* ────────────────────────────────────────────
+   War Game — Confetti Canvas
+──────────────────────────────────────────── */
+
+#confetti-canvas {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: var(--z-confetti);
+    opacity: 0;
+    transition: opacity 0.3s var(--ease-out);
+}
+
+#confetti-canvas.active {
+    opacity: 1;
+}
+
+/* Celebration overlay text */
+.celebration-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: calc(var(--z-confetti) - 1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.4s var(--ease-out);
+}
+
+.celebration-overlay.active {
+    opacity: 1;
+}
+
+.celebration-title {
+    font-family: var(--font-display);
+    font-size: 64px;
+    font-weight: 700;
+    letter-spacing: -0.28px;
+    line-height: 1.07;
+    color: var(--white);
+    text-shadow: 0 4px 40px rgba(0, 0, 0, 0.8);
+    animation: celebrationBounce 0.6s var(--ease-spring) both;
+}
+
+.celebration-subtitle {
+    font-size: 21px;
+    font-weight: 300;
+    letter-spacing: -0.374px;
+    color: var(--text-on-dark-secondary);
+    margin-top: 12px;
+    text-shadow: 0 2px 12px rgba(0, 0, 0, 0.6);
+}
+
+/* ────────────────────────────────────────────
+   War Game — Leaderboard
+──────────────────────────────────────────── */
+
+.leaderboard {
+    list-style: none;
+}
+
+.leaderboard-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    animation: slideUp 0.3s var(--ease-out) both;
+}
+
+.leaderboard-item:nth-child(2) { animation-delay: 0.06s; }
+.leaderboard-item:nth-child(3) { animation-delay: 0.12s; }
+.leaderboard-item:nth-child(4) { animation-delay: 0.18s; }
+.leaderboard-item:nth-child(5) { animation-delay: 0.24s; }
+
+.leaderboard-rank {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-display);
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: -0.224px;
+    background: rgba(255, 255, 255, 0.08);
+    color: var(--text-on-dark-tertiary);
+    flex-shrink: 0;
+}
+
+.leaderboard-rank.rank-1 {
+    background: rgba(255, 214, 10, 0.16);
+    color: var(--yellow);
+}
+
+.leaderboard-rank.rank-2 {
+    background: rgba(174, 174, 178, 0.16);
+    color: var(--silver);
+}
+
+.leaderboard-rank.rank-3 {
+    background: rgba(172, 142, 104, 0.16);
+    color: var(--bronze);
+}
+
+.leaderboard-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.leaderboard-team {
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--white);
+    letter-spacing: -0.374px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.leaderboard-score {
+    font-size: 12px;
+    color: var(--text-on-dark-tertiary);
+    letter-spacing: -0.12px;
+    margin-top: 2px;
+}
+
+.leaderboard-profit {
+    font-family: var(--font-display);
+    font-size: 17px;
+    font-weight: 600;
+    letter-spacing: -0.374px;
+    flex-shrink: 0;
+}
+
+.leaderboard-profit.positive { color: var(--green); }
+.leaderboard-profit.negative { color: var(--red); }
+
+/* ────────────────────────────────────────────
+   War Game — Countdown Overlay (Fullscreen)
+──────────────────────────────────────────── */
+
+.countdown-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: var(--z-countdown);
+    background: rgba(0, 0, 0, 0.92);
+    backdrop-filter: saturate(120%) blur(8px);
+    -webkit-backdrop-filter: saturate(120%) blur(8px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s var(--ease-out);
+}
+
+.countdown-overlay.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.countdown-number {
+    font-family: var(--font-display);
+    font-size: 160px;
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -0.28px;
+    color: var(--white);
+    animation: countdownPulse 1s var(--ease-in-out) infinite;
+    text-shadow: 0 0 80px rgba(0, 113, 227, 0.6);
+}
+
+.countdown-label {
+    font-size: 21px;
+    font-weight: 300;
+    letter-spacing: -0.374px;
+    color: var(--text-on-dark-secondary);
+}
+
+/* ────────────────────────────────────────────
+   War Game — Round Transition Overlay
+──────────────────────────────────────────── */
+
+.round-transition-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: var(--z-overlay);
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.4s var(--ease-out);
+}
+
+.round-transition-overlay.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.round-transition-text {
+    font-family: var(--font-display);
+    font-size: 48px;
+    font-weight: 700;
+    letter-spacing: -0.28px;
+    color: var(--white);
+    animation: roundWipe 0.5s var(--ease-spring) both;
+}
+
+.round-transition-sub {
+    font-size: 21px;
+    font-weight: 300;
+    letter-spacing: -0.374px;
+    color: var(--text-on-dark-secondary);
+}
+
+/* ────────────────────────────────────────────
+   Game Info Toggle Panel
+──────────────────────────────────────────── */
+
+.game-info-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    user-select: none;
+    padding: 4px 0;
+}
+
+.game-info-body {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s var(--ease-out), opacity 0.4s var(--ease-out);
+    opacity: 0;
+}
+
+.game-info-body.open {
+    max-height: 600px;
+    opacity: 1;
+}
+
+.toggle-arrow {
+    font-size: 12px;
+    color: var(--text-on-dark-tertiary);
+    transition: transform 0.25s var(--ease-spring);
+    display: inline-block;
+}
+
+.game-info-toggle.open .toggle-arrow {
+    transform: rotate(180deg);
+}
+
+/* War Game Lobby Extras — game-info-toggle overrides */
+.game-info-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    background: none;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: var(--radius-md);
+    color: rgba(255, 255, 255, 0.6);
+    font-family: var(--font-text);
+    font-size: 14px;
+    padding: 12px 16px;
+    cursor: pointer;
+    transition: background 0.15s;
+    margin-top: 12px;
+}
+
+.game-info-toggle:hover {
+    background: rgba(255, 255, 255, 0.04);
+    color: var(--white);
+}
+
+.toggle-arrow {
+    transition: transform 0.25s;
+    font-size: 12px;
+}
+
+.game-info-toggle.open .toggle-arrow {
+    transform: rotate(180deg);
+}
+
+.game-info-body {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease, opacity 0.3s;
+    opacity: 0;
+    font-size: 13px;
+    line-height: 1.7;
+    color: rgba(255, 255, 255, 0.55);
+}
+
+.game-info-body.open {
+    max-height: 400px;
+    opacity: 1;
+    padding-top: 14px;
+}
+
+/* ────────────────────────────────────────────
+   Round Table Labels (rt-*)
+──────────────────────────────────────────── */
+
+.rt-title {
+    font-family: var(--font-display);
+    font-size: 17px;
+    font-weight: 600;
+    color: var(--white);
+    letter-spacing: -0.374px;
+    margin-bottom: 4px;
+    line-height: 1.29;
+}
+
+.rt-label {
+    font-size: 12px;
+    color: var(--text-on-dark-tertiary);
+    letter-spacing: -0.12px;
+    text-transform: uppercase;
+    font-weight: 600;
+    letter-spacing: 0.4px;
+}
+
+/* ────────────────────────────────────────────
+   Rules List
+──────────────────────────────────────────── */
+
+.rules-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.rules-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.7);
+    letter-spacing: -0.224px;
+    line-height: 1.43;
+}
+
+.rule-icon {
+    font-size: 18px;
+    line-height: 1.4;
+    flex-shrink: 0;
+}
+
+/* War Game Lobby Extras — rules-list overrides */
+.rules-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.rules-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    font-size: 13px;
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.rules-list li strong {
+    color: var(--white);
+}
+
+/* ────────────────────────────────────────────
+   ID-based Overlays (HTML uses IDs)
+──────────────────────────────────────────── */
+
+#countdownOverlay {
+    position: fixed;
+    inset: 0;
+    z-index: 500;
+    background: rgba(0, 0, 0, 0.92);
+    backdrop-filter: saturate(120%) blur(8px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s var(--ease-out);
+}
+
+#countdownOverlay.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+#countdownOverlay.hidden {
+    display: none;
+}
+
+#countdownOverlay .countdown-number {
+    font-family: var(--font-display);
+    font-size: 160px;
+    font-weight: 700;
+    line-height: 1;
+    color: var(--white);
+    animation: countdownPulse 0.8s var(--ease-spring);
+}
+
+#countdownOverlay .countdown-label {
+    font-size: 17px;
+    color: var(--text-on-dark-tertiary);
+    margin-top: 16px;
+    letter-spacing: -0.374px;
+}
+
+#roundTransition {
+    position: fixed;
+    inset: 0;
+    z-index: 450;
+    background: rgba(0, 0, 0, 0.88);
+    backdrop-filter: blur(4px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.4s var(--ease-out);
+}
+
+#roundTransition.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+#roundTransition.hidden {
+    display: none;
+}
+
+#roundTransition .rt-label {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--apple-blue);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+
+#roundTransition .rt-title {
+    font-family: var(--font-display);
+    font-size: 40px;
+    font-weight: 700;
+    color: var(--white);
+    letter-spacing: -0.5px;
+    text-align: center;
+}
+
+#confettiCanvas {
+    position: fixed;
+    inset: 0;
+    z-index: 400;
+    pointer-events: none;
+}
+
+#confettiCanvas.hidden {
+    display: none;
+}
+
+/* ────────────────────────────────────────────
+   Onboarding Overlay
+──────────────────────────────────────────── */
+
+.onboarding-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    z-index: var(--z-overlay);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s;
+}
+
+.onboarding-backdrop.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.onboarding-spotlight {
+    position: absolute;
+    border-radius: var(--radius-lg);
+    box-shadow: 0 0 0 9999px rgba(0,0,0,0.7);
+    transition: all 0.4s var(--ease-spring);
+    z-index: 1;
+}
+
+.onboarding-tooltip {
+    position: absolute;
+    background: var(--dark-surface-2);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: var(--radius-lg);
+    padding: 20px;
+    max-width: 300px;
+    z-index: 2;
+    animation: fadeInUp 0.4s var(--ease-out);
+}
+
+.onboarding-step {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--apple-blue);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 6px;
+}
+
+.onboarding-text {
+    font-size: 15px;
+    line-height: 1.5;
+    color: var(--white);
+    margin-bottom: 16px;
+}
+
+.onboarding-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.onboarding-skip {
+    background: none;
+    border: none;
+    color: rgba(255,255,255,0.4);
+    font-size: 13px;
+    cursor: pointer;
+    font-family: var(--font-text);
+}
+
+.onboarding-skip:hover { color: rgba(255,255,255,0.7); }
+
+.onboarding-next {
+    background: var(--apple-blue);
+    color: var(--white);
+    border: none;
+    padding: 8px 20px;
+    border-radius: var(--radius-md);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: var(--font-text);
+    transition: opacity 0.15s;
+}
+
+.onboarding-next:hover { opacity: 0.85; }
+
+.onboarding-dots {
+    display: flex;
+    gap: 6px;
+}
+
+.onboarding-dots span {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.2);
+    transition: background 0.2s;
+}
+
+.onboarding-dots span.active {
+    background: var(--apple-blue);
+}
+
+/* ────────────────────────────────────────────
+   Strategy Time Between Rounds
+──────────────────────────────────────────── */
+
+.strategy-time {
+    text-align: center;
+    padding: 24px;
+    animation: fadeInUp 0.5s var(--ease-out);
+}
+
+.strategy-timer {
+    font-size: 48px;
+    font-weight: 700;
+    font-family: var(--font-display);
+    color: var(--apple-blue);
+    margin-bottom: 8px;
+}
+
+.strategy-label {
+    font-size: 15px;
+    color: rgba(255,255,255,0.6);
+}
+
+/* ────────────────────────────────────────────
+   Scenario Briefing & Difficulty
+──────────────────────────────────────────── */
+
+.scenario-briefing {
+    font-size: 14px;
+    font-style: italic;
+    color: rgba(255,255,255,0.55);
+    line-height: 1.6;
+    padding: 12px 16px;
+    border-left: 3px solid var(--apple-blue);
+    margin-bottom: 14px;
+    background: rgba(0,113,227,0.06);
+    border-radius: 0 var(--radius-md) var(--radius-md) 0;
+}
+
+.scenario-difficulty {
+    display: inline-flex;
+    gap: 3px;
+    margin-left: 8px;
+    vertical-align: middle;
+}
+
+.scenario-difficulty .star {
+    color: var(--yellow);
+    font-size: 14px;
+}
+
+.scenario-difficulty .star.empty {
+    color: rgba(255,255,255,0.15);
+}
+
+.learning-objective {
+    margin-top: 14px;
+    padding: 12px 16px;
+    background: rgba(48,209,88,0.08);
+    border-left: 3px solid var(--green);
+    border-radius: 0 var(--radius-md) var(--radius-md) 0;
+    font-size: 13px;
+    line-height: 1.5;
+    color: rgba(255,255,255,0.7);
+}
+
+.learning-objective strong {
+    color: var(--green);
+}
+
+/* ────────────────────────────────────────────
+   AI Assist (in-round coaching)
+──────────────────────────────────────────── */
+
+.ai-assist-area {
+    margin-top: 16px;
+    padding-top: 14px;
+    border-top: 1px solid rgba(255,255,255,0.08);
+}
+
+.ai-assist-row {
+    display: flex;
+    gap: 8px;
+}
+
+.ai-ask-input {
+    flex: 1;
+    padding: 8px 12px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: var(--radius-md);
+    color: var(--white);
+    font-family: var(--font-text);
+    font-size: 13px;
+}
+
+.ai-ask-input::placeholder {
+    color: rgba(255,255,255,0.3);
+}
+
+.ai-ask-input:focus {
+    outline: none;
+    border-color: var(--apple-blue);
+}
+
+.ai-ask-response {
+    margin-top: 10px;
+    padding: 12px 14px;
+    background: rgba(0,113,227,0.08);
+    border-left: 3px solid var(--apple-blue);
+    border-radius: 0 var(--radius-md) var(--radius-md) 0;
+    font-size: 13px;
+    line-height: 1.6;
+    color: rgba(255,255,255,0.8);
+}
+
+.team-score-total {
+    font-size: 11px;
+    color: rgba(255,255,255,0.4);
+    margin-top: 2px;
+}
+
+/* ────────────────────────────────────────────
+   Round Summary Card
+──────────────────────────────────────────── */
+
+.round-summary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 10px;
+    margin-bottom: 16px;
+}
+
+.round-summary-team {
+    background: rgba(255,255,255,0.04);
+    border-radius: var(--radius-md);
+    padding: 14px 12px;
+    text-align: center;
+}
+
+.round-summary-team .team-name {
+    font-size: 12px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.6);
+    margin-bottom: 6px;
+}
+
+.round-summary-team .team-profit {
+    font-size: 20px;
+    font-weight: 700;
+}
+
+.round-summary-team .team-profit.positive { color: var(--green); }
+.round-summary-team .team-profit.negative { color: var(--red); }
+
+/* ────────────────────────────────────────────
+   Dramatic Final Result
+──────────────────────────────────────────── */
+
+.final-reveal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.95);
+    z-index: var(--z-overlay);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.5s;
+}
+
+.final-reveal-overlay.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.final-reveal-title {
+    font-family: var(--font-display);
+    font-size: 36px;
+    font-weight: 700;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--white);
+    opacity: 0;
+    animation: revealTitle 1s 0.5s var(--ease-out) forwards;
+}
+
+@keyframes revealTitle {
+    from { opacity: 0; transform: scale(0.8); letter-spacing: 16px; }
+    to   { opacity: 1; transform: scale(1); letter-spacing: 4px; }
+}
+
+.final-reveal-item {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.5s, transform 0.5s var(--ease-out);
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 14px 24px;
+    border-radius: var(--radius-lg);
+    min-width: 320px;
+    margin-top: 10px;
+}
+
+.final-reveal-item.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.final-reveal-item.winner {
+    background: linear-gradient(135deg, rgba(255,214,10,0.15), rgba(255,159,10,0.15));
+    border: 1px solid rgba(255,214,10,0.3);
+    animation: goldenGlow 2s ease-in-out infinite alternate;
+}
+
+@keyframes goldenGlow {
+    from { box-shadow: 0 0 12px rgba(255,214,10,0.1); }
+    to   { box-shadow: 0 0 24px rgba(255,214,10,0.25); }
+}
+
+.final-rank {
+    font-size: 28px;
+    font-weight: 800;
+    min-width: 40px;
+    text-align: center;
+}
+
+.final-rank.gold   { color: var(--yellow); }
+.final-rank.silver { color: var(--silver); }
+.final-rank.bronze { color: var(--bronze); }
+
+.final-team-name {
+    font-size: 18px;
+    font-weight: 600;
+    flex: 1;
+}
+
+.final-score {
+    font-size: 16px;
+    color: rgba(255,255,255,0.6);
+}
+
+.final-dismiss {
+    margin-top: 28px;
+    opacity: 0;
+    transition: opacity 0.5s;
+}
+
+.final-dismiss.visible { opacity: 1; }
+
+/* ────────────────────────────────────────────
+   Strategy Cards
+──────────────────────────────────────────── */
+
+.strategy-cards-section {
+    margin-bottom: 16px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+
+.card-section-title {
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: rgba(255,255,255,0.7);
+}
+
+.strategy-cards-row {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding-bottom: 4px;
+}
+
+.strategy-cards-row::-webkit-scrollbar { display: none; }
+
+.strategy-card {
+    flex: 0 0 130px;
+    padding: 12px 10px;
+    background: rgba(255,255,255,0.04);
+    border: 1.5px solid rgba(255,255,255,0.08);
+    border-radius: var(--radius-lg);
+    cursor: pointer;
+    transition: all 0.2s var(--ease-spring);
+    text-align: center;
+}
+
+.strategy-card:hover {
+    background: rgba(255,255,255,0.07);
+    border-color: rgba(255,255,255,0.15);
+    transform: translateY(-2px);
+}
+
+.strategy-card.selected {
+    background: rgba(0,113,227,0.12);
+    border-color: var(--apple-blue);
+    box-shadow: 0 0 12px rgba(0,113,227,0.2);
+}
+
+.sc-icon { font-size: 28px; margin-bottom: 6px; }
+.sc-name { font-size: 12px; font-weight: 600; color: var(--white); margin-bottom: 4px; }
+.sc-desc { font-size: 10px; color: rgba(255,255,255,0.5); line-height: 1.4; margin-bottom: 4px; }
+.sc-edu { font-size: 9px; color: var(--apple-blue); font-weight: 500; }
+
+/* ────────────────────────────────────────────
+   Impact Preview (real-time)
+──────────────────────────────────────────── */
+
+.impact-preview {
+    margin: 14px 0;
+    padding: 14px 16px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: var(--radius-md);
+    text-align: center;
+}
+
+.impact-profit {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 6px;
+}
+
+.impact-profit .positive { color: var(--green); }
+.impact-profit .negative { color: var(--red); }
+
+.impact-detail {
+    font-size: 12px;
+    color: rgba(255,255,255,0.45);
+}
+
+/* ────────────────────────────────────────────
+   Impact Ripple (post-submit breakdown)
+──────────────────────────────────────────── */
+
+.impact-ripple {
+    padding: 4px 0;
+}
+
+.impact-ripple strong {
+    display: block;
+    margin-bottom: 10px;
+    font-size: 13px;
+}
+
+.impact-bars {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.impact-bar-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.impact-bar-label {
+    font-size: 12px;
+    color: rgba(255,255,255,0.6);
+    width: 60px;
+    flex-shrink: 0;
+}
+
+.impact-bar-track {
+    flex: 1;
+    height: 8px;
+    background: rgba(255,255,255,0.06);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.impact-bar-fill {
+    height: 100%;
+    border-radius: 4px;
+    animation: barGrow 0.6s var(--ease-out);
+}
+
+.impact-bar-fill.positive { background: var(--green); }
+.impact-bar-fill.negative { background: var(--red); }
+
+@keyframes barGrow {
+    from { width: 0 !important; }
+}
+
+.impact-bar-value {
+    font-size: 12px;
+    font-weight: 600;
+    width: 50px;
+    text-align: right;
+    flex-shrink: 0;
+}
+
+.impact-bar-value.positive { color: var(--green); }
+.impact-bar-value.negative { color: var(--red); }
+
+/* ────────────────────────────────────────────
+   Token System
+──────────────────────────────────────────── */
+
+.token-badge {
+    font-size: 12px;
+    font-weight: 500;
+    padding: 2px 8px;
+    background: rgba(255,214,10,0.12);
+    border-radius: var(--radius-pill);
+    color: var(--yellow);
+    margin-left: 8px;
+    vertical-align: middle;
+}
+
+.token-actions {
+    display: flex;
+    gap: 8px;
+    margin: 10px 0;
+}
+
+.token-btn {
+    flex: 1;
+    font-size: 12px !important;
+    padding: 8px 10px !important;
+}
+
+.cost-badge {
+    font-size: 10px;
+    opacity: 0.6;
+    margin-left: 4px;
+}
+
+/* ────────────────────────────────────────────
+   Round Drama
+──────────────────────────────────────────── */
+
+.round-drama {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 16px;
+    border-radius: var(--radius-md);
+    margin: 14px 0;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    animation: fadeInUp 0.5s var(--ease-out);
+}
+
+.round-drama.drama-comeback {
+    background: rgba(255,214,10,0.1);
+    border-color: rgba(255,214,10,0.3);
+    animation: shake 0.6s var(--ease-in-out), fadeInUp 0.5s var(--ease-out);
+}
+
+.round-drama.drama-close {
+    background: rgba(0,113,227,0.1);
+    border-color: rgba(0,113,227,0.3);
+}
+
+.drama-icon { font-size: 24px; }
+.drama-text { font-size: 14px; font-weight: 600; color: var(--white); }

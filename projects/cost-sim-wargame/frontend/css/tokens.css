@@ -1,0 +1,66 @@
+/* ────────────────────────────────────────────
+   CSS Custom Properties
+──────────────────────────────────────────── */
+:root {
+    /* Primary Palette */
+    --pure-black: #000000;
+    --light-gray: #f5f5f7;
+    --near-black: #1d1d1f;
+    --white: #ffffff;
+
+    /* Interactive — Apple Blue only */
+    --apple-blue: #0071e3;
+    --link-blue: #0066cc;
+    --link-blue-dark: #2997ff;
+
+    /* Text Hierarchy */
+    --text-primary: #1d1d1f;
+    --text-secondary: rgba(0, 0, 0, 0.8);
+    --text-tertiary: rgba(0, 0, 0, 0.48);
+    --text-on-dark: #ffffff;
+    --text-on-dark-secondary: rgba(255, 255, 255, 0.7);
+    --text-on-dark-tertiary: rgba(255, 255, 255, 0.48);
+
+    /* Dark Surfaces */
+    --dark-surface-1: #272729;
+    --dark-surface-2: #28282a;
+    --dark-surface-3: #2a2a2d;
+    --nav-bg: rgba(0, 0, 0, 0.8);
+    --overlay: rgba(210, 210, 215, 0.64);
+
+    /* Semantic Colors */
+    --green: #30d158;
+    --red: #ff453a;
+    --yellow: #ffd60a;
+    --silver: #aeaeb2;
+    --bronze: #ac8e68;
+
+    /* Shadow — sparingly */
+    --shadow-card: rgba(0, 0, 0, 0.22) 3px 5px 30px 0px;
+
+    /* Typography */
+    --font-display: 'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    --font-text: 'Inter', -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    --font-mono: ui-monospace, 'SF Mono', 'Cascadia Code', 'Fira Code', monospace;
+
+    /* Border Radius */
+    --radius-sm: 5px;
+    --radius-md: 8px;
+    --radius-lg: 12px;
+    --radius-pill: 980px;
+
+    /* Transition Easing */
+    --ease-spring: cubic-bezier(0.25, 0.1, 0.25, 1);
+    --ease-out: cubic-bezier(0, 0, 0.2, 1);
+    --ease-in-out: cubic-bezier(0.42, 0, 0.58, 1);
+
+    /* Z-Index Layers */
+    --z-content: 1;
+    --z-sticky: 50;
+    --z-nav: 99;
+    --z-header: 100;
+    --z-chat: 200;
+    --z-overlay: 300;
+    --z-countdown: 400;
+    --z-confetti: 500;
+}

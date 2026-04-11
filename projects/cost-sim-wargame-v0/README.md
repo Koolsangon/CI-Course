@@ -1,4 +1,17 @@
-# 개발원가 War Game - 효과 분석 Simulation
+# 개발원가 War Game (v0.3) — ⚠️ DEPRECATED
+
+> **이 프로젝트는 Deprecated 상태입니다.**
+>
+> 후속 버전: [`CI-Course/projects/cost-sim-v1/`](../cost-sim-v1/) — 재설계된 Next.js 14 + Living Cost Tree
+> 재설계 플랜: `.omc/plans/2026-04-11-cost-sim-v1-redesign.md`
+>
+> **이 폴더의 코드를 직접 실행하지 마세요.** FastAPI 서버, HTML 프론트엔드, WebSocket war game 로직은 v1.0에서 완전히 대체되었습니다.
+>
+> **`engine/cost_model.py`는 삭제 금지** — v1.0의 `scripts/gen-fixtures.py`가 이 파일을 골든 픽스처 oracle로 직접 임포트합니다. 엔진 수식 변경 시에만 여기서 수정 후 fixture 재생성.
+
+---
+
+## 원본 설명 (참고용)
 
 디스플레이/반도체 제조업의 개발원가(COP) 시뮬레이션을 모바일 반응형 웹앱으로 구현한 교육용 War Game 플랫폼입니다.
 

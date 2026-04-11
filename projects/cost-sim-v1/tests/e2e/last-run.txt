@@ -1,0 +1,43 @@
+
+Running 14 tests using 1 worker
+
+  ✓   1 [chromium] › tests/e2e/design-qa.spec.ts:7:7 › Design QA — Playwright visual + hard checks (US-PW-4) › home page shows title + two mode cards (3.1s)
+  ✓   2 [chromium] › tests/e2e/design-qa.spec.ts:31:7 › Design QA — Playwright visual + hard checks (US-PW-4) › sandbox dropdown closed screenshot (1.8s)
+  ✓   3 [chromium] › tests/e2e/design-qa.spec.ts:69:7 › Design QA — Playwright visual + hard checks (US-PW-4) › sandbox dropdown open — all 6 options visible (1.6s)
+  ✓   4 [chromium] › tests/e2e/design-qa.spec.ts:92:7 › Design QA — Playwright visual + hard checks (US-PW-4) › formula inspector rows do not clip text at 256px panel width (2.3s)
+  ✓   5 [chromium] › tests/e2e/design-qa.spec.ts:135:7 › Design QA — Playwright visual + hard checks (US-PW-4) › guided case 1 hook phase screenshot + touch target sizes (1.8s)
+  Loading 변화: 3 formula(s): [
+  [32m'Panel(노무+경비+상각) + Module(노무+경비+상각)'[39m,
+  [32m'COM = 소요재료비 + 가공비'[39m,
+  [32m'COP = COM + SGA'[39m
+]
+  ✓   6 [chromium] › tests/e2e/formula-inspector.spec.ts:14:9 › Formula Inspector — every case shows formulas after slider interaction › case "Loading 변화" displays ≥ 1 formula after moving a slider (3.3s)
+  인건비 변화: 4 formula(s): [
+  [32m'COP = COM + SGA'[39m,
+  [32m'Panel(노무+경비+상각) + Module(노무+경비+상각)'[39m,
+  [32m'COM = 소요재료비 + 가공비'[39m,
+  [32m'SGA = 직개발 + 운반 + 사업부 + 운영 + Corp OH'[39m
+]
+  ✓   7 [chromium] › tests/e2e/formula-inspector.spec.ts:14:9 › Formula Inspector — every case shows formulas after slider interaction › case "인건비 변화" displays ≥ 1 formula after moving a slider (3.1s)
+  한계이익률 목표: 3 formula(s): [ [32m'Σ(BOM / 누적수율)'[39m, [32m'COM = 소요재료비 + 가공비'[39m, [32m'COP = COM + SGA'[39m ]
+  ✓   8 [chromium] › tests/e2e/formula-inspector.spec.ts:14:9 › Formula Inspector — every case shows formulas after slider interaction › case "한계이익률 목표" displays ≥ 1 formula after moving a slider (3.1s)
+  재료비 절감 vs 수율 하락: 3 formula(s): [ [32m'Σ(BOM / 누적수율)'[39m, [32m'COM = 소요재료비 + 가공비'[39m, [32m'COP = COM + SGA'[39m ]
+  ✓   9 [chromium] › tests/e2e/formula-inspector.spec.ts:14:9 › Formula Inspector — every case shows formulas after slider interaction › case "재료비 절감 vs 수율 하락" displays ≥ 1 formula after moving a slider (3.3s)
+  면취수 · Mask 복합 변화: 4 formula(s): [
+  [32m'COM = 소요재료비 + 가공비'[39m,
+  [32m'COP = COM + SGA'[39m,
+  [32m'Panel(노무+경비+상각) + Module(노무+경비+상각)'[39m,
+  [32m'Σ(BOM / 누적수율)'[39m
+]
+  ✓  10 [chromium] › tests/e2e/formula-inspector.spec.ts:14:9 › Formula Inspector — every case shows formulas after slider interaction › case "면취수 · Mask 복합 변화" displays ≥ 1 formula after moving a slider (3.3s)
+  Tact 지연 + 투자비: 3 formula(s): [
+  [32m'Panel(노무+경비+상각) + Module(노무+경비+상각)'[39m,
+  [32m'COM = 소요재료비 + 가공비'[39m,
+  [32m'COP = COM + SGA'[39m
+]
+  ✓  11 [chromium] › tests/e2e/formula-inspector.spec.ts:14:9 › Formula Inspector — every case shows formulas after slider interaction › case "Tact 지연 + 투자비" displays ≥ 1 formula after moving a slider (3.1s)
+  ✓  12 [chromium] › tests/e2e/guided-flow.spec.ts:4:7 › Guided flow — Reflect → next case navigation (US-PW-3) › Case 1 Reflect completes and leads to Case 2 (6.0s)
+  ✓  13 [chromium] › tests/e2e/sandbox-dropdown.spec.ts:24:7 › Sandbox case dropdown — US-PW-2 (critical bug) › all 6 cases are selectable and each produces a distinct tree state (5.6s)
+  ✓  14 [chromium] › tests/e2e/sandbox-dropdown.spec.ts:78:7 › Sandbox case dropdown — US-PW-2 (critical bug) › Case 3 한계이익률 목표 slider actually mutates the tree (3.2s)
+
+  14 passed (55.1s)

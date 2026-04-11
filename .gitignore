@@ -1,3 +1,13 @@
 __pycache__/
 *.pyc
 .env
+
+# OMC runtime state — only plans are tracked
+**/.omc/sessions/
+**/.omc/state/
+**/.omc/notepad.md
+**/.omc/project-memory.json
+**/.omc/research/
+**/.omc/logs/
+**/.omc/prd.json
+**/.omc/progress.txt

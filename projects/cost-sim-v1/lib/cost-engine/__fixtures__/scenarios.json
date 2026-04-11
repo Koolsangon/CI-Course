@@ -1,0 +1,459 @@
+{
+  "case1_loading_50": {
+    "description": "Loading 70%→50% (Case1)",
+    "adapter": "loading",
+    "input": {
+      "new_loading": 0.5
+    },
+    "params_after": {
+      "price": 200.0,
+      "yields": {
+        "tft": 0.99,
+        "cf": 1.0,
+        "cell": 0.95,
+        "module": 0.972
+      },
+      "bom": {
+        "tft": 6.0,
+        "cf": 5.0,
+        "cell": 1.5,
+        "module": 75.0
+      },
+      "processing": {
+        "panel": {
+          "labor": 29.82,
+          "expense": 16.099999999999998,
+          "depreciation": 22.679999999999996
+        },
+        "module": {
+          "labor": 12.179999999999998,
+          "expense": 7.419999999999999,
+          "depreciation": 10.5
+        }
+      },
+      "sga": {
+        "direct_dev": 4.7,
+        "transport": 0.3,
+        "business_unit": 16.0,
+        "operation": 1.2,
+        "corporate_oh": 6.2
+      },
+      "loading": 0.5
+    },
+    "result": {
+      "price": 200.0,
+      "cumulative_yield": 0.914166,
+      "bom_total": 87.5,
+      "material_cost": 90.7630561626663,
+      "processing_cost": 98.69999999999999,
+      "panel_labor": 29.82,
+      "panel_expense": 16.099999999999998,
+      "panel_depreciation": 22.679999999999996,
+      "module_labor": 12.179999999999998,
+      "module_expense": 7.419999999999999,
+      "module_depreciation": 10.5,
+      "com": 189.4630561626663,
+      "sga": 28.4,
+      "cop": 217.8630561626663,
+      "operating_profit": -17.86305616266631,
+      "operating_margin": -0.08931528081333155,
+      "cash_cost": 184.68305616266633,
+      "ebitda": 15.316943837333667,
+      "variable_cost": 91.0630561626663,
+      "marginal_profit": 108.9369438373337
+    }
+  },
+  "case2_labor_1_5x": {
+    "description": "인건비 1.5배 (Case2)",
+    "adapter": "labor",
+    "input": {
+      "labor_multiplier": 1.5
+    },
+    "params_after": {
+      "price": 200.0,
+      "yields": {
+        "tft": 0.99,
+        "cf": 1.0,
+        "cell": 0.95,
+        "module": 0.9413
+      },
+      "bom": {
+        "tft": 6.0,
+        "cf": 5.0,
+        "cell": 1.5,
+        "module": 75.0
+      },
+      "processing": {
+        "panel": {
+          "labor": 15.0,
+          "expense": 5.5,
+          "depreciation": 19.0
+        },
+        "module": {
+          "labor": 3.1500000000000004,
+          "expense": 1.6,
+          "depreciation": 3.1
+        }
+      },
+      "sga": {
+        "direct_dev": 5.404999999999999,
+        "transport": 0.3,
+        "business_unit": 18.4,
+        "operation": 1.38,
+        "corporate_oh": 7.13
+      },
+      "loading": 0.7
+    },
+    "result": {
+      "price": 200.0,
+      "cumulative_yield": 0.88529265,
+      "bom_total": 87.5,
+      "material_cost": 93.72324507607738,
+      "processing_cost": 47.35,
+      "panel_labor": 15.0,
+      "panel_expense": 5.5,
+      "panel_depreciation": 19.0,
+      "module_labor": 3.1500000000000004,
+      "module_expense": 1.6,
+      "module_depreciation": 3.1,
+      "com": 141.07324507607737,
+      "sga": 32.614999999999995,
+      "cop": 173.68824507607735,
+      "operating_profit": 26.31175492392265,
+      "operating_margin": 0.13155877461961324,
+      "cash_cost": 151.58824507607736,
+      "ebitda": 48.41175492392264,
+      "variable_cost": 94.02324507607737,
+      "marginal_profit": 105.97675492392263
+    }
+  },
+  "case4_mat_m5_yield_m4p": {
+    "description": "재료비 -5% + 수율 -4%p (Case4)",
+    "adapter": "material-yield",
+    "input": {
+      "material_change_pct": -0.05,
+      "module_yield_change": -0.04
+    },
+    "params_after": {
+      "price": 200.0,
+      "yields": {
+        "tft": 0.99,
+        "cf": 1.0,
+        "cell": 0.95,
+        "module": 0.9319999999999999
+      },
+      "bom": {
+        "tft": 6.0,
+        "cf": 5.0,
+        "cell": 1.5,
+        "module": 71.25
+      },
+      "processing": {
+        "panel": {
+          "labor": 21.3,
+          "expense": 11.5,
+          "depreciation": 16.2
+        },
+        "module": {
+          "labor": 8.7,
+          "expense": 5.3,
+          "depreciation": 7.5
+        }
+      },
+      "sga": {
+        "direct_dev": 4.7,
+        "transport": 0.3,
+        "business_unit": 16.0,
+        "operation": 1.2,
+        "corporate_oh": 6.2
+      },
+      "loading": 0.7
+    },
+    "result": {
+      "price": 200.0,
+      "cumulative_yield": 0.8765459999999999,
+      "bom_total": 83.75,
+      "material_cost": 90.63486114818846,
+      "processing_cost": 70.5,
+      "panel_labor": 21.3,
+      "panel_expense": 11.5,
+      "panel_depreciation": 16.2,
+      "module_labor": 8.7,
+      "module_expense": 5.3,
+      "module_depreciation": 7.5,
+      "com": 161.13486114818846,
+      "sga": 28.4,
+      "cop": 189.53486114818847,
+      "operating_profit": 10.465138851811531,
+      "operating_margin": 0.052325694259057656,
+      "cash_cost": 165.83486114818848,
+      "ebitda": 34.16513885181152,
+      "variable_cost": 90.93486114818846,
+      "marginal_profit": 109.06513885181154
+    }
+  },
+  "case5a_cuts_25_29": {
+    "description": "면취수 25→29 (Case5a)",
+    "adapter": "cuts-mask",
+    "input": {
+      "old_cuts": 25,
+      "new_cuts": 29,
+      "old_mask": 6,
+      "new_mask": 6
+    },
+    "params_after": {
+      "price": 200.0,
+      "yields": {
+        "tft": 0.99,
+        "cf": 1.0,
+        "cell": 0.95,
+        "module": 0.972
+      },
+      "bom": {
+        "tft": 5.172413793103448,
+        "cf": 4.310344827586206,
+        "cell": 1.293103448275862,
+        "module": 75.0
+      },
+      "processing": {
+        "panel": {
+          "labor": 18.362068965517242,
+          "expense": 9.913793103448276,
+          "depreciation": 13.96551724137931
+        },
+        "module": {
+          "labor": 8.7,
+          "expense": 5.3,
+          "depreciation": 7.5
+        }
+      },
+      "sga": {
+        "direct_dev": 4.7,
+        "transport": 0.3,
+        "business_unit": 16.0,
+        "operation": 1.2,
+        "corporate_oh": 6.2
+      },
+      "loading": 0.7
+    },
+    "result": {
+      "price": 200.0,
+      "cumulative_yield": 0.914166,
+      "bom_total": 85.77586206896552,
+      "material_cost": 88.88684066811378,
+      "processing_cost": 63.741379310344826,
+      "panel_labor": 18.362068965517242,
+      "panel_expense": 9.913793103448276,
+      "panel_depreciation": 13.96551724137931,
+      "module_labor": 8.7,
+      "module_expense": 5.3,
+      "module_depreciation": 7.5,
+      "com": 152.62821997845862,
+      "sga": 28.4,
+      "cop": 181.02821997845862,
+      "operating_profit": 18.971780021541377,
+      "operating_margin": 0.09485890010770688,
+      "cash_cost": 159.56270273707932,
+      "ebitda": 40.43729726292068,
+      "variable_cost": 89.18684066811377,
+      "marginal_profit": 110.81315933188623
+    }
+  },
+  "case5b_cuts_mask": {
+    "description": "면취수 25→29 + Mask 6→7 (Case5b)",
+    "adapter": "cuts-mask",
+    "input": {
+      "old_cuts": 25,
+      "new_cuts": 29,
+      "old_mask": 6,
+      "new_mask": 7
+    },
+    "params_after": {
+      "price": 200.0,
+      "yields": {
+        "tft": 0.99,
+        "cf": 1.0,
+        "cell": 0.95,
+        "module": 0.972
+      },
+      "bom": {
+        "tft": 5.172413793103448,
+        "cf": 4.310344827586206,
+        "cell": 1.293103448275862,
+        "module": 75.0
+      },
+      "processing": {
+        "panel": {
+          "labor": 21.42241379310345,
+          "expense": 11.566091954022989,
+          "depreciation": 16.29310344827586
+        },
+        "module": {
+          "labor": 8.7,
+          "expense": 5.3,
+          "depreciation": 7.5
+        }
+      },
+      "sga": {
+        "direct_dev": 4.7,
+        "transport": 0.3,
+        "business_unit": 16.0,
+        "operation": 1.2,
+        "corporate_oh": 6.2
+      },
+      "loading": 0.7
+    },
+    "result": {
+      "price": 200.0,
+      "cumulative_yield": 0.914166,
+      "bom_total": 85.77586206896552,
+      "material_cost": 88.88684066811378,
+      "processing_cost": 70.7816091954023,
+      "panel_labor": 21.42241379310345,
+      "panel_expense": 11.566091954022989,
+      "panel_depreciation": 16.29310344827586,
+      "module_labor": 8.7,
+      "module_expense": 5.3,
+      "module_depreciation": 7.5,
+      "com": 159.66844986351606,
+      "sga": 28.4,
+      "cop": 188.06844986351607,
+      "operating_profit": 11.931550136483935,
+      "operating_margin": 0.05965775068241967,
+      "cash_cost": 164.2753464152402,
+      "ebitda": 35.72465358475981,
+      "variable_cost": 89.18684066811377,
+      "marginal_profit": 110.81315933188623
+    }
+  },
+  "case6a_tact_1_2x": {
+    "description": "Tact 1.2X (Case6a)",
+    "adapter": "tact-investment",
+    "input": {
+      "tact_multiplier": 1.2,
+      "investment_depreciation_delta": 0.0
+    },
+    "params_after": {
+      "price": 200.0,
+      "yields": {
+        "tft": 0.99,
+        "cf": 1.0,
+        "cell": 0.95,
+        "module": 0.972
+      },
+      "bom": {
+        "tft": 6.0,
+        "cf": 5.0,
+        "cell": 1.5,
+        "module": 75.0
+      },
+      "processing": {
+        "panel": {
+          "labor": 21.3,
+          "expense": 11.5,
+          "depreciation": 16.2
+        },
+        "module": {
+          "labor": 10.44,
+          "expense": 6.359999999999999,
+          "depreciation": 9.0
+        }
+      },
+      "sga": {
+        "direct_dev": 4.7,
+        "transport": 0.3,
+        "business_unit": 16.0,
+        "operation": 1.2,
+        "corporate_oh": 6.2
+      },
+      "loading": 0.7
+    },
+    "result": {
+      "price": 200.0,
+      "cumulative_yield": 0.914166,
+      "bom_total": 87.5,
+      "material_cost": 90.7630561626663,
+      "processing_cost": 74.8,
+      "panel_labor": 21.3,
+      "panel_expense": 11.5,
+      "panel_depreciation": 16.2,
+      "module_labor": 10.44,
+      "module_expense": 6.359999999999999,
+      "module_depreciation": 9.0,
+      "com": 165.5630561626663,
+      "sga": 28.4,
+      "cop": 193.9630561626663,
+      "operating_profit": 6.036943837333695,
+      "operating_margin": 0.030184719186668475,
+      "cash_cost": 168.76305616266632,
+      "ebitda": 31.236943837333683,
+      "variable_cost": 91.0630561626663,
+      "marginal_profit": 108.9369438373337
+    }
+  },
+  "case6b_tact_invest": {
+    "description": "Tact 1.2X + 투자 13억 (Case6b)",
+    "adapter": "tact-investment",
+    "input": {
+      "tact_multiplier": 1.2,
+      "investment_depreciation_delta": 1.9
+    },
+    "params_after": {
+      "price": 200.0,
+      "yields": {
+        "tft": 0.99,
+        "cf": 1.0,
+        "cell": 0.95,
+        "module": 0.972
+      },
+      "bom": {
+        "tft": 6.0,
+        "cf": 5.0,
+        "cell": 1.5,
+        "module": 75.0
+      },
+      "processing": {
+        "panel": {
+          "labor": 21.3,
+          "expense": 11.5,
+          "depreciation": 16.2
+        },
+        "module": {
+          "labor": 10.44,
+          "expense": 6.359999999999999,
+          "depreciation": 10.9
+        }
+      },
+      "sga": {
+        "direct_dev": 4.7,
+        "transport": 0.3,
+        "business_unit": 16.0,
+        "operation": 1.2,
+        "corporate_oh": 6.2
+      },
+      "loading": 0.7
+    },
+    "result": {
+      "price": 200.0,
+      "cumulative_yield": 0.914166,
+      "bom_total": 87.5,
+      "material_cost": 90.7630561626663,
+      "processing_cost": 76.69999999999999,
+      "panel_labor": 21.3,
+      "panel_expense": 11.5,
+      "panel_depreciation": 16.2,
+      "module_labor": 10.44,
+      "module_expense": 6.359999999999999,
+      "module_depreciation": 10.9,
+      "com": 167.4630561626663,
+      "sga": 28.4,
+      "cop": 195.8630561626663,
+      "operating_profit": 4.136943837333689,
+      "operating_margin": 0.020684719186668445,
+      "cash_cost": 168.76305616266632,
+      "ebitda": 31.236943837333683,
+      "variable_cost": 91.0630561626663,
+      "marginal_profit": 108.9369438373337
+    }
+  }
+}

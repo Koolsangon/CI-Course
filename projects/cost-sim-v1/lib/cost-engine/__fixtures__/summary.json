@@ -1,0 +1,8 @@
+{
+  "generated_at": "2026-04-11",
+  "oracle": "/mnt/d/02. AI/02. Claude/Vibe Coding/28. CI 과정 시뮬레이션 개발/CI-Course/projects/cost-sim-wargame-v0/engine/cost_model.py",
+  "reference_count": 6,
+  "scenario_count": 7,
+  "tolerance": 0.001,
+  "policy": "TS engine must match each fixture value within ±0.001 (float64 ↔ JS Number, IEEE 754)"
+}

@@ -1,0 +1,356 @@
+{
+  "case1": {
+    "params": {
+      "price": 200.0,
+      "yields": {
+        "tft": 0.99,
+        "cf": 1.0,
+        "cell": 0.95,
+        "module": 0.972
+      },
+      "bom": {
+        "tft": 6.0,
+        "cf": 5.0,
+        "cell": 1.5,
+        "module": 75.0
+      },
+      "processing": {
+        "panel": {
+          "labor": 21.3,
+          "expense": 11.5,
+          "depreciation": 16.2
+        },
+        "module": {
+          "labor": 8.7,
+          "expense": 5.3,
+          "depreciation": 7.5
+        }
+      },
+      "sga": {
+        "direct_dev": 4.7,
+        "transport": 0.3,
+        "business_unit": 16.0,
+        "operation": 1.2,
+        "corporate_oh": 6.2
+      },
+      "loading": 0.7
+    },
+    "result": {
+      "price": 200.0,
+      "cumulative_yield": 0.914166,
+      "bom_total": 87.5,
+      "material_cost": 90.7630561626663,
+      "processing_cost": 70.5,
+      "panel_labor": 21.3,
+      "panel_expense": 11.5,
+      "panel_depreciation": 16.2,
+      "module_labor": 8.7,
+      "module_expense": 5.3,
+      "module_depreciation": 7.5,
+      "com": 161.26305616266632,
+      "sga": 28.4,
+      "cop": 189.66305616266632,
+      "operating_profit": 10.336943837333678,
+      "operating_margin": 0.051684719186668386,
+      "cash_cost": 165.96305616266633,
+      "ebitda": 34.036943837333666,
+      "variable_cost": 91.0630561626663,
+      "marginal_profit": 108.9369438373337
+    }
+  },
+  "case2": {
+    "params": {
+      "price": 200.0,
+      "yields": {
+        "tft": 0.99,
+        "cf": 1.0,
+        "cell": 0.95,
+        "module": 0.9413
+      },
+      "bom": {
+        "tft": 6.0,
+        "cf": 5.0,
+        "cell": 1.5,
+        "module": 75.0
+      },
+      "processing": {
+        "panel": {
+          "labor": 10.0,
+          "expense": 5.5,
+          "depreciation": 19.0
+        },
+        "module": {
+          "labor": 2.1,
+          "expense": 1.6,
+          "depreciation": 3.1
+        }
+      },
+      "sga": {
+        "direct_dev": 4.7,
+        "transport": 0.3,
+        "business_unit": 16.0,
+        "operation": 1.2,
+        "corporate_oh": 6.2
+      },
+      "loading": 0.7
+    },
+    "result": {
+      "price": 200.0,
+      "cumulative_yield": 0.88529265,
+      "bom_total": 87.5,
+      "material_cost": 93.72324507607738,
+      "processing_cost": 41.3,
+      "panel_labor": 10.0,
+      "panel_expense": 5.5,
+      "panel_depreciation": 19.0,
+      "module_labor": 2.1,
+      "module_expense": 1.6,
+      "module_depreciation": 3.1,
+      "com": 135.0232450760774,
+      "sga": 28.4,
+      "cop": 163.4232450760774,
+      "operating_profit": 36.57675492392261,
+      "operating_margin": 0.18288377461961303,
+      "cash_cost": 141.3232450760774,
+      "ebitda": 58.6767549239226,
+      "variable_cost": 94.02324507607737,
+      "marginal_profit": 105.97675492392263
+    }
+  },
+  "case3": {
+    "params": {
+      "price": 200.0,
+      "yields": {
+        "tft": 0.99,
+        "cf": 1.0,
+        "cell": 0.95,
+        "module": 0.9413
+      },
+      "bom": {
+        "tft": 6.0,
+        "cf": 5.0,
+        "cell": 1.5,
+        "module": 75.0
+      },
+      "processing": {
+        "panel": {
+          "labor": 10.0,
+          "expense": 5.5,
+          "depreciation": 19.0
+        },
+        "module": {
+          "labor": 2.1,
+          "expense": 1.6,
+          "depreciation": 3.1
+        }
+      },
+      "sga": {
+        "direct_dev": 4.7,
+        "transport": 0.3,
+        "business_unit": 16.0,
+        "operation": 1.2,
+        "corporate_oh": 6.2
+      },
+      "loading": 0.7
+    },
+    "result": {
+      "price": 200.0,
+      "cumulative_yield": 0.88529265,
+      "bom_total": 87.5,
+      "material_cost": 93.72324507607738,
+      "processing_cost": 41.3,
+      "panel_labor": 10.0,
+      "panel_expense": 5.5,
+      "panel_depreciation": 19.0,
+      "module_labor": 2.1,
+      "module_expense": 1.6,
+      "module_depreciation": 3.1,
+      "com": 135.0232450760774,
+      "sga": 28.4,
+      "cop": 163.4232450760774,
+      "operating_profit": 36.57675492392261,
+      "operating_margin": 0.18288377461961303,
+      "cash_cost": 141.3232450760774,
+      "ebitda": 58.6767549239226,
+      "variable_cost": 94.02324507607737,
+      "marginal_profit": 105.97675492392263
+    }
+  },
+  "case4": {
+    "params": {
+      "price": 200.0,
+      "yields": {
+        "tft": 0.99,
+        "cf": 1.0,
+        "cell": 0.95,
+        "module": 0.972
+      },
+      "bom": {
+        "tft": 6.0,
+        "cf": 5.0,
+        "cell": 1.5,
+        "module": 75.0
+      },
+      "processing": {
+        "panel": {
+          "labor": 21.3,
+          "expense": 11.5,
+          "depreciation": 16.2
+        },
+        "module": {
+          "labor": 8.7,
+          "expense": 5.3,
+          "depreciation": 7.5
+        }
+      },
+      "sga": {
+        "direct_dev": 4.7,
+        "transport": 0.3,
+        "business_unit": 16.0,
+        "operation": 1.2,
+        "corporate_oh": 6.2
+      },
+      "loading": 0.7
+    },
+    "result": {
+      "price": 200.0,
+      "cumulative_yield": 0.914166,
+      "bom_total": 87.5,
+      "material_cost": 90.7630561626663,
+      "processing_cost": 70.5,
+      "panel_labor": 21.3,
+      "panel_expense": 11.5,
+      "panel_depreciation": 16.2,
+      "module_labor": 8.7,
+      "module_expense": 5.3,
+      "module_depreciation": 7.5,
+      "com": 161.26305616266632,
+      "sga": 28.4,
+      "cop": 189.66305616266632,
+      "operating_profit": 10.336943837333678,
+      "operating_margin": 0.051684719186668386,
+      "cash_cost": 165.96305616266633,
+      "ebitda": 34.036943837333666,
+      "variable_cost": 91.0630561626663,
+      "marginal_profit": 108.9369438373337
+    }
+  },
+  "case5": {
+    "params": {
+      "price": 200.0,
+      "yields": {
+        "tft": 0.99,
+        "cf": 1.0,
+        "cell": 0.95,
+        "module": 0.972
+      },
+      "bom": {
+        "tft": 6.0,
+        "cf": 5.0,
+        "cell": 1.5,
+        "module": 75.0
+      },
+      "processing": {
+        "panel": {
+          "labor": 21.3,
+          "expense": 11.5,
+          "depreciation": 16.2
+        },
+        "module": {
+          "labor": 8.7,
+          "expense": 5.3,
+          "depreciation": 7.5
+        }
+      },
+      "sga": {
+        "direct_dev": 4.7,
+        "transport": 0.3,
+        "business_unit": 16.0,
+        "operation": 1.2,
+        "corporate_oh": 6.2
+      },
+      "loading": 0.7
+    },
+    "result": {
+      "price": 200.0,
+      "cumulative_yield": 0.914166,
+      "bom_total": 87.5,
+      "material_cost": 90.7630561626663,
+      "processing_cost": 70.5,
+      "panel_labor": 21.3,
+      "panel_expense": 11.5,
+      "panel_depreciation": 16.2,
+      "module_labor": 8.7,
+      "module_expense": 5.3,
+      "module_depreciation": 7.5,
+      "com": 161.26305616266632,
+      "sga": 28.4,
+      "cop": 189.66305616266632,
+      "operating_profit": 10.336943837333678,
+      "operating_margin": 0.051684719186668386,
+      "cash_cost": 165.96305616266633,
+      "ebitda": 34.036943837333666,
+      "variable_cost": 91.0630561626663,
+      "marginal_profit": 108.9369438373337
+    }
+  },
+  "case6": {
+    "params": {
+      "price": 200.0,
+      "yields": {
+        "tft": 0.99,
+        "cf": 1.0,
+        "cell": 0.95,
+        "module": 0.972
+      },
+      "bom": {
+        "tft": 6.0,
+        "cf": 5.0,
+        "cell": 1.5,
+        "module": 75.0
+      },
+      "processing": {
+        "panel": {
+          "labor": 21.3,
+          "expense": 11.5,
+          "depreciation": 16.2
+        },
+        "module": {
+          "labor": 8.7,
+          "expense": 5.3,
+          "depreciation": 7.5
+        }
+      },
+      "sga": {
+        "direct_dev": 4.7,
+        "transport": 0.3,
+        "business_unit": 16.0,
+        "operation": 1.2,
+        "corporate_oh": 6.2
+      },
+      "loading": 0.7
+    },
+    "result": {
+      "price": 200.0,
+      "cumulative_yield": 0.914166,
+      "bom_total": 87.5,
+      "material_cost": 90.7630561626663,
+      "processing_cost": 70.5,
+      "panel_labor": 21.3,
+      "panel_expense": 11.5,
+      "panel_depreciation": 16.2,
+      "module_labor": 8.7,
+      "module_expense": 5.3,
+      "module_depreciation": 7.5,
+      "com": 161.26305616266632,
+      "sga": 28.4,
+      "cop": 189.66305616266632,
+      "operating_profit": 10.336943837333678,
+      "operating_margin": 0.051684719186668386,
+      "cash_cost": 165.96305616266633,
+      "ebitda": 34.036943837333666,
+      "variable_cost": 91.0630561626663,
+      "marginal_profit": 108.9369438373337
+    }
+  }
+}

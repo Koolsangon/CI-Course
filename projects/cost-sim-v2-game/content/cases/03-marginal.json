@@ -1,0 +1,51 @@
+{
+  "id": "03-marginal",
+  "title": "한계이익률 목표",
+  "scenario": "본부장이 한계이익률 60%를 목표로 주문했습니다. 현재 53% 수준에서 어떻게 도달할까요?",
+  "adapter": "marginal",
+  "reference": {
+    "price": 200,
+    "yields": { "tft": 0.99, "cf": 1.0, "cell": 0.95, "module": 0.9413 },
+    "bom": { "tft": 6.0, "cf": 5.0, "cell": 1.5, "module": 75.0 },
+    "processing": {
+      "panel": { "labor": 10.0, "expense": 5.5, "depreciation": 19.0 },
+      "module": { "labor": 2.1, "expense": 1.6, "depreciation": 3.1 }
+    },
+    "sga": { "direct_dev": 4.7, "transport": 0.3, "business_unit": 16.0, "operation": 1.2, "corporate_oh": 6.2 },
+    "loading": 0.70
+  },
+  "variables": [
+    {
+      "key": "target_rate",
+      "ko": "목표 한계이익률",
+      "min": 0.40,
+      "max": 0.75,
+      "step": 0.01,
+      "default": 0.60,
+      "unit": "%",
+      "format": "percent"
+    }
+  ],
+  "expected": {
+    "target_marginal_profit": 120.0,
+    "target_variable_cost": 80.0,
+    "required_material_cost": 79.7
+  },
+  "phases": {
+    "hook": "'한계이익률 60%'라는 목표, 어디서 원가를 깎아야 할까요?",
+    "discover": "슬라이더를 60%에 맞춰보고, 트리에서 어떤 항목이 빨간색으로 바뀌는지 보세요.",
+    "apply": {
+      "question": "한계이익률 60% 달성을 위해 필요한 변동비는 얼마인가요?",
+      "answer_key": 80.0,
+      "tolerance": 0.5,
+      "hint": "변동비 = Price × (1 - 목표율). 200 × (1 - 0.60) = ?"
+    },
+    "reflect": "한계이익률은 어떤 원가 항목과 가장 밀접한가요?"
+  },
+  "coach": {
+    "hook": "한계이익률(변동비를 뺀 이익률)은 고정비와 무관합니다. 어디를 건드려야 할까요?",
+    "discover": "변동비(소요재료비 + 운반비)만 목표율에 영향을 준다는 것을 확인해보세요.",
+    "apply": "목표 변동비 = Price × (1 - 목표율). 이 식에서 역산해보세요.",
+    "reflect": "한계이익률은 '고정비와 무관한 ___ 이익 비율' — 빈 칸을 채워보세요."
+  }
+}

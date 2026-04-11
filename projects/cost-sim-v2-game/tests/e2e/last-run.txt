@@ -1,0 +1,55 @@
+
+Running 26 tests using 1 worker
+
+  ✓   1 [chromium] › tests/e2e/boss-case.spec.ts:71:7 › Phase C — Boss Case #7 (Q3 위기) › Boss card defaults to LOCKED state with 0/6 progress (2.7s)
+  ✓   2 [chromium] › tests/e2e/boss-case.spec.ts:85:7 › Phase C — Boss Case #7 (Q3 위기) › Boss card UNLOCKS after seeding 6 × 3-star localStorage (5.6s)
+  ✓   3 [chromium] › tests/e2e/boss-case.spec.ts:103:7 › Phase C — Boss Case #7 (Q3 위기) › Boss case Apply with correct answer credits 3 mastery bumps (5.8s)
+  ✓   4 [chromium] › tests/e2e/campaign-persistence.spec.ts:34:7 › Phase B — Narrative + Persistence + Campaign › Intro modal appears on first case 1 visit and dismisses (3.3s)
+  ✓   5 [chromium] › tests/e2e/campaign-persistence.spec.ts:62:7 › Phase B — Narrative + Persistence + Campaign › Quarter bar renders with progress and updates after Apply (5.5s)
+  ✓   6 [chromium] › tests/e2e/campaign-persistence.spec.ts:89:7 › Phase B — Narrative + Persistence + Campaign › CFO reaction appears in Reflect success card (5.9s)
+  ✓   7 [chromium] › tests/e2e/campaign-persistence.spec.ts:110:7 › Phase B — Narrative + Persistence + Campaign › zustand persist — case 1 stars survive a page reload (7.1s)
+  ✓   8 [chromium] › tests/e2e/design-qa.spec.ts:7:7 › Design QA — Playwright visual + hard checks (US-PW-4) › home page shows title + two mode cards (1.9s)
+  ✓   9 [chromium] › tests/e2e/design-qa.spec.ts:31:7 › Design QA — Playwright visual + hard checks (US-PW-4) › sandbox dropdown closed screenshot (3.4s)
+  ✓  10 [chromium] › tests/e2e/design-qa.spec.ts:69:7 › Design QA — Playwright visual + hard checks (US-PW-4) › sandbox dropdown open — all 6 options visible (1.9s)
+  ✓  11 [chromium] › tests/e2e/design-qa.spec.ts:92:7 › Design QA — Playwright visual + hard checks (US-PW-4) › formula inspector rows do not clip text at 256px panel width (2.2s)
+  ✓  12 [chromium] › tests/e2e/design-qa.spec.ts:135:7 › Design QA — Playwright visual + hard checks (US-PW-4) › guided case 1 hook phase screenshot + touch target sizes (2.0s)
+  Loading 변화: 3 formula(s): [
+  [32m'Panel(노무+경비+상각) + Module(노무+경비+상각)'[39m,
+  [32m'COM = 소요재료비 + 가공비'[39m,
+  [32m'COP = COM + SGA'[39m
+]
+  ✓  13 [chromium] › tests/e2e/formula-inspector.spec.ts:14:9 › Formula Inspector — every case shows formulas after slider interaction › case "Loading 변화" displays ≥ 1 formula after moving a slider (3.1s)
+  인건비 변화: 4 formula(s): [
+  [32m'COP = COM + SGA'[39m,
+  [32m'Panel(노무+경비+상각) + Module(노무+경비+상각)'[39m,
+  [32m'COM = 소요재료비 + 가공비'[39m,
+  [32m'SGA = 직개발 + 운반 + 사업부 + 운영 + Corp OH'[39m
+]
+  ✓  14 [chromium] › tests/e2e/formula-inspector.spec.ts:14:9 › Formula Inspector — every case shows formulas after slider interaction › case "인건비 변화" displays ≥ 1 formula after moving a slider (3.1s)
+  한계이익률 목표: 3 formula(s): [ [32m'Σ(BOM / 누적수율)'[39m, [32m'COM = 소요재료비 + 가공비'[39m, [32m'COP = COM + SGA'[39m ]
+  ✓  15 [chromium] › tests/e2e/formula-inspector.spec.ts:14:9 › Formula Inspector — every case shows formulas after slider interaction › case "한계이익률 목표" displays ≥ 1 formula after moving a slider (3.2s)
+  재료비 절감 vs 수율 하락: 3 formula(s): [ [32m'Σ(BOM / 누적수율)'[39m, [32m'COM = 소요재료비 + 가공비'[39m, [32m'COP = COM + SGA'[39m ]
+  ✓  16 [chromium] › tests/e2e/formula-inspector.spec.ts:14:9 › Formula Inspector — every case shows formulas after slider interaction › case "재료비 절감 vs 수율 하락" displays ≥ 1 formula after moving a slider (3.2s)
+  면취수 · Mask 복합 변화: 4 formula(s): [
+  [32m'COM = 소요재료비 + 가공비'[39m,
+  [32m'COP = COM + SGA'[39m,
+  [32m'Panel(노무+경비+상각) + Module(노무+경비+상각)'[39m,
+  [32m'Σ(BOM / 누적수율)'[39m
+]
+  ✓  17 [chromium] › tests/e2e/formula-inspector.spec.ts:14:9 › Formula Inspector — every case shows formulas after slider interaction › case "면취수 · Mask 복합 변화" displays ≥ 1 formula after moving a slider (3.2s)
+  Tact 지연 + 투자비: 3 formula(s): [
+  [32m'Panel(노무+경비+상각) + Module(노무+경비+상각)'[39m,
+  [32m'COM = 소요재료비 + 가공비'[39m,
+  [32m'COP = COM + SGA'[39m
+]
+  ✓  18 [chromium] › tests/e2e/formula-inspector.spec.ts:14:9 › Formula Inspector — every case shows formulas after slider interaction › case "Tact 지연 + 투자비" displays ≥ 1 formula after moving a slider (3.1s)
+  ✓  19 [chromium] › tests/e2e/guided-flow.spec.ts:14:7 › Guided flow — Reflect → next case navigation + Phase A scoring (US-PW-3) › Case 1 Reflect completes, score+stars visible, leads to Case 2 (6.8s)
+  ✓  20 [chromium] › tests/e2e/mastery-daily.spec.ts:30:7 › Phase C — Mastery + Daily Challenge › Home page shows mastery meter with all 6 rows at level 0 (2.7s)
+  ✓  21 [chromium] › tests/e2e/mastery-daily.spec.ts:43:7 › Phase C — Mastery + Daily Challenge › Streak badge starts at 0 (2.6s)
+  ✓  22 [chromium] › tests/e2e/mastery-daily.spec.ts:51:7 › Phase C — Mastery + Daily Challenge › Completing case 1 bumps loading mastery to 1 and starts streak (7.1s)
+  ✓  23 [chromium] › tests/e2e/mastery-daily.spec.ts:92:7 › Phase C — Mastery + Daily Challenge › Daily challenge route renders a case + start link (3.6s)
+  ✓  24 [chromium] › tests/e2e/mastery-daily.spec.ts:102:7 › Phase C — Mastery + Daily Challenge › Daily challenge picks the same case for the same date (deterministic seed) (3.4s)
+  ✓  25 [chromium] › tests/e2e/sandbox-dropdown.spec.ts:24:7 › Sandbox case dropdown — US-PW-2 (critical bug) › all 6 cases are selectable and each produces a distinct tree state (5.4s)
+  ✓  26 [chromium] › tests/e2e/sandbox-dropdown.spec.ts:78:7 › Sandbox case dropdown — US-PW-2 (critical bug) › Case 3 한계이익률 목표 slider actually mutates the tree (3.2s)
+
+  26 passed (1.9m)

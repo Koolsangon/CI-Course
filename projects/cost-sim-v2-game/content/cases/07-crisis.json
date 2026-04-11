@@ -1,0 +1,73 @@
+{
+  "id": "07-crisis",
+  "title": "Q3 위기 — 3중고 동시 충격",
+  "scenario": "Q3 첫 달에 세 가지 충격이 동시에 옵니다. 거래처 주문 급감으로 Loading이 60%로, 임금 협상으로 인건비가 1.3배로, 모듈 수율은 -2%p 떨어집니다. 이 모든 것이 동시에 작동할 때 Panel 노무비가 어디까지 가는지 한 숫자로 가져오세요.",
+  "adapter": "crisis",
+  "reference": {
+    "price": 200,
+    "yields": { "tft": 0.99, "cf": 1.0, "cell": 0.95, "module": 0.972 },
+    "bom": { "tft": 6.0, "cf": 5.0, "cell": 1.5, "module": 75.0 },
+    "processing": {
+      "panel": { "labor": 21.3, "expense": 11.5, "depreciation": 16.2 },
+      "module": { "labor": 8.7, "expense": 5.3, "depreciation": 7.5 }
+    },
+    "sga": { "direct_dev": 4.7, "transport": 0.3, "business_unit": 16.0, "operation": 1.2, "corporate_oh": 6.2 },
+    "loading": 0.70
+  },
+  "variables": [
+    {
+      "key": "new_loading",
+      "ko": "Loading",
+      "min": 0.30,
+      "max": 1.00,
+      "step": 0.01,
+      "default": 0.60,
+      "unit": "%",
+      "format": "percent"
+    },
+    {
+      "key": "labor_multiplier",
+      "ko": "인건비 배수",
+      "min": 0.80,
+      "max": 2.00,
+      "step": 0.05,
+      "default": 1.30,
+      "unit": "x",
+      "format": "multiplier"
+    },
+    {
+      "key": "module_yield_change",
+      "ko": "Module 수율 변화",
+      "min": -0.10,
+      "max": 0.05,
+      "step": 0.005,
+      "default": -0.02,
+      "unit": "%p",
+      "format": "percent_point"
+    }
+  ],
+  "expected": {
+    "panel_labor": 32.305,
+    "module_labor": 13.195,
+    "sga": 30.929,
+    "cop": 216.35,
+    "operating_profit": -16.35
+  },
+  "phases": {
+    "hook": "Loading 60% + 임금 1.3배 + 수율 -2%p가 동시에 작용합니다. 어떤 변수가 가장 무겁게 박힐까요?",
+    "discover": "세 슬라이더를 각각 움직여 보세요. 변수 사이의 곱셈 연쇄가 어떻게 누적되는지 트리에서 확인하세요.",
+    "apply": {
+      "question": "Loading 60% + 임금 1.3배 + 수율 -2%p 동시 적용 시 Panel 노무비는?",
+      "answer_key": 32.305,
+      "tolerance": 0.5,
+      "hint": "21.3 × (0.7/0.6) × 1.3 — Loading 비율 × 인건비 배수의 누적입니다."
+    },
+    "reflect": "세 충격이 동시에 작용할 때 가장 큰 손해는 어디서 나왔나요? 한 문장으로 정리해보세요."
+  },
+  "coach": {
+    "hook": "분기 마지막 도전입니다. 한 번에 세 변수가 함께 움직일 때, 손익이 어디서 깨지는지 보세요.",
+    "discover": "각 효과를 따로 계산해 곱하면 정답에 다가갑니다. Loading은 가공비를, 인건비는 노무비+SGA를, 수율은 재료비를 건드립니다.",
+    "apply": "수식을 분리해보세요. 21.3 × (0.7/0.6) = 24.85, 그 다음 × 1.3 = 32.31. 수율 변화는 노무비에 영향을 주지 않습니다.",
+    "reflect": "한 줄: '동시 충격 시 가장 무겁게 박힌 항목은 ___이고, 그 이유는 ___이다.'"
+  }
+}

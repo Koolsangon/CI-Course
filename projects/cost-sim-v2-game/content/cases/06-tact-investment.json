@@ -1,0 +1,62 @@
+{
+  "id": "06-tact-investment",
+  "title": "Tact 지연 + 투자비",
+  "scenario": "Module 공정의 Tact Time이 1.2배로 늘어나고, 생산능력 확보를 위해 13억원 추가 투자가 필요합니다.",
+  "adapter": "tact-investment",
+  "reference": {
+    "price": 200,
+    "yields": { "tft": 0.99, "cf": 1.0, "cell": 0.95, "module": 0.972 },
+    "bom": { "tft": 6.0, "cf": 5.0, "cell": 1.5, "module": 75.0 },
+    "processing": {
+      "panel": { "labor": 21.3, "expense": 11.5, "depreciation": 16.2 },
+      "module": { "labor": 8.7, "expense": 5.3, "depreciation": 7.5 }
+    },
+    "sga": { "direct_dev": 4.7, "transport": 0.3, "business_unit": 16.0, "operation": 1.2, "corporate_oh": 6.2 },
+    "loading": 0.70
+  },
+  "variables": [
+    {
+      "key": "tact_multiplier",
+      "ko": "Tact 배수",
+      "min": 0.80,
+      "max": 1.50,
+      "step": 0.05,
+      "default": 1.2,
+      "unit": "x",
+      "format": "multiplier"
+    },
+    {
+      "key": "investment_depreciation_delta",
+      "ko": "투자 상각비 증가분",
+      "min": 0.0,
+      "max": 5.0,
+      "step": 0.1,
+      "default": 1.9,
+      "unit": "$",
+      "format": "dollar"
+    }
+  ],
+  "expected": {
+    "module_labor_tact": 10.44,
+    "module_expense_tact": 6.36,
+    "module_depreciation_tact": 9.0,
+    "module_depreciation_invest": 10.9
+  },
+  "phases": {
+    "hook": "Tact이 늘면 Module 가공비가 같이 늘어납니다. 투자비는 그 위에 얹힙니다.",
+    "discover": "두 슬라이더로 Module 블록만 집중해서 관찰해보세요.",
+    "apply": {
+      "question": "Tact 1.2배 + 상각비 +$1.9 적용 시 Module 상각비는 약 얼마인가요?",
+      "answer_key": 10.9,
+      "tolerance": 0.1,
+      "hint": "7.5 × 1.2 + 1.9 = ?"
+    },
+    "reflect": "투자 결정 시 왜 '가공비 + 상각비' 두 항목을 모두 봐야 하는지 설명해보세요."
+  },
+  "coach": {
+    "hook": "T/T 지연과 투자 — 두 요인이 같은 Module 블록에 겹칩니다.",
+    "discover": "배수 적용과 덧셈 적용, 연산 순서를 직접 확인해보세요.",
+    "apply": "상각비만 '덧셈'으로 처리됩니다. 나머지는 곱셈입니다.",
+    "reflect": "한 문장: 'Tact 지연은 Module 가공비 전체에 ___로 작용한다.'"
+  }
+}

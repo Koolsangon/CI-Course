@@ -1,0 +1,97 @@
+{
+  "id": "pre-post-v1",
+  "description": "AC2 paired pre/post instrument. 같은 10문항을 사전·사후에 동일하게 제시. 채점은 각 항목 1점 × 10 = 10점 만점.",
+  "target_delta": 0.30,
+  "target_sample": 10,
+  "validation": {
+    "required": "비대상 n≥3 사용자로 모호성 점검 — Phase 0b DoD.",
+    "status": "pending"
+  },
+  "sections": [
+    {
+      "id": "blank-tree-fill",
+      "title": "원가 트리 빈칸 채우기",
+      "scoring": "정확히 맞으면 1점, 아니면 0점",
+      "questions": [
+        {
+          "id": "BTF-1",
+          "prompt": "COP = COM + ___. 빈칸에 들어갈 용어는 무엇인가요?",
+          "answer": "SGA",
+          "alternatives": ["판관비", "Selling General Administrative"],
+          "points": 1
+        },
+        {
+          "id": "BTF-2",
+          "prompt": "COM은 소요재료비와 ___ 의 합입니다. 빈칸은?",
+          "answer": "가공비",
+          "alternatives": ["Processing Cost"],
+          "points": 1
+        },
+        {
+          "id": "BTF-3",
+          "prompt": "소요재료비 = BOM ÷ ___ 입니다. 빈칸에 들어갈 용어는?",
+          "answer": "누적수율",
+          "alternatives": ["cumulative yield", "누적 수율"],
+          "points": 1
+        },
+        {
+          "id": "BTF-4",
+          "prompt": "Cash Cost = COP - ___ 입니다. 빈칸은?",
+          "answer": "상각비",
+          "alternatives": ["depreciation"],
+          "points": 1
+        },
+        {
+          "id": "BTF-5",
+          "prompt": "한계이익 = Price - ___. 빈칸에 들어갈 용어는?",
+          "answer": "변동비",
+          "alternatives": ["variable cost"],
+          "points": 1
+        }
+      ]
+    },
+    {
+      "id": "variable-impact-match",
+      "title": "변수 → 영향 매칭",
+      "scoring": "정확히 맞으면 1점",
+      "format": "multiple-choice",
+      "questions": [
+        {
+          "id": "VIM-1",
+          "prompt": "Loading이 감소하면 가공비는 어떻게 변하나요?",
+          "choices": ["비례해서 감소", "반비례해서 증가", "변화 없음", "수율에 따라 다름"],
+          "answer_index": 1,
+          "points": 1
+        },
+        {
+          "id": "VIM-2",
+          "prompt": "인건비가 1.5배가 되면 SGA는 어떻게 변하나요?",
+          "choices": ["1.5배 증가", "변화 없음", "일부만 증가 (인건비 비중만큼)", "50% 증가"],
+          "answer_index": 2,
+          "points": 1
+        },
+        {
+          "id": "VIM-3",
+          "prompt": "면취수가 25→29로 증가하면 TFT BOM은?",
+          "choices": ["증가", "감소 (25/29 비율)", "변화 없음", "가공비만 영향"],
+          "answer_index": 1,
+          "points": 1
+        },
+        {
+          "id": "VIM-4",
+          "prompt": "Mask가 6→7로 증가하면 Panel 가공비는?",
+          "choices": ["7/6 비율로 증가", "6/7 비율로 감소", "변화 없음", "Module 가공비만 영향"],
+          "answer_index": 0,
+          "points": 1
+        },
+        {
+          "id": "VIM-5",
+          "prompt": "Module 수율이 4%p 떨어지면 소요재료비는?",
+          "choices": ["감소", "변화 없음", "증가 (분모가 작아지므로)", "상각비만 영향"],
+          "answer_index": 2,
+          "points": 1
+        }
+      ]
+    }
+  ]
+}

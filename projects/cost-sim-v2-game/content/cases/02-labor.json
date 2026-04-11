@@ -1,0 +1,53 @@
+{
+  "id": "02-labor",
+  "title": "인건비 변화",
+  "scenario": "임금 협상 결과 전사 인건비가 1.5배로 인상되었습니다.",
+  "adapter": "labor",
+  "reference": {
+    "price": 200,
+    "yields": { "tft": 0.99, "cf": 1.0, "cell": 0.95, "module": 0.9413 },
+    "bom": { "tft": 6.0, "cf": 5.0, "cell": 1.5, "module": 75.0 },
+    "processing": {
+      "panel": { "labor": 10.0, "expense": 5.5, "depreciation": 19.0 },
+      "module": { "labor": 2.1, "expense": 1.6, "depreciation": 3.1 }
+    },
+    "sga": { "direct_dev": 4.7, "transport": 0.3, "business_unit": 16.0, "operation": 1.2, "corporate_oh": 6.2 },
+    "loading": 0.70
+  },
+  "variables": [
+    {
+      "key": "labor_multiplier",
+      "ko": "인건비 배수",
+      "min": 0.80,
+      "max": 2.00,
+      "step": 0.05,
+      "default": 1.5,
+      "unit": "x",
+      "format": "multiplier"
+    }
+  ],
+  "expected": {
+    "panel_labor": 15.0,
+    "module_labor": 3.15,
+    "sga": 32.66,
+    "cop": 173.71,
+    "operating_profit": 26.29
+  },
+  "phases": {
+    "hook": "인건비가 1.5배로 오르면 COP(제조원가)는 어디까지 상승할까요?",
+    "discover": "Panel·Module 노무비와 SGA가 함께 변하는 것을 확인해 보세요.",
+    "apply": {
+      "question": "인건비 1.5배 적용 시 SGA는 약 얼마가 될까요? (소수점 둘째 자리)",
+      "answer_key": 32.66,
+      "tolerance": 0.1,
+      "hint": "SGA 중 인건비 비중은 30%. 기존 28.4 × (0.7 + 0.3 × 1.5)"
+    },
+    "reflect": "영업이익 $36.6 → $26.3, 이 감소의 원인을 한 문장으로 설명해보세요."
+  },
+  "coach": {
+    "hook": "인건비 인상이 SGA까지 영향을 준다는 사실, 직관적인가요?",
+    "discover": "SGA 내 인건비 비중(30%)을 떠올려보세요. 나머지 70%는 인상과 무관합니다.",
+    "apply": "식을 나눠 생각해볼까요? 인건비 부분과 비인건비 부분을 각각 계산해보세요.",
+    "reflect": "간단하게: '노무비와 SGA 중 ___만 배수가 적용된다' — 빈 칸을 채워보세요."
+  }
+}

@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { getStaticCoaching } from "@/lib/coach/static-coach";
 import type { GuidedPhase } from "@/lib/store";
 
-export const runtime = "edge";
+export const runtime = "nodejs";
 
 interface CoachRequest {
   caseId: string;

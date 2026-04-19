@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { TreePine, BookOpen, ArrowRight, Zap, CalendarCheck, Skull, Lock } from "lucide-react";
+import { TreePine, BookOpen, ArrowRight, Zap, CalendarCheck, Skull, Lock, BarChart3 } from "lucide-react";
 import MasteryMeter from "@/components/Mastery/MasteryMeter";
 import StreakBadge from "@/components/Mastery/StreakBadge";
 import { useStore } from "@/lib/store";
@@ -45,6 +45,18 @@ const modes = [
     border: "border-[hsl(30_98%_47%/0.2)] hover:border-[hsl(30_98%_47%/0.5)]",
     iconColor: "text-[hsl(var(--warn))]",
     tag: "매일"
+  },
+  {
+    href: "/analyze",
+    icon: BarChart3,
+    label: "실무 분석",
+    sublabel: "What-if 시나리오",
+    description:
+      "내 제품의 실제 원가 데이터를 입력하고, 변수 변경에 따른 원가 구조 변화를 분석합니다.",
+    accent: "from-[hsl(210_80%_40%/0.08)] to-[hsl(210_80%_40%/0.02)]",
+    border: "border-[hsl(210_80%_40%/0.2)] hover:border-[hsl(210_80%_40%/0.5)]",
+    iconColor: "text-[hsl(210_80%_50%)]",
+    tag: "실무"
   }
 ];
 
@@ -109,7 +121,7 @@ export default function HomePage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.18, ease: [0.16, 1, 0.3, 1] }}
-          className="grid w-full grid-cols-1 gap-4 sm:grid-cols-3"
+          className="grid w-full grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4"
         >
           {modes.map((mode) => {
             const Icon = mode.icon;

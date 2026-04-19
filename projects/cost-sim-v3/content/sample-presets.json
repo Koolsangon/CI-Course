@@ -1,0 +1,30 @@
+[
+  {
+    "name": "55인치 OLED 기준",
+    "params": {
+      "price": 220.0,
+      "yields": { "tft": 0.98, "cf": 0.99, "cell": 0.94, "module": 0.96 },
+      "bom": { "tft": 7.5, "cf": 6.0, "cell": 2.0, "module": 82.0 },
+      "processing": {
+        "panel": { "labor": 23.5, "expense": 12.8, "depreciation": 18.0 },
+        "module": { "labor": 9.5, "expense": 5.8, "depreciation": 8.2 }
+      },
+      "sga": { "direct_dev": 5.2, "transport": 0.4, "business_unit": 17.5, "operation": 1.4, "corporate_oh": 6.8 },
+      "loading": 0.75
+    }
+  },
+  {
+    "name": "65인치 LCD 기준",
+    "params": {
+      "price": 165.0,
+      "yields": { "tft": 0.99, "cf": 1.0, "cell": 0.96, "module": 0.98 },
+      "bom": { "tft": 4.5, "cf": 3.8, "cell": 1.2, "module": 55.0 },
+      "processing": {
+        "panel": { "labor": 15.0, "expense": 8.2, "depreciation": 12.5 },
+        "module": { "labor": 6.0, "expense": 3.8, "depreciation": 5.5 }
+      },
+      "sga": { "direct_dev": 3.8, "transport": 0.25, "business_unit": 12.0, "operation": 0.9, "corporate_oh": 4.8 },
+      "loading": 0.82
+    }
+  }
+]

@@ -74,10 +74,10 @@ export default function Reflect({ caseDef }: { caseDef: CaseDef }) {
         <div className="relative flex flex-col gap-5">
           {/* Phase badge */}
           <div className="flex items-center gap-2">
-            <span className="flex h-7 w-7 items-center justify-center rounded-xl bg-[hsl(250_80%_60%/0.12)] text-[hsl(250_80%_72%)]">
+            <span className="flex h-7 w-7 items-center justify-center rounded-xl bg-[hsl(345_100%_32%/0.08)] text-[hsl(345_100%_32%)]">
               <BookMarked className="h-4 w-4" />
             </span>
-            <span className="text-xs font-bold uppercase tracking-widest text-[hsl(250_80%_72%)]">
+            <span className="text-xs font-bold uppercase tracking-widest text-[hsl(345_100%_32%)]">
               Reflect · 2분
             </span>
           </div>
@@ -99,7 +99,7 @@ export default function Reflect({ caseDef }: { caseDef: CaseDef }) {
               "w-full resize-none rounded-2xl border bg-[hsl(var(--surface-200)/0.4)] p-4",
               "text-sm leading-relaxed text-[hsl(var(--fg))] placeholder:text-[hsl(var(--muted)/0.5)]",
               "outline-none transition-all duration-150",
-              "focus:ring-2 focus:ring-[hsl(250_80%_60%/0.5)] focus:border-[hsl(250_80%_60%/0.4)]",
+              "focus:ring-2 focus:ring-[hsl(345_100%_32%/0.4)] focus:border-[hsl(345_100%_32%/0.3)]",
               "border-[hsl(var(--border))]"
             ].join(" ")}
           />

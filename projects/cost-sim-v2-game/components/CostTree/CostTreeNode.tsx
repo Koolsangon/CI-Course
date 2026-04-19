@@ -15,7 +15,7 @@ export interface CostTreeNodeData {
 
 // Group → gradient + text token
 const groupStyles: Record<string, { bg: string; text: string; border: string }> = {
-  root:       { bg: "from-[hsl(226_36%_14%)] to-[hsl(226_36%_10%)]",   text: "text-white",                   border: "border-[hsl(var(--accent)/0.4)]" },
+  root:       { bg: "from-[hsl(345_100%_32%)] to-[hsl(345_100%_24%)]",  text: "text-white",                   border: "border-[hsl(var(--accent)/0.4)]" },
   top:        { bg: "from-[hsl(235_72%_30%)] to-[hsl(235_72%_24%)]",   text: "text-white",                   border: "border-[hsl(235_72%_55%/0.35)]" },
   com:        { bg: "from-[hsl(199_80%_25%)] to-[hsl(199_80%_20%)]",   text: "text-white",                   border: "border-[hsl(199_80%_55%/0.35)]" },
   sga:        { bg: "from-[hsl(263_60%_28%)] to-[hsl(263_60%_22%)]",   text: "text-white",                   border: "border-[hsl(263_60%_60%/0.35)]" },

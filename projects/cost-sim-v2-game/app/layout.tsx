@@ -1,28 +1,17 @@
 import type { Metadata, Viewport } from "next";
-import { Noto_Sans_KR } from "next/font/google";
 import "./globals.css";
 import ServiceWorkerBoot from "@/components/ServiceWorkerBoot";
 import ProfileGate from "@/components/ProfileGate";
 
-// Pretendard is not on Google Fonts; use Noto Sans KR as Korean-optimized fallback
-// with a matching weights selection. The CSS variable is consumed by tailwind.config.ts
-const notoSansKR = Noto_Sans_KR({
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800"],
-  variable: "--font-pretendard",
-  display: "swap",
-  preload: true
-});
-
 export const metadata: Metadata = {
-  title: "Cost Sim v1 — 살아있는 원가 트리",
-  description: "COP/COM/SGA 원가 구조 해석력을 기르는 인터랙티브 학습 툴",
+  title: "개발원가 시뮬레이션 — LG Display HRD",
+  description: "COP/COM/SGA 원가 구조 해석력을 기르는 인터랙티브 학습 툴 · LG Display 전사원 교육",
   manifest: "/manifest.webmanifest",
   icons: { icon: "/icon-192.svg" },
   appleWebApp: {
     capable: true,
-    statusBarStyle: "black-translucent",
-    title: "원가 트리"
+    statusBarStyle: "default",
+    title: "원가 시뮬레이션"
   }
 };
 
@@ -31,8 +20,8 @@ export const viewport: Viewport = {
   initialScale: 1,
   viewportFit: "cover",
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#f5f6fa" },
-    { media: "(prefers-color-scheme: dark)",  color: "#090d18" }
+    { media: "(prefers-color-scheme: light)", color: "#FFFFFF" },
+    { media: "(prefers-color-scheme: dark)",  color: "#0A0A0A" }
   ]
 };
 
@@ -42,12 +31,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="ko" className={`${notoSansKR.variable} dark`}>
+    <html lang="ko">
       <head>
+        {/* Pretendard Variable — LG Smart substitute, Korean + Latin */}
         <link
           rel="preconnect"
           href="https://cdn.jsdelivr.net"
           crossOrigin="anonymous"
+        />
+        <link
+          rel="stylesheet"
+          href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.css"
         />
       </head>
       <body>

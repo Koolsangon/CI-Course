@@ -118,7 +118,7 @@ export default function DailyPage() {
             <Link
               href={`/cases/${caseId}`}
               data-test="daily-start"
-              className="flex items-center justify-center gap-1.5 rounded-xl bg-[hsl(45_92%_55%)] px-5 py-3 text-sm font-bold text-[hsl(226_36%_5%)] transition-all hover:brightness-110 active:scale-[0.98]"
+              className="flex items-center justify-center gap-1.5 rounded-xl bg-[hsl(var(--accent))] px-5 py-3 text-sm font-bold text-white transition-all hover:bg-[hsl(var(--accent-dim))] active:scale-[0.98]"
             >
               오늘의 도전 시작
               <ArrowRight className="h-4 w-4" />

@@ -17,8 +17,8 @@ const modes = [
     sublabel: "자유 탐색 모드",
     description:
       "슬라이더를 움직이며 BOM·수율·Loading·면취수·Mask·Tact의 인과관계를 실시간으로 추적합니다.",
-    accent: "from-[hsl(189_96%_43%/0.15)] to-[hsl(189_96%_43%/0.04)]",
-    border: "border-[hsl(189_96%_43%/0.25)] hover:border-[hsl(189_96%_43%/0.6)]",
+    accent: "from-[hsl(345_100%_32%/0.08)] to-[hsl(345_100%_32%/0.02)]",
+    border: "border-[hsl(345_100%_32%/0.2)] hover:border-[hsl(345_100%_32%/0.5)]",
     iconColor: "text-[hsl(var(--accent))]",
     tag: "실시간"
   },
@@ -29,8 +29,8 @@ const modes = [
     sublabel: "단계별 학습 모드",
     description:
       "Hook → Discover → Apply → Reflect 4단계로 원가 구조 해석력을 체계적으로 쌓습니다.",
-    accent: "from-[hsl(160_72%_40%/0.15)] to-[hsl(160_72%_40%/0.04)]",
-    border: "border-[hsl(160_72%_40%/0.25)] hover:border-[hsl(160_72%_40%/0.6)]",
+    accent: "from-[hsl(123_46%_34%/0.08)] to-[hsl(123_46%_34%/0.02)]",
+    border: "border-[hsl(123_46%_34%/0.2)] hover:border-[hsl(123_46%_34%/0.5)]",
     iconColor: "text-[hsl(var(--success))]",
     tag: "6 Cases"
   },
@@ -41,9 +41,9 @@ const modes = [
     sublabel: "데일리 챌린지",
     description:
       "매일 한 케이스를 무작위로 골라 출제합니다. 매일 들러서 연속 도전 기록을 쌓으세요.",
-    accent: "from-[hsl(45_92%_55%/0.15)] to-[hsl(45_92%_55%/0.04)]",
-    border: "border-[hsl(45_92%_55%/0.25)] hover:border-[hsl(45_92%_55%/0.6)]",
-    iconColor: "text-[hsl(45_92%_60%)]",
+    accent: "from-[hsl(30_98%_47%/0.08)] to-[hsl(30_98%_47%/0.02)]",
+    border: "border-[hsl(30_98%_47%/0.2)] hover:border-[hsl(30_98%_47%/0.5)]",
+    iconColor: "text-[hsl(var(--warn))]",
     tag: "매일"
   }
 ];
@@ -60,14 +60,14 @@ export default function HomePage() {
 
   return (
     <main className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden mesh-bg">
-      {/* Background blobs */}
+      {/* Background blobs — subtle LG Red warmth */}
       <div
         aria-hidden
-        className="pointer-events-none absolute left-1/4 top-1/4 h-96 w-96 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[hsl(189_96%_43%/0.06)] blur-3xl"
+        className="pointer-events-none absolute left-1/4 top-1/4 h-96 w-96 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[hsl(345_100%_32%/0.04)] blur-3xl"
       />
       <div
         aria-hidden
-        className="pointer-events-none absolute bottom-1/4 right-1/4 h-80 w-80 translate-x-1/2 translate-y-1/2 rounded-full bg-[hsl(250_80%_60%/0.05)] blur-3xl"
+        className="pointer-events-none absolute bottom-1/4 right-1/4 h-80 w-80 translate-x-1/2 translate-y-1/2 rounded-full bg-[hsl(349_100%_45%/0.03)] blur-3xl"
       />
 
       <div className="relative z-10 flex w-full max-w-3xl flex-col items-center gap-8 px-5 py-12">
@@ -169,19 +169,19 @@ export default function HomePage() {
             <Link
               href={`/cases/${BOSS_CASE_ID}`}
               data-test="boss-link"
-              className="group relative flex items-center gap-4 overflow-hidden rounded-3xl border border-[hsl(0_84%_60%/0.4)] bg-gradient-to-br from-[hsl(0_84%_60%/0.18)] to-[hsl(280_84%_60%/0.06)] p-5 transition-all hover:-translate-y-1 hover:shadow-elevated"
+              className="group relative flex items-center gap-4 overflow-hidden rounded-3xl border border-[hsl(345_100%_32%/0.4)] bg-gradient-to-br from-[hsl(345_100%_32%/0.1)] to-[hsl(349_100%_45%/0.04)] p-5 transition-all hover:-translate-y-1 hover:shadow-elevated"
             >
-              <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-2xl bg-[hsl(var(--surface-200)/0.5)] text-[hsl(0_84%_65%)]">
+              <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-2xl bg-[hsl(var(--surface-200)/0.5)] text-[hsl(345_100%_32%)]">
                 <Skull className="h-6 w-6" />
               </div>
               <div className="min-w-0 flex-1">
-                <span className="text-[10px] font-bold uppercase tracking-widest text-[hsl(0_84%_65%)]">
+                <span className="text-[10px] font-bold uppercase tracking-widest text-[hsl(345_100%_32%)]">
                   BOSS · UNLOCKED
                 </span>
                 <div className="text-base font-bold text-[hsl(var(--fg))]">{bossCase.title}</div>
                 <p className="mt-1 text-xs text-[hsl(var(--muted))] line-clamp-2">{bossCase.scenario}</p>
               </div>
-              <ArrowRight className="h-4 w-4 flex-shrink-0 text-[hsl(0_84%_65%)] opacity-60 transition-opacity group-hover:opacity-100" />
+              <ArrowRight className="h-4 w-4 flex-shrink-0 text-[hsl(345_100%_32%)] opacity-60 transition-opacity group-hover:opacity-100" />
             </Link>
           ) : (
             <div className="relative flex items-center gap-4 overflow-hidden rounded-3xl border border-dashed border-[hsl(var(--border))] bg-[hsl(var(--surface-100)/0.5)] p-5">

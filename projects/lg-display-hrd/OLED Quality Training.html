@@ -1,0 +1,728 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>OLED 제조 품질 기본 · 2025 전사원 교육</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.css">
+<link rel="stylesheet" href="colors_and_type.css">
+<style>
+  /* ---------- THEME TOKENS (Tweakable) ---------- */
+  :root {
+    --deck-bg-page:      #FFFFFF;
+    --deck-bg-card:      #FAFAFA;
+    --deck-bg-dark:      #0A0A0A;
+    --deck-fg-1:         #0A0A0A;
+    --deck-fg-2:         #4A4A4A;
+    --deck-fg-3:         #757575;
+    --deck-border:       #E5E5E5;
+    --deck-divider:      #0A0A0A;
+    --deck-accent:       #A50034;
+    --deck-accent-alt:   #E4002B;
+  }
+  [data-theme="dark"] {
+    --deck-bg-page:      #0A0A0A;
+    --deck-bg-card:      #1A1A1A;
+    --deck-bg-dark:      #000000;
+    --deck-fg-1:         #FFFFFF;
+    --deck-fg-2:         #D4D4D4;
+    --deck-fg-3:         #9E9E9E;
+    --deck-border:       #2A2A2A;
+    --deck-divider:      #A50034;
+  }
+  [data-theme="red"] {
+    --deck-bg-page:      #A50034;
+    --deck-bg-card:      #8A002C;
+    --deck-bg-dark:      #7A0026;
+    --deck-fg-1:         #FFFFFF;
+    --deck-fg-2:         #F5CDD5;
+    --deck-fg-3:         #E8A0AE;
+    --deck-border:       rgba(255,255,255,0.18);
+    --deck-divider:      #FFFFFF;
+    --deck-accent:       #FFFFFF;
+    --deck-accent-alt:   #FFFFFF;
+  }
+
+  html, body {
+    margin: 0;
+    background: #000;
+    font-family: 'Pretendard Variable', Pretendard, -apple-system, 'Apple SD Gothic Neo',
+                 'Noto Sans KR', 'Malgun Gothic', sans-serif;
+  }
+
+  /* ---------- SLIDE BASE ---------- */
+  .slide {
+    background: var(--deck-bg-page);
+    color: var(--deck-fg-1);
+    position: relative;
+    overflow: hidden;
+    padding: 80px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    transition: background-color 400ms cubic-bezier(0.2,0.8,0.2,1),
+                color 400ms cubic-bezier(0.2,0.8,0.2,1);
+  }
+  .eyebrow {
+    font-size: 22px;
+    font-weight: 600;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--deck-accent);
+    margin-bottom: 20px;
+  }
+  h1 {
+    font-size: 88px;
+    font-weight: 700;
+    letter-spacing: -.03em;
+    line-height: 1.05;
+    margin: 0 0 24px;
+    color: var(--deck-fg-1);
+  }
+  h2 {
+    font-size: 72px;
+    font-weight: 700;
+    letter-spacing: -.03em;
+    line-height: 1.1;
+    margin: 0 0 24px;
+    color: var(--deck-fg-1);
+  }
+  p.lead {
+    font-size: 28px;
+    line-height: 1.5;
+    color: var(--deck-fg-2);
+    max-width: 1500px;
+    margin: 0 0 48px;
+    font-weight: 400;
+  }
+  .footer {
+    position: absolute;
+    left: 80px;
+    bottom: 40px;
+    font-size: 18px;
+    color: var(--deck-fg-3);
+  }
+  .pg {
+    position: absolute;
+    right: 80px;
+    bottom: 40px;
+    font-family: var(--font-mono);
+    font-size: 18px;
+    color: var(--deck-fg-3);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: .06em;
+  }
+  .lg-mark {
+    position: absolute;
+    left: 80px;
+    top: 80px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    color: var(--deck-fg-1);
+    font-size: 20px;
+    font-weight: 600;
+  }
+  .lg-mark .mk {
+    width: 40px; height: 40px;
+    background: var(--deck-accent);
+    border-radius: 9px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-weight: 700;
+    font-size: 16px;
+    letter-spacing: -.02em;
+  }
+  [data-theme="red"] .lg-mark .mk { background: #fff; color: #A50034; }
+
+  /* ---------- SLIDE 01 · TITLE ---------- */
+  .s-title { background: var(--deck-bg-dark); color: #fff; padding: 0; }
+  .s-title .wedge {
+    position: absolute; inset: 0;
+    background: linear-gradient(135deg, rgba(228,0,43,0.92), rgba(165,0,52,0.92));
+    clip-path: polygon(62% 0, 100% 0, 100% 100%, 42% 100%);
+  }
+  [data-theme="red"] .s-title .wedge { opacity: 0; }
+  [data-theme="dark"] .s-title .wedge { opacity: .85; }
+  .s-title .brand {
+    position: absolute; left: 80px; top: 80px;
+    display: flex; align-items: center; gap: 14px;
+    color: #fff; font-size: 22px; font-weight: 600;
+  }
+  .s-title .brand .mk {
+    width: 56px; height: 56px; background: #A50034;
+    border-radius: 12px; color: #fff; font-weight: 700; font-size: 22px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .s-title .brand .sub { color: #9E9E9E; font-weight: 400; margin-left: 6px; }
+  .s-title .eyebrow {
+    position: absolute; left: 80px; top: 380px; margin: 0;
+    color: #E4002B;
+  }
+  .s-title h1 {
+    position: absolute; left: 80px; top: 440px; right: 80px;
+    font-size: 132px; line-height: 1.03; color: #fff;
+  }
+  .s-title .sub {
+    position: absolute; left: 80px; top: 790px; right: 760px;
+    font-size: 30px; color: #D4D4D4; line-height: 1.45;
+  }
+  .s-title .meta {
+    position: absolute; left: 80px; bottom: 80px;
+    display: flex; gap: 64px; font-size: 20px;
+  }
+  .s-title .meta .lab {
+    color: #E4002B; font-weight: 700; font-size: 14px;
+    letter-spacing: .12em; text-transform: uppercase;
+    display: block; margin-bottom: 6px;
+  }
+  .s-title .meta .val { color: #fff; font-weight: 500; }
+  .s-title .pg { color: #757575; }
+
+  /* ---------- SLIDE 02 · AGENDA ---------- */
+  .agenda-list { flex: 1; display: flex; flex-direction: column; gap: 4px; max-width: 1700px; margin-top: 24px; }
+  .agenda-it {
+    display: grid; grid-template-columns: 120px 1fr 220px;
+    align-items: center; padding: 24px 0;
+    border-bottom: 1px solid var(--deck-border); font-size: 34px;
+  }
+  .agenda-it .n {
+    font-family: var(--font-mono); font-size: 26px;
+    color: var(--deck-accent); font-weight: 600;
+    font-variant-numeric: tabular-nums;
+  }
+  .agenda-it .t { font-weight: 600; letter-spacing: -.01em; color: var(--deck-fg-1); }
+  .agenda-it .d { color: var(--deck-fg-3); font-size: 22px; text-align: right; font-variant-numeric: tabular-nums; }
+  .agenda-it.active .t { color: var(--deck-accent); }
+
+  /* ---------- SLIDE 03 · SECTION DIVIDER ---------- */
+  .s-section {
+    background: var(--deck-accent);
+    color: #fff;
+    padding: 0;
+  }
+  [data-theme="dark"] .s-section { background: var(--deck-bg-dark); border-top: 4px solid #A50034; }
+  [data-theme="red"] .s-section { background: #7A0026; }
+  .s-section .num {
+    position: absolute; left: 80px; top: 180px;
+    font-size: 480px; font-weight: 900; line-height: .8;
+    letter-spacing: -.06em; color: rgba(255,255,255,.12);
+    font-variant-numeric: tabular-nums;
+  }
+  .s-section .eyebrow {
+    position: absolute; left: 80px; top: 540px;
+    color: rgba(255,255,255,.85); margin: 0;
+  }
+  .s-section h1 {
+    position: absolute; left: 80px; top: 620px;
+    font-size: 168px; line-height: 1; color: #fff;
+  }
+  .s-section .rule {
+    position: absolute; left: 80px; top: 900px;
+    width: 200px; height: 6px; background: #fff;
+  }
+  .s-section .sub {
+    position: absolute; left: 320px; top: 893px;
+    font-size: 22px; color: rgba(255,255,255,.75);
+  }
+  .s-section .brand, .s-section .pg { color: rgba(255,255,255,.7); }
+  .s-section .lg-mark { color: #fff; }
+  .s-section .lg-mark .mk { background: #fff; color: var(--deck-accent); }
+
+  /* ---------- SLIDE 04 · BODY 3-COL ---------- */
+  .cols-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; margin-top: 20px; }
+  .q-card {
+    background: var(--deck-bg-card);
+    border: 1px solid var(--deck-border);
+    border-radius: 16px;
+    padding: 36px;
+    display: flex; flex-direction: column; gap: 14px;
+  }
+  .q-card .ic {
+    width: 56px; height: 56px; border-radius: 12px;
+    background: var(--deck-accent); color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 4px;
+  }
+  [data-theme="red"] .q-card .ic { background: #fff; color: #A50034; }
+  .q-card .num {
+    font-family: var(--font-mono); font-size: 14px;
+    color: var(--deck-accent); font-weight: 600; letter-spacing: .08em;
+  }
+  .q-card h3 {
+    font-size: 32px; font-weight: 700; letter-spacing: -.02em;
+    margin: 0; line-height: 1.2; color: var(--deck-fg-1);
+  }
+  .q-card p {
+    font-size: 20px; line-height: 1.55; color: var(--deck-fg-2); margin: 0;
+  }
+
+  /* ---------- SLIDE 05 · PROCESS 5-STEP ---------- */
+  .flow-5 {
+    display: grid; grid-template-columns: repeat(5, 1fr);
+    gap: 0; margin-top: 40px; margin-bottom: 40px;
+  }
+  .flow-step { padding: 0 20px; position: relative; display: flex; flex-direction: column; gap: 14px; }
+  .flow-step:not(:last-child)::after {
+    content: ""; position: absolute; right: -8px; top: 34px;
+    width: 14px; height: 14px;
+    border-right: 3px solid var(--deck-accent);
+    border-top: 3px solid var(--deck-accent);
+    transform: rotate(45deg);
+  }
+  .flow-step .idx {
+    width: 72px; height: 72px; border-radius: 50%;
+    background: var(--deck-bg-card); border: 2px solid var(--deck-accent);
+    color: var(--deck-accent); font-size: 30px; font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .flow-step .tag {
+    font-size: 13px; letter-spacing: .1em; text-transform: uppercase;
+    color: var(--deck-accent); font-weight: 600;
+  }
+  .flow-step h3 {
+    font-size: 24px; font-weight: 700; margin: 0; letter-spacing: -.01em;
+    line-height: 1.25; color: var(--deck-fg-1);
+  }
+  .flow-step p {
+    font-size: 16px; line-height: 1.55; color: var(--deck-fg-2); margin: 0;
+  }
+  .flow-caption {
+    margin-top: 24px; font-size: 18px; color: var(--deck-fg-3); line-height: 1.5;
+    padding: 20px 28px; background: var(--deck-bg-card);
+    border-left: 4px solid var(--deck-accent); border-radius: 0 12px 12px 0;
+  }
+
+  /* ---------- SLIDE 06 · COMPARISON ---------- */
+  .cmp { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; flex: 1; }
+  .cmp-col { border-radius: 20px; padding: 44px; display: flex; flex-direction: column; gap: 18px; }
+  .cmp-col.bad { background: var(--deck-bg-card); border: 1px solid var(--deck-border); }
+  .cmp-col.good { background: var(--deck-bg-dark); color: #fff; border: 0; }
+  [data-theme="dark"] .cmp-col.good { background: #A50034; }
+  [data-theme="red"] .cmp-col.good { background: #fff; color: #A50034; }
+  [data-theme="red"] .cmp-col.bad { background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.2); }
+  .cmp-tag {
+    display: inline-flex; align-items: center; padding: 6px 16px;
+    border-radius: 999px; font-size: 16px; font-weight: 600;
+    letter-spacing: .05em; width: max-content; text-transform: uppercase;
+  }
+  .cmp-col.bad .cmp-tag { background: #EEEEEE; color: #757575; }
+  [data-theme="dark"] .cmp-col.bad .cmp-tag { background: #2A2A2A; color: #BDBDBD; }
+  [data-theme="red"] .cmp-col.bad .cmp-tag { background: rgba(255,255,255,.15); color: #fff; }
+  .cmp-col.good .cmp-tag { background: #E4002B; color: #fff; }
+  [data-theme="red"] .cmp-col.good .cmp-tag { background: #A50034; color: #fff; }
+  .cmp-col h3 {
+    font-size: 42px; font-weight: 700; letter-spacing: -.02em; margin: 0; line-height: 1.15;
+  }
+  .cmp-col.good h3 { color: #fff; }
+  [data-theme="red"] .cmp-col.good h3 { color: #A50034; }
+  .cmp-col ul { list-style: none; padding: 0; margin: 16px 0 0; display: flex; flex-direction: column; gap: 14px; }
+  .cmp-col li { font-size: 22px; line-height: 1.5; display: flex; gap: 14px; align-items: flex-start; }
+  .cmp-col li::before {
+    content: ""; flex: none; width: 8px; height: 8px;
+    border-radius: 50%; margin-top: 12px;
+  }
+  .cmp-col.bad li::before { background: #BDBDBD; }
+  .cmp-col.good li::before { background: #E4002B; }
+  .cmp-col.good li { color: #E5E5E5; }
+  [data-theme="red"] .cmp-col.good li { color: #4A4A4A; }
+
+  /* ---------- SLIDE 07 · STAT ---------- */
+  .stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 40px; margin-top: 60px; margin-bottom: 50px; }
+  .stat {
+    display: flex; flex-direction: column; gap: 12px;
+    padding-left: 24px;
+    border-left: 4px solid var(--deck-accent);
+  }
+  .stat .n {
+    font-size: 140px; font-weight: 700; letter-spacing: -.04em;
+    line-height: .9; color: var(--deck-fg-1); font-variant-numeric: tabular-nums;
+  }
+  .stat .n .u {
+    font-size: 52px; color: var(--deck-accent); margin-left: 6px; font-weight: 600;
+  }
+  .stat .lb { font-size: 24px; font-weight: 600; color: var(--deck-fg-1); line-height: 1.3; }
+  .stat .d { font-size: 18px; color: var(--deck-fg-3); line-height: 1.5; }
+  .note-src { font-size: 15px; color: var(--deck-fg-3); max-width: 1400px; line-height: 1.55; }
+
+  /* ---------- SLIDE 08 · CHECKLIST ---------- */
+  .chk-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px 60px; flex: 1; margin-top: 12px; }
+  .chk { display: flex; align-items: flex-start; gap: 18px; padding: 18px 0; border-bottom: 1px solid var(--deck-border); }
+  .chk .box {
+    flex: none; width: 34px; height: 34px; border-radius: 8px;
+    background: var(--deck-accent); color: #fff;
+    display: flex; align-items: center; justify-content: center;
+    margin-top: 4px;
+  }
+  [data-theme="red"] .chk .box { background: #fff; color: #A50034; }
+  .chk .t { font-size: 24px; font-weight: 600; line-height: 1.3; letter-spacing: -.01em; color: var(--deck-fg-1); }
+  .chk .d { font-size: 17px; color: var(--deck-fg-3); margin-top: 4px; line-height: 1.45; }
+
+  /* ---------- SLIDE 09 · CLOSING ---------- */
+  .s-close {
+    background: var(--deck-bg-dark); color: #fff; padding: 0;
+  }
+  [data-theme="red"] .s-close { background: #7A0026; }
+  .s-close::after {
+    content: ""; position: absolute; inset: 0;
+    background: radial-gradient(circle at 80% 30%, rgba(228,0,43,.35), transparent 60%);
+  }
+  [data-theme="red"] .s-close::after { opacity: .3; }
+  .s-close .inner {
+    position: relative; z-index: 2; padding: 140px 120px;
+    height: 100%; display: flex; flex-direction: column; box-sizing: border-box;
+  }
+  .s-close .eyebrow { color: #E4002B; margin: 0 0 28px; font-size: 26px; }
+  [data-theme="red"] .s-close .eyebrow { color: #fff; }
+  .s-close h1 {
+    font-size: 180px; line-height: .98; color: #fff;
+    margin: 0 0 28px;
+  }
+  .s-close .sub {
+    font-size: 34px; color: #D4D4D4; max-width: 1300px;
+    line-height: 1.45; margin: 0 0 auto; font-weight: 400;
+  }
+  [data-theme="red"] .s-close .sub { color: rgba(255,255,255,.85); }
+  .s-close .foot { display: flex; justify-content: space-between; align-items: flex-end; margin-top: auto; gap: 32px; }
+  .s-close .qa { display: flex; gap: 56px; }
+  .s-close .qa .lb { font-size: 13px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: #E4002B; margin-bottom: 6px; }
+  [data-theme="red"] .s-close .qa .lb { color: #fff; }
+  .s-close .qa .v { font-size: 22px; color: #fff; font-weight: 600; }
+  .s-close .qa .v span { color: #9E9E9E; font-weight: 400; display: block; font-size: 16px; margin-top: 4px; }
+  .s-close .brand { display: flex; align-items: center; gap: 18px; }
+  .s-close .brand .mk {
+    width: 56px; height: 56px; background: #A50034; border-radius: 12px;
+    color: #fff; font-weight: 700; font-size: 22px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .s-close .brand .bname { font-size: 22px; font-weight: 600; color: #fff; }
+  .s-close .brand .bsub { font-size: 16px; color: #9E9E9E; margin-top: 4px; }
+  .s-close .pg { color: #757575; bottom: 80px; right: 80px; }
+
+  /* ---------- TWEAKS PANEL ---------- */
+  #tweaks {
+    position: fixed; right: 20px; bottom: 20px;
+    background: rgba(10,10,10,0.92);
+    color: #fff; border-radius: 14px; padding: 16px 18px;
+    font-size: 13px; z-index: 2147483100;
+    min-width: 240px;
+    display: none;
+    box-shadow: 0 12px 40px rgba(0,0,0,.4);
+    font-family: inherit;
+    backdrop-filter: blur(8px);
+  }
+  #tweaks[data-on] { display: block; }
+  #tweaks h4 {
+    margin: 0 0 12px; font-size: 13px; letter-spacing: .14em;
+    text-transform: uppercase; color: #E4002B; font-weight: 700;
+  }
+  #tweaks .row { display: flex; flex-direction: column; gap: 6px; margin-bottom: 12px; }
+  #tweaks .label { font-size: 11px; color: #9E9E9E; letter-spacing: .06em; text-transform: uppercase; }
+  #tweaks .seg { display: flex; gap: 4px; background: #1F1F1F; border-radius: 8px; padding: 3px; }
+  #tweaks .seg button {
+    flex: 1; appearance: none; background: transparent;
+    border: 0; color: #BDBDBD; padding: 7px 10px;
+    border-radius: 6px; font: inherit; cursor: pointer;
+    transition: background 150ms ease, color 150ms ease;
+  }
+  #tweaks .seg button[data-sel] { background: #A50034; color: #fff; font-weight: 600; }
+  #tweaks .hint { font-size: 11px; color: #757575; margin-top: 2px; }
+</style>
+</head>
+<body data-theme="light">
+
+<deck-stage width="1920" height="1080">
+
+  <!-- 01 · TITLE -->
+  <section class="slide s-title" data-label="Title">
+    <div class="wedge"></div>
+    <div class="brand">
+      <span class="mk">LG</span>
+      <span>LG Display<span class="sub">· HRD</span></span>
+    </div>
+    <div class="eyebrow">2025 전사원 교육 · Module 04</div>
+    <h1>OLED 제조<br>품질 기본</h1>
+    <div class="sub">우리가 만드는 화면, 그 뒤에 있는<br>네 가지 품질 원칙</div>
+    <div class="meta">
+      <div><span class="lab">Session</span><span class="val">2025 · Q2 · Module 04</span></div>
+      <div><span class="lab">Duration</span><span class="val">50분</span></div>
+      <div><span class="lab">Facilitator</span><span class="val">HRD 인재육성실 · 품질혁신팀</span></div>
+    </div>
+    <div class="pg">01 / 09</div>
+  </section>
+
+  <!-- 02 · AGENDA -->
+  <section class="slide" data-label="Agenda">
+    <div class="lg-mark"><span class="mk">LG</span><span>LG Display · HRD</span></div>
+    <div class="eyebrow" style="margin-top:88px">Agenda</div>
+    <h1>오늘 함께 살펴볼<br>네 가지 주제</h1>
+    <div class="agenda-list">
+      <div class="agenda-it active"><span class="n">01</span><span class="t">OLED 품질이 중요한 이유</span><span class="d">10 min · 현재</span></div>
+      <div class="agenda-it"><span class="n">02</span><span class="t">품질의 4가지 차원</span><span class="d">12 min</span></div>
+      <div class="agenda-it"><span class="n">03</span><span class="t">제조 공정과 품질 검사 흐름</span><span class="d">15 min</span></div>
+      <div class="agenda-it"><span class="n">04</span><span class="t">합격 · 불합격 판정 기준</span><span class="d">10 min</span></div>
+      <div class="agenda-it"><span class="n">05</span><span class="t">현장 실천 체크리스트</span><span class="d">3 min</span></div>
+    </div>
+    <div class="footer">2025 Q2 · Module 04 · OLED 제조 품질 기본</div>
+    <div class="pg">02 / 09</div>
+  </section>
+
+  <!-- 03 · SECTION DIVIDER -->
+  <section class="slide s-section" data-label="Section 01">
+    <div class="lg-mark"><span class="mk">LG</span><span>LG Display · HRD</span></div>
+    <div class="num">01</div>
+    <div class="eyebrow">Part 01</div>
+    <h1>품질의 네 가지<br>차원</h1>
+    <div class="rule"></div>
+    <div class="sub">기본 개념 · 약 12분</div>
+    <div class="pg">03 / 09</div>
+  </section>
+
+  <!-- 04 · BODY 3-COL -->
+  <section class="slide" data-label="Quality Dimensions">
+    <div class="lg-mark"><span class="mk">LG</span><span>LG Display · HRD</span></div>
+    <div class="eyebrow" style="margin-top:88px">Part 01 · Key Concepts</div>
+    <h2>품질을 이루는 네 기둥</h2>
+    <p class="lead">OLED 패널의 품질은 한 가지 숫자가 아닌, 네 가지 관점의 합입니다.</p>
+    <div class="cols-3">
+      <div class="q-card">
+        <div class="num">01</div>
+        <div class="ic"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 010 18M3 12h18"/></svg></div>
+        <h3>광학 특성</h3>
+        <p>휘도 · 색재현율 · 균일도. 고객이 눈으로 보는 가장 직접적인 품질.</p>
+      </div>
+      <div class="q-card">
+        <div class="num">02</div>
+        <div class="ic"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M7 20h10M10 16v4M14 16v4"/></svg></div>
+        <h3>결함 수준</h3>
+        <p>휘점 · 암점 · 라인 디펙트의 수와 분포. 검사 장비가 1차 판독.</p>
+      </div>
+      <div class="q-card">
+        <div class="num">03</div>
+        <div class="ic"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L3 7v5c0 5 3.5 8.5 9 10 5.5-1.5 9-5 9-10V7l-9-5z"/></svg></div>
+        <h3>신뢰성</h3>
+        <p>수명 · 번인 저항 · 환경 내구성. 시간이 증명하는 장기 품질.</p>
+      </div>
+    </div>
+    <div class="footer">LG Display · HRD · Module 04</div>
+    <div class="pg">04 / 09</div>
+  </section>
+
+  <!-- 05 · PROCESS 5-STEP -->
+  <section class="slide" data-label="Process">
+    <div class="lg-mark"><span class="mk">LG</span><span>LG Display · HRD</span></div>
+    <div class="eyebrow" style="margin-top:88px">Part 02 · Manufacturing Flow</div>
+    <h2>제조 공정과 품질 검사</h2>
+    <p class="lead" style="font-size:24px;margin-bottom:20px">다섯 단계 공정, 각 단계마다 품질이 다듬어집니다.</p>
+    <div class="flow-5">
+      <div class="flow-step">
+        <div class="idx">1</div><div class="tag">Substrate</div>
+        <h3>기판 준비</h3>
+        <p>유리 · 백플레인. 결함 0 상태로 시작합니다.</p>
+      </div>
+      <div class="flow-step">
+        <div class="idx">2</div><div class="tag">Deposition</div>
+        <h3>유기물 증착</h3>
+        <p>R · G · B 발광층을 진공 환경에서 형성.</p>
+      </div>
+      <div class="flow-step">
+        <div class="idx">3</div><div class="tag">Encapsulation</div>
+        <h3>봉지</h3>
+        <p>수분 · 산소 차단. OLED의 수명을 결정합니다.</p>
+      </div>
+      <div class="flow-step">
+        <div class="idx">4</div><div class="tag">Cell Test</div>
+        <h3>셀 검사</h3>
+        <p>전기 · 광학 특성 자동 측정. 1차 판정.</p>
+      </div>
+      <div class="flow-step">
+        <div class="idx">5</div><div class="tag">Final QA</div>
+        <h3>최종 품질 확인</h3>
+        <p>외관 · 신뢰성 샘플. 출하 가능 여부 결정.</p>
+      </div>
+    </div>
+    <div class="flow-caption">
+      <b style="color:var(--deck-fg-1)">핵심 원칙.</b> 앞 공정의 결함은 뒷 공정에서 줄어들지 않습니다.
+      각 단계에서 "지금 발견하는 것"이 가장 싼 품질입니다.
+    </div>
+    <div class="footer">LG Display · HRD · Module 04</div>
+    <div class="pg">05 / 09</div>
+  </section>
+
+  <!-- 06 · COMPARISON -->
+  <section class="slide" data-label="Pass / Fail">
+    <div class="lg-mark"><span class="mk">LG</span><span>LG Display · HRD</span></div>
+    <div class="eyebrow" style="margin-top:88px">Part 03 · Pass / Fail</div>
+    <h2>판정의 기준,<br>수치로 말합니다</h2>
+    <div class="cmp" style="margin-top:28px">
+      <div class="cmp-col bad">
+        <span class="cmp-tag">Fail · 불합격</span>
+        <h3>"화면이 괜찮아 보임"</h3>
+        <ul>
+          <li>주관적 관찰 · 검사자마다 다른 기준</li>
+          <li>재현 불가능 · 협력사와 공유 어려움</li>
+          <li>공정 개선 신호를 놓치게 됩니다</li>
+        </ul>
+      </div>
+      <div class="cmp-col good">
+        <span class="cmp-tag">Pass · 합격</span>
+        <h3>"휘점 ≤ 2, 암점 ≤ 1, 균일도 ≥ 95%"</h3>
+        <ul>
+          <li>수치 기준 · 측정 장비로 재현 가능</li>
+          <li>전 공정이 동일한 언어를 사용</li>
+          <li>데이터가 다음 개선 과제를 알려줍니다</li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer">LG Display · HRD · Module 04</div>
+    <div class="pg">06 / 09</div>
+  </section>
+
+  <!-- 07 · STAT -->
+  <section class="slide" data-label="Numbers">
+    <div class="lg-mark"><span class="mk">LG</span><span>LG Display · HRD</span></div>
+    <div class="eyebrow" style="margin-top:88px">2024 Quality Snapshot</div>
+    <h2>지난 한 해,<br>우리가 지킨 숫자</h2>
+    <div class="stat-grid">
+      <div class="stat">
+        <div class="n">99.2<span class="u">%</span></div>
+        <div class="lb">출하 합격률</div>
+        <div class="d">전 제품군 평균 · 전년 대비 +0.4%p</div>
+      </div>
+      <div class="stat">
+        <div class="n">0.8<span class="u">ppm</span></div>
+        <div class="lb">고객 불량 지수</div>
+        <div class="d">100만대 당 반품 건수</div>
+      </div>
+      <div class="stat">
+        <div class="n">18<span class="u">%↓</span></div>
+        <div class="lb">재작업 비율</div>
+        <div class="d">초기 검사 강화 효과 · vs 2023</div>
+      </div>
+    </div>
+    <div class="note-src">※ 출처: LG Display 품질혁신팀 2024 연간 리포트 (2025.03 집계). 수치는 교육 목적의 예시이며, 실제 공시 데이터는 IR 발표를 기준으로 합니다.</div>
+    <div class="footer">LG Display · HRD · Module 04</div>
+    <div class="pg">07 / 09</div>
+  </section>
+
+  <!-- 08 · CHECKLIST -->
+  <section class="slide" data-label="Checklist">
+    <div class="lg-mark"><span class="mk">LG</span><span>LG Display · HRD</span></div>
+    <div class="eyebrow" style="margin-top:88px">Takeaways</div>
+    <h2>현장에서, 오늘부터</h2>
+    <p class="lead" style="font-size:24px">여러분의 자리에서 바로 적용할 수 있는 여섯 가지입니다.</p>
+    <div class="chk-grid">
+      <div class="chk"><div class="box"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></div><div><div class="t">이상 징후는 즉시 정지 · 보고</div><div class="d">"한 장 더" 대신 "지금 확인"을 선택합니다</div></div></div>
+      <div class="chk"><div class="box"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></div><div><div class="t">기준을 수치로 말하기</div><div class="d">"괜찮다"가 아닌 측정값으로 소통합니다</div></div></div>
+      <div class="chk"><div class="box"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></div><div><div class="t">앞 공정 결함은 즉시 피드백</div><div class="d">다음 근무조로 넘기지 않습니다</div></div></div>
+      <div class="chk"><div class="box"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></div><div><div class="t">검사 장비 일일 점검 기록</div><div class="d">측정값의 신뢰는 장비 신뢰에서 시작됩니다</div></div></div>
+      <div class="chk"><div class="box"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></div><div><div class="t">청정도 · 정전기 대책 준수</div><div class="d">OLED는 미세 환경에 가장 민감합니다</div></div></div>
+      <div class="chk"><div class="box"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></div><div><div class="t">좋은 품질 사례도 공유</div><div class="d">문제만큼이나 좋은 신호도 기록합니다</div></div></div>
+    </div>
+    <div class="footer">LG Display · HRD · Module 04</div>
+    <div class="pg">08 / 09</div>
+  </section>
+
+  <!-- 09 · CLOSING -->
+  <section class="slide s-close" data-label="Closing">
+    <div class="inner">
+      <div class="eyebrow">Thank you</div>
+      <h1>품질은<br>우리 모두의 일</h1>
+      <div class="sub">여러분의 한 번의 확인이, 고객이 보는 완벽한 화면을 만듭니다.<br>오늘 배운 원칙 중 하나만, 내일의 현장에서 실천해 주세요.</div>
+      <div class="foot">
+        <div class="brand">
+          <span class="mk">LG</span>
+          <div><div class="bname">LG Display · HRD</div><div class="bsub">인재육성실 · 품질혁신팀 · 2025</div></div>
+        </div>
+        <div class="qa">
+          <div><div class="lb">Q&amp;A</div><div class="v">hrd-quality@lgdisplay.com</div></div>
+          <div><div class="lb">Portal</div><div class="v">edu.lgdisplay.com<span>SSO 로그인</span></div></div>
+          <div><div class="lb">Next</div><div class="v">Module 05<span>2025.06.09</span></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="pg">09 / 09</div>
+  </section>
+
+</deck-stage>
+
+<!-- TWEAKS PANEL -->
+<div id="tweaks" role="dialog" aria-label="Tweaks">
+  <h4>Tweaks</h4>
+  <div class="row">
+    <span class="label">Theme</span>
+    <div class="seg" data-key="theme">
+      <button data-v="light">Light</button>
+      <button data-v="dark">Dark</button>
+      <button data-v="red">LG Red</button>
+    </div>
+    <div class="hint">Light = 기본 교육용 · Dark = 강의장 · Red = 섹션 오프닝</div>
+  </div>
+</div>
+
+<script type="application/json" id="speaker-notes">[
+  "안녕하십니까. 2025년 2분기 전사원 교육 모듈 04, 'OLED 제조 품질 기본' 시간입니다. 오늘은 우리가 매일 만드는 화면 뒤에 있는 네 가지 품질 원칙을 약 50분에 걸쳐 함께 살펴보겠습니다. 현장의 언어로, 여러분의 자리에서 바로 실천할 수 있는 내용으로 구성했습니다.",
+  "오늘 다룰 주제는 다섯 가지입니다. 먼저 OLED 품질이 왜 중요한지, 그 다음 품질을 이루는 네 가지 차원, 이어서 제조 공정과 품질 검사의 흐름, 그리고 합격과 불합격을 가르는 기준, 마지막으로 현장 실천 체크리스트 순으로 진행하겠습니다.",
+  "첫 번째 섹션입니다. 품질을 이루는 네 가지 차원을 먼저 개념으로 정리하겠습니다.",
+  "OLED 패널의 품질은 하나의 숫자가 아닙니다. 광학 특성, 결함 수준, 신뢰성, 그리고 공정 능력이 함께 어우러져야 '좋은 패널'이 됩니다. 이 네 가지 중 하나만 뒤처져도 최종 품질은 그 낮은 수준에 맞춰집니다.",
+  "두 번째 섹션입니다. 실제 제조 공정은 기판 준비부터 최종 품질 확인까지 다섯 단계로 나뉩니다. 핵심 원칙은 단 하나, '앞 공정의 결함은 뒷 공정에서 줄어들지 않는다'입니다. 지금 발견하는 것이 가장 비용이 적게 드는 품질입니다.",
+  "세 번째 섹션입니다. 판정은 주관적 표현이 아닌 수치로 이루어져야 합니다. '화면이 괜찮아 보임'이 아니라 '휘점 2개 이하, 암점 1개 이하, 균일도 95퍼센트 이상' 같은 수치가 모두가 같은 언어로 품질을 이야기할 수 있게 해줍니다.",
+  "2024년 한 해 동안 우리가 지킨 숫자를 보시겠습니다. 출하 합격률, 고객 불량 지수, 재작업 비율 개선 정도입니다. 이 숫자들은 여러분 한 분 한 분의 확인이 쌓여 만든 결과입니다.",
+  "마지막 섹션입니다. 오늘부터 현장에서 바로 실천할 수 있는 여섯 가지를 정리했습니다. 한 번에 여섯 가지 모두가 아니라, 여러분 자리에서 가장 가까운 한 가지부터 시작해 보시기 바랍니다.",
+  "오늘도 참여해 주셔서 고맙습니다. 품질은 특정 부서의 일이 아닌, 우리 모두의 일입니다. 질문이나 피드백은 언제든 품질혁신팀 메일로 보내주시기 바랍니다. 다음 모듈 05는 6월 9일에 이어집니다."
+]</script>
+
+<script src="mock_deck/deck-stage.js"></script>
+<script>
+  // ---------- TWEAKS ----------
+  const TWEAK_DEFAULTS = { "theme": "light" };
+
+  let current = { ...TWEAK_DEFAULTS };
+  const panel = document.getElementById('tweaks');
+
+  function apply(state) {
+    document.body.setAttribute('data-theme', state.theme);
+    panel.querySelectorAll('.seg').forEach(seg => {
+      const key = seg.dataset.key;
+      seg.querySelectorAll('button').forEach(b => {
+        if (b.dataset.v === state[key]) b.setAttribute('data-sel', '');
+        else b.removeAttribute('data-sel');
+      });
+    });
+  }
+
+  panel.querySelectorAll('.seg').forEach(seg => {
+    const key = seg.dataset.key;
+    seg.querySelectorAll('button').forEach(b => {
+      b.addEventListener('click', () => {
+        current[key] = b.dataset.v;
+        apply(current);
+        try {
+          window.parent.postMessage({ type: '__edit_mode_set_keys', edits: { [key]: b.dataset.v } }, '*');
+        } catch (e) {}
+      });
+    });
+  });
+
+  window.addEventListener('message', (e) => {
+    const d = e.data || {};
+    if (d.type === '__activate_edit_mode') panel.setAttribute('data-on', '');
+    if (d.type === '__deactivate_edit_mode') panel.removeAttribute('data-on');
+  });
+  try { window.parent.postMessage({ type: '__edit_mode_available' }, '*'); } catch (e) {}
+
+  // Also allow T key to toggle tweaks panel for standalone use
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 't' || e.key === 'T') {
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+      if (panel.hasAttribute('data-on')) panel.removeAttribute('data-on');
+      else panel.setAttribute('data-on', '');
+    }
+  });
+
+  apply(current);
+</script>
+</body>
+</html>

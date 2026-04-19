@@ -42,7 +42,7 @@ const Slider = forwardRef<HTMLInputElement, SliderProps>(
               "[&::-webkit-slider-thumb]:rounded-full",
               "[&::-webkit-slider-thumb]:bg-[hsl(var(--accent))]",
               "[&::-webkit-slider-thumb]:shadow-glow-sm",
-              "[&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-[hsl(226_36%_5%/0.8)]",
+              "[&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-[hsl(0_0%_100%/0.8)]",
               "[&::-webkit-slider-thumb]:cursor-grab [&::-webkit-slider-thumb]:active:cursor-grabbing",
               "[&::-webkit-slider-thumb]:transition-transform [&::-webkit-slider-thumb]:duration-100",
               "[&::-webkit-slider-thumb]:hover:scale-125 [&::-webkit-slider-thumb]:active:scale-110",

@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>LG Display HRD Design System — README</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.css">
+<link rel="stylesheet" href="colors_and_type.css">
+<style>
+  body {
+    padding: 48px 56px;
+    max-width: 900px;
+    font-family: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont,
+                 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic',
+                 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    color: #0A0A0A;
+    background: #FFFFFF;
+    line-height: 1.6;
+  }
+  .eyebrow { font-size: 13px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: #A50034; margin-bottom: 12px; }
+  h1.title { font-size: 44px; font-weight: 700; letter-spacing: -.02em; margin: 0 0 8px; }
+  .lede { font-size: 17px; color: #4A4A4A; line-height: 1.6; max-width: 680px; margin: 0 0 28px; }
+  h2 { font-size: 22px; margin: 40px 0 14px; padding-top: 20px; border-top: 1px solid #E5E5E5; }
+  h3 { font-size: 16px; font-weight: 600; margin: 20px 0 8px; color: #0A0A0A; }
+  p { font-size: 15px; line-height: 1.65; color: #0A0A0A; margin: 0 0 12px; }
+  ul { margin: 0 0 14px; padding-left: 22px; }
+  li { font-size: 15px; line-height: 1.7; color: #0A0A0A; }
+  code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 13px; background: #F5F5F5; padding: 2px 6px; border-radius: 4px; }
+  .note { background: #FEF5F7; border-left: 3px solid #A50034; padding: 14px 18px; border-radius: 0 8px 8px 0; font-size: 14px; color: #0A0A0A; margin: 12px 0 20px; line-height: 1.6; }
+  table { width: 100%; border-collapse: collapse; margin: 10px 0 18px; font-size: 14px; }
+  th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid #E5E5E5; vertical-align: top; }
+  th { font-weight: 600; color: #4A4A4A; background: #FAFAFA; }
+  td code { font-size: 12px; }
+  .swatches { display: flex; gap: 10px; margin: 10px 0 18px; flex-wrap: wrap; }
+  .sw { flex: 1 1 140px; border-radius: 8px; overflow: hidden; border: 1px solid #E5E5E5; }
+  .sw .chip { height: 54px; display: flex; align-items: flex-end; padding: 8px 10px; color: #fff; font-weight: 600; font-size: 12px; }
+  .sw .meta { padding: 6px 10px; font-size: 11px; color: #757575; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+  .quote { font-size: 14px; background: #FAFAFA; padding: 14px 18px; border-radius: 8px; margin: 10px 0; line-height: 1.7; }
+  .bad { color: #A50034; font-weight: 500; }
+</style>
+</head>
+<body>
+
+<div class="eyebrow">LG Display · HRD</div>
+<h1 class="title">Corporate Training Design System</h1>
+<p class="lede">
+  A typography, color, layout, and component system for LG Display's company-wide
+  employee training (HRD) slides. Built on the 2023 LG Corporate Identity refresh.
+</p>
+
+<div class="note">
+  <b>Context note.</b> No official brand guide (LG CI Manual, Brand Communication Guidelines)
+  or existing HRD slide deck was provided. This system is reconstructed from public LG
+  and LG Display brand materials. If the internal guide exists, it supersedes this system.
+</div>
+
+<h2>Sources</h2>
+<ul>
+  <li><b>User brief</b> — "LG Display HRD, company-wide training slide design system"</li>
+  <li><b>Public references</b> — lg.com/global/our-brand, LG Newsroom (2023 Rebrand), LG Chem CI</li>
+  <li><b>Reference library</b> — <code>design-md/</code> (40+ third-party systems, structural reference only, not LG material)</li>
+</ul>
+
+<h2>Index</h2>
+<table>
+  <thead><tr><th style="width:28%">File / Folder</th><th>Purpose</th></tr></thead>
+  <tbody>
+    <tr><td><code>README.html</code></td><td>This document — overview, content fundamentals, visual foundations, iconography</td></tr>
+    <tr><td><code>colors_and_type.css</code></td><td>CSS variables (color, type, spacing, shadow, radius)</td></tr>
+    <tr><td><code>assets/</code></td><td>Logo, illustrations, background, icons</td></tr>
+    <tr><td><code>slides/</code></td><td>11 sample slides (Title, Section, Agenda, Body, Comparison ...)</td></tr>
+    <tr><td><code>mock_deck/</code></td><td>deck-stage web component for slide presentation</td></tr>
+    <tr><td><code>OLED Quality Training.html</code></td><td>Complete 9-slide example training deck</td></tr>
+  </tbody>
+</table>
+
+<h2>Content Fundamentals</h2>
+<p>Training slides hold a <b>"warm authority"</b> tone. The system reflects LG's 2023 rebrand values:
+"Human-centered Innovation" and "Warmth to Power a Smile."</p>
+
+<h3>Principles</h3>
+<ul>
+  <li><b>Polite Korean verb endings</b> (~합니다 / ~입니다) by default. All-hands audience, respectful register</li>
+  <li><b>Address as "여러분"</b> ("everyone"), not "당신/you" — evokes collective learning</li>
+  <li><b>Arabic numerals with units</b>: 3 ways, 2025, 12 months. Sino-Korean numerals only on cover / in quotes</li>
+  <li><b>Code-switch only for proper nouns</b> — LG, OLED, HRD, AI. Common English words should be written in Hangul</li>
+  <li><b>Titles are noun phrases; body is complete sentences.</b> No periods in titles</li>
+  <li><b>CTAs are verbs</b> — Start, Learn more, Contact. Avoid exclamation marks</li>
+  <li><b>No emoji.</b> Use icons instead</li>
+</ul>
+
+<h3>Good copy example</h3>
+<div class="quote">
+  <b>Title</b>: 2025 Core-Values Internalization (2025년 핵심가치 내재화)<br>
+  <b>Subtitle</b>: 3 behavior principles that change your day-to-day<br>
+  <b>Body</b>: The way we work shapes customer experience. This session walks through three concrete behaviors with on-the-ground examples.
+</div>
+
+<h3>Copy to avoid</h3>
+<ul>
+  <li class="bad">"Level UP your career! 🚀" — mixed English, emoji, informal</li>
+  <li class="bad">"7 tips you NEED to know!!" — hype, exclamation marks</li>
+  <li class="bad">"Next Level Leadership" — literal English title in a Korean context</li>
+</ul>
+
+<h2>Visual Foundations</h2>
+
+<h3>Color</h3>
+<div class="swatches">
+  <div class="sw"><div class="chip" style="background:#A50034">LG Red</div><div class="meta">#A50034</div></div>
+  <div class="sw"><div class="chip" style="background:#E4002B">Active Red</div><div class="meta">#E4002B</div></div>
+  <div class="sw"><div class="chip" style="background:#7A0026">Deep Red</div><div class="meta">#7A0026</div></div>
+  <div class="sw"><div class="chip" style="background:#6B6B6B">LG Grey</div><div class="meta">#6B6B6B</div></div>
+  <div class="sw"><div class="chip" style="background:#0A0A0A">Near Black</div><div class="meta">#0A0A0A</div></div>
+</div>
+<ul>
+  <li><b>LG Red</b> — cap at roughly 10% of any screen. Never as a wide fill</li>
+  <li><b>Active Red</b> — digital accent: interactive elements, chart highlights, Live badges</li>
+  <li><b>Neutral scale</b> #FAFAFA → #0A0A0A, 8 steps. Enough for all backgrounds, cards, and text</li>
+  <li><b>Semantic</b> — Success #2E7D32, Warning #ED6C02, Info #1565C0, Error = Active Red</li>
+</ul>
+
+<h3>Typography</h3>
+<ul>
+  <li>UI / body: <b>Pretendard Variable</b> (LG Smart substitute) — balanced Hangul, Latin, and numerals</li>
+  <li>Scale: Display 72 / H1 48 / H2 36 / H3 28 / Body-L 22 / Body 18 / Caption 14</li>
+  <li>Minimum 24px on 16:9 slides</li>
+  <li>Line-height — titles 1.15, body 1.55, long-form 1.7</li>
+  <li>Letter-spacing — Hangul body <code>-0.01em</code>, large titles <code>-0.03em</code></li>
+</ul>
+
+<h3>Backgrounds</h3>
+<ul>
+  <li>Default — pure white <code>#FFFFFF</code> or off-white <code>#FAFAFA</code></li>
+  <li>Section dividers — full-bleed LG Red or near-black, white typography</li>
+  <li>Allowed gradient: Active Red → LG Red diagonal only (cover / section dividers). No purple or blue gradients</li>
+  <li>Pattern: <code>assets/pattern-dotgrid.svg</code> at 5% opacity maximum</li>
+</ul>
+
+<h3>Motion</h3>
+<ul>
+  <li>Easing: <code>cubic-bezier(0.2, 0.8, 0.2, 1)</code> — quick start, soft settle</li>
+  <li>Duration: 150ms (buttons) / 250ms (cards) / 400ms (slide transitions)</li>
+  <li>All transitions = fade + translate ≤ 8px. No bounce, rotation, or scale &gt; 1.05</li>
+</ul>
+
+<h3>States</h3>
+<ul>
+  <li><b>Hover</b> — background 5% darker, or text underline</li>
+  <li><b>Press</b> — <code>transform: scale(0.98)</code> + background 10% darker</li>
+  <li><b>Focus</b> — 2px Active Red outline + 2px white inner ring, 2px offset</li>
+  <li><b>Disabled</b> — 40% opacity, cursor not-allowed</li>
+</ul>
+
+<h3>Shape &amp; Elevation</h3>
+<ul>
+  <li>Radius: XS 4 / S 8 / M 12 / L 16 / XL 24 / Pill 999. Slide cards default to L</li>
+  <li>Border: 1px <code>--border-subtle</code>; 2px for emphasis</li>
+  <li>4 shadow steps (xs · sm · md · lg), all neutral gray. No colored shadows</li>
+</ul>
+
+<h3>Layout — 16:9</h3>
+<ul>
+  <li>Safe area: 1920 × 1080, 80px margin → inner content 1760 × 920</li>
+  <li>Grid: 12 columns, 32px gutter</li>
+  <li>Fixed elements — LG logo bottom-left (32px tall), page number bottom-right <code>N / Total</code></li>
+  <li>No glassmorphism or backdrop-blur (clarity first for training material)</li>
+</ul>
+
+<h2>Iconography</h2>
+<ul>
+  <li><b>Lucide Icons</b> (CDN, MIT) as a substitute — 1.5 stroke, rounded line caps</li>
+  <li>Sizes: 20 / 24 / 32 / 48. Body on slides: 28–32</li>
+  <li>Color inherits <code>currentColor</code>, single-tone only. No multi-color icons</li>
+  <li>Brand symbol: <code>assets/lg-logo.svg</code> is a symbolic reproduction. Replace with the official vector</li>
+  <li>No emoji or decorative Unicode. Only math symbols (× ÷ ≤ ≥) and check (✓) are exempt</li>
+</ul>
+
+<h2>Tweakable Knobs</h2>
+<ul>
+  <li><code>theme</code> — light / dark / lg-red</li>
+  <li><code>density</code> — comfortable / compact</li>
+  <li><code>accent</code> — LG Red / LG Active Red</li>
+  <li><code>logoPosition</code> — bottom-left / top-left / hidden</li>
+</ul>
+
+<h2>Known Substitutions &amp; Asks</h2>
+<ol>
+  <li><b>Font</b> — Pretendard stands in for LG Smart. Drop official licensed files into <code>fonts/</code> and swap <code>--font-sans</code></li>
+  <li><b>Official logo</b> — <code>assets/lg-logo.svg</code> is a placeholder; replace with the official vector</li>
+  <li><b>Official icon set</b> — Lucide stands in; share the internal LG icon library when available</li>
+  <li><b>Existing HRD template</b> — none was provided. Share a PPTX and this system will be matched to it exactly</li>
+</ol>
+
+</body>
+</html>

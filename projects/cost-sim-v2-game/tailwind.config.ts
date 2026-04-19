@@ -10,7 +10,7 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        // Primary surface scale — deep navy
+        // Primary surface scale — LG neutral gray
         surface: {
           50:  "hsl(var(--surface-50) / <alpha-value>)",
           100: "hsl(var(--surface-100) / <alpha-value>)",
@@ -21,7 +21,7 @@ const config: Config = {
           900: "hsl(var(--surface-900) / <alpha-value>)",
           950: "hsl(var(--surface-950) / <alpha-value>)",
         },
-        // Accent — electric cyan
+        // Accent — LG Red
         accent: {
           DEFAULT: "hsl(var(--accent) / <alpha-value>)",
           dim:     "hsl(var(--accent-dim) / <alpha-value>)",
@@ -31,23 +31,29 @@ const config: Config = {
         success: "hsl(var(--success) / <alpha-value>)",
         warn:    "hsl(var(--warn) / <alpha-value>)",
         danger:  "hsl(var(--danger) / <alpha-value>)",
+        // LG brand colors (direct hex for one-off use)
+        "lg-red":     "#A50034",
+        "lg-active":  "#E4002B",
+        "lg-deep":    "#7A0026",
+        "lg-grey":    "#6B6B6B",
         // Legacy compat — keep tree.* working
         tree: {
-          base:   "#0a0f1e",
-          accent: "#06b6d4",
-          warn:   "#f59e0b",
-          good:   "#10b981",
-          bad:    "#ef4444"
+          base:   "#FAFAFA",
+          accent: "#A50034",
+          warn:   "#ED6C02",
+          good:   "#2E7D32",
+          bad:    "#E4002B"
         }
       },
       fontFamily: {
-        sans: ["var(--font-pretendard)", "Pretendard", "-apple-system", "BlinkMacSystemFont", "system-ui", "sans-serif"],
-        mono: ["ui-monospace", "SFMono-Regular", "Menlo", "monospace"]
+        sans: ["var(--font-pretendard)", "Pretendard", "-apple-system", "BlinkMacSystemFont", "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", "system-ui", "sans-serif"],
+        mono: ["ui-monospace", "SFMono-Regular", "Menlo", "Consolas", "monospace"]
       },
       borderRadius: {
+        /* LG HRD shape scale: XS 4 / S 8 / M 12 / L 16 / XL 24 / Pill 999 */
         xl:  "16px",
         "2xl": "20px",
-        "3xl": "28px",
+        "3xl": "24px",
       },
       spacing: {
         "safe-top":    "env(safe-area-inset-top)",
@@ -56,11 +62,13 @@ const config: Config = {
         "safe-right":  "env(safe-area-inset-right)",
       },
       boxShadow: {
-        card:     "0 1px 3px 0 rgb(0 0 0 / 0.4), 0 1px 2px -1px rgb(0 0 0 / 0.3)",
-        elevated: "0 4px 16px 0 rgb(0 0 0 / 0.5), 0 2px 4px -1px rgb(0 0 0 / 0.4)",
-        glow:     "0 0 20px 0 hsl(var(--accent) / 0.25)",
-        "glow-sm":"0 0 8px 0 hsl(var(--accent) / 0.35)",
-        inner:    "inset 0 1px 0 0 rgb(255 255 255 / 0.06)",
+        /* Neutral gray shadows only — no colored shadows per LG HRD spec */
+        card:     "0 1px 2px rgba(10,10,10,0.04)",
+        elevated: "0 8px 24px rgba(10,10,10,0.08)",
+        glow:     "0 0 12px 0 hsl(var(--accent) / 0.15)",
+        "glow-sm":"0 0 6px 0 hsl(var(--accent) / 0.2)",
+        inner:    "inset 0 1px 0 0 rgb(255 255 255 / 0.04)",
+        lg:       "0 24px 48px rgba(10,10,10,0.10)",
       },
       keyframes: {
         "fade-in": {
@@ -68,7 +76,7 @@ const config: Config = {
           to:   { opacity: "1" }
         },
         "slide-up": {
-          from: { opacity: "0", transform: "translateY(12px)" },
+          from: { opacity: "0", transform: "translateY(8px)" },
           to:   { opacity: "1", transform: "translateY(0)" }
         },
         "slide-down": {
@@ -80,14 +88,15 @@ const config: Config = {
           "50%":      { opacity: "0.5" }
         },
         "glow-pulse": {
-          "0%, 100%": { boxShadow: "0 0 8px 0 hsl(var(--accent) / 0.2)" },
-          "50%":      { boxShadow: "0 0 20px 4px hsl(var(--accent) / 0.5)" }
+          "0%, 100%": { boxShadow: "0 0 6px 0 hsl(var(--accent) / 0.15)" },
+          "50%":      { boxShadow: "0 0 14px 2px hsl(var(--accent) / 0.3)" }
         }
       },
       animation: {
-        "fade-in":    "fade-in 0.25s ease-out",
-        "slide-up":   "slide-up 0.3s cubic-bezier(0.16, 1, 0.3, 1)",
-        "slide-down": "slide-down 0.2s ease-out",
+        /* LG HRD motion: cubic-bezier(0.2, 0.8, 0.2, 1) — quick start, soft settle */
+        "fade-in":    "fade-in 0.25s cubic-bezier(0.2, 0.8, 0.2, 1)",
+        "slide-up":   "slide-up 0.25s cubic-bezier(0.2, 0.8, 0.2, 1)",
+        "slide-down": "slide-down 0.25s cubic-bezier(0.2, 0.8, 0.2, 1)",
         "glow-pulse": "glow-pulse 2s ease-in-out infinite"
       }
     }

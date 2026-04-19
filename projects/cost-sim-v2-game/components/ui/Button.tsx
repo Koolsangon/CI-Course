@@ -10,13 +10,13 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 
 const variantClasses: Record<ButtonVariant, string> = {
   primary:
-    "bg-[hsl(var(--fg))] text-[hsl(var(--bg))] hover:opacity-90 active:scale-[0.97]",
+    "bg-[hsl(var(--fg))] text-[hsl(var(--bg))] hover:opacity-90 active:scale-[0.98]",
   accent:
-    "bg-[hsl(var(--accent))] text-[hsl(226_36%_5%)] hover:brightness-110 active:scale-[0.97] shadow-glow-sm",
+    "bg-[hsl(var(--accent))] text-white hover:bg-[hsl(var(--accent-dim))] active:scale-[0.98]",
   secondary:
-    "bg-[hsl(var(--surface-200))] text-[hsl(var(--fg))] border border-[hsl(var(--border))] hover:bg-[hsl(var(--surface-300)/0.5)] active:scale-[0.97]",
+    "bg-[hsl(var(--surface-200))] text-[hsl(var(--fg))] border border-[hsl(var(--border))] hover:bg-[hsl(var(--surface-300)/0.5)] active:scale-[0.98]",
   ghost:
-    "bg-transparent text-[hsl(var(--muted))] hover:text-[hsl(var(--fg))] hover:bg-[hsl(var(--surface-200)/0.5)] active:scale-[0.97]"
+    "bg-transparent text-[hsl(var(--muted))] hover:text-[hsl(var(--fg))] hover:bg-[hsl(var(--surface-200)/0.5)] active:scale-[0.98]"
 };
 
 const sizeClasses: Record<ButtonSize, string> = {

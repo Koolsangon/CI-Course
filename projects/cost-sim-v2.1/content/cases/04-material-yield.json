@@ -1,0 +1,63 @@
+{
+  "id": "04-material-yield",
+  "title": "재료비 절감 vs 수율 하락",
+  "scenario": "원재료 업체를 바꿔 Module BOM을 5% 절감했지만, 그 대가로 Module 수율이 4%p 떨어졌습니다.",
+  "adapter": "material-yield",
+  "reference": {
+    "price": 200,
+    "yields": { "tft": 0.99, "cf": 1.0, "cell": 0.95, "module": 0.972 },
+    "bom": { "tft": 6.0, "cf": 5.0, "cell": 1.5, "module": 75.0 },
+    "processing": {
+      "panel": { "labor": 21.3, "expense": 11.5, "depreciation": 16.2 },
+      "module": { "labor": 8.7, "expense": 5.3, "depreciation": 7.5 }
+    },
+    "sga": { "direct_dev": 4.7, "transport": 0.3, "business_unit": 16.0, "operation": 1.2, "corporate_oh": 6.2 },
+    "loading": 0.70
+  },
+  "variables": [
+    {
+      "key": "material_change_pct",
+      "ko": "재료비 변화율",
+      "min": -0.20,
+      "max": 0.20,
+      "step": 0.005,
+      "default": -0.05,
+      "unit": "%",
+      "format": "percent_delta",
+      "description": "Module BOM 변경 → Module 소요재료비 → 소요재료비 합계 → COM → COP → 영업이익"
+    },
+    {
+      "key": "module_yield_change",
+      "ko": "Module 수율 변화",
+      "min": -0.10,
+      "max": 0.05,
+      "step": 0.005,
+      "default": -0.04,
+      "unit": "%p",
+      "format": "percent_point",
+      "description": "Module 수율 변경 → 누적수율 → 소요재료비(BOM÷수율) → COM → COP → 영업이익"
+    }
+  ],
+  "expected": {
+    "bom_module": 71.25,
+    "module_yield": 0.932,
+    "material_cost": 90.6
+  },
+  "phases": {
+    "hook": "재료비 5% 절감. 좋은 거래처럼 보이지만, 수율이 떨어진다면?",
+    "discover": "두 슬라이더를 동시에 움직여 소요재료비가 어떻게 변하는지 확인해보세요.",
+    "apply": {
+      "question": "재료비 -5% + 수율 -4%p일 때, 새 소요재료비는 약 얼마인가요?",
+      "answer_key": 90.6,
+      "tolerance": 0.3,
+      "hint": "소요재료비 = Σ(BOM/누적수율). 수율이 줄면 분모가 줄어 결과는 커집니다."
+    },
+    "reflect": "절감 효과가 거의 사라진 이유를 한 문장으로 설명하세요."
+  },
+  "coach": {
+    "hook": "절감과 손실이 상쇄되는 트레이드오프, 어느 쪽이 이길까요?",
+    "discover": "두 효과가 서로 반대 방향이라는 점을 트리에서 확인해보세요.",
+    "apply": "BOM을 먼저 적용한 뒤 수율 변화를 적용해보세요. 순서는 결과에 영향을 주지 않습니다.",
+    "reflect": "한 문장: '절감은 분자를 ___하고, 수율 하락은 분모를 ___한다.'"
+  }
+}

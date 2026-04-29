@@ -1,0 +1,47 @@
+{
+  "id": "05-cuts-mask",
+  "title": "면취수 · Mask 복합 변화",
+  "scenario": "원판 설계 변경으로 면취수가 25 → 29로 늘었습니다. 그런데 정밀도 때문에 Mask가 6 → 7로 늘어납니다.",
+  "adapter": "cuts-mask",
+  "reference": {
+    "price": 200,
+    "yields": { "tft": 0.99, "cf": 1.0, "cell": 0.95, "module": 0.972 },
+    "bom": { "tft": 6.0, "cf": 5.0, "cell": 1.5, "module": 75.0 },
+    "processing": {
+      "panel": { "labor": 21.3, "expense": 11.5, "depreciation": 16.2 },
+      "module": { "labor": 8.7, "expense": 5.3, "depreciation": 7.5 }
+    },
+    "sga": { "direct_dev": 4.7, "transport": 0.3, "business_unit": 16.0, "operation": 1.2, "corporate_oh": 6.2 },
+    "loading": 0.70
+  },
+  "variables": [
+    { "key": "old_cuts", "ko": "기준 면취수", "min": 10, "max": 40, "step": 1, "default": 25, "unit": "개", "format": "int", "description": "기준 면취수 — 비교 기준점" },
+    { "key": "new_cuts", "ko": "새 면취수", "min": 10, "max": 40, "step": 1, "default": 29, "unit": "개", "format": "int", "description": "면취수 변경 → TFT·CF·Cell BOM(기준÷신규 비율) + Panel 가공비 → COM → COP → 영업이익" },
+    { "key": "old_mask", "ko": "기준 Mask", "min": 3, "max": 10, "step": 1, "default": 6, "unit": "장", "format": "int", "description": "기준 Mask — 비교 기준점" },
+    { "key": "new_mask", "ko": "새 Mask", "min": 3, "max": 10, "step": 1, "default": 7, "unit": "장", "format": "int", "description": "Mask 변경 → Panel 가공비(노무비·경비·감상비) × (신규÷기준) → COM → COP → 영업이익" }
+  ],
+  "expected": {
+    "tft_bom_cuts": 5.172,
+    "cf_bom_cuts": 4.310,
+    "cell_bom_cuts": 1.293,
+    "panel_labor_cuts_only": 18.36,
+    "panel_labor_cuts_and_mask": 21.42
+  },
+  "phases": {
+    "hook": "면취수가 늘면 원가는 내려갑니다. 그런데 Mask가 함께 늘면?",
+    "discover": "슬라이더로 면취수만 먼저 조정해 보고, 그 다음 Mask를 바꿔보세요.",
+    "apply": {
+      "question": "면취수 25→29, Mask 6→7일 때 Panel 노무비는 약 얼마인가요?",
+      "answer_key": 21.42,
+      "tolerance": 0.1,
+      "hint": "21.3 × (25/29) × (7/6) = ?"
+    },
+    "reflect": "면취수 효과를 Mask가 얼마나 상쇄했는지 요약해보세요."
+  },
+  "coach": {
+    "hook": "복합 변수의 상호작용 — 어느 효과가 더 크게 작용할까요?",
+    "discover": "두 변수를 따로 분리해서 확인해보면 계산이 쉬워집니다.",
+    "apply": "두 비율을 곱하면 됩니다. cuts_ratio × mask_ratio.",
+    "reflect": "한 문장: '면취수 증가는 원가를 ___하고, Mask 증가는 ___한다.'"
+  }
+}

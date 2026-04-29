@@ -1,0 +1,184 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ─── LG Display HRD Design System — Color Tokens ──────────────────────── */
+/* HSL values only (no hsl() wrapper) for Tailwind alpha channel support.   */
+/* Based on 2023 LG Corporate Identity refresh.                             */
+:root {
+  /* Font — Pretendard Variable (LG Smart substitute) */
+  --font-pretendard: 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', system-ui, sans-serif;
+
+  /* Surface scale — neutral (light mode, default) */
+  --surface-50:  0 0% 98%;     /* #FAFAFA */
+  --surface-100: 0 0% 96%;     /* #F5F5F5 */
+  --surface-200: 0 0% 93%;     /* #EEEEEE */
+  --surface-300: 0 0% 90%;     /* #E5E5E5 */
+  --surface-400: 0 0% 74%;     /* #BDBDBD */
+  --surface-800: 0 0% 16%;     /* #2A2A2A */
+  --surface-900: 0 0% 4%;      /* #0A0A0A */
+  --surface-950: 0 0% 2%;      /* #050505 */
+
+  /* Accent — LG Red */
+  --accent:     345 100% 32%;  /* #A50034 — LG Red heritage */
+  --accent-dim: 345 100% 24%;  /* #7A0026 — Deep Red / pressed */
+  --accent-glow:349 100% 45%;  /* #E4002B — Active Red / digital */
+
+  /* Semantic */
+  --success: 123 46% 34%;      /* #2E7D32 */
+  --warn:    30 98% 47%;       /* #ED6C02 */
+  --danger:  349 100% 45%;     /* #E4002B — Active Red */
+
+  /* Base page */
+  --bg:     0 0% 100%;         /* #FFFFFF */
+  --fg:     0 0% 4%;           /* #0A0A0A */
+  --muted:  0 0% 46%;          /* #757575 */
+  --border: 0 0% 90%;          /* #E5E5E5 */
+
+  /* LG brand extras */
+  --lg-grey: 0 0% 42%;         /* #6B6B6B */
+
+  color-scheme: light dark;
+}
+
+/* Dark mode overrides — applied via .dark class on <html> */
+.dark {
+  --surface-50:  0 0% 16%;     /* #2A2A2A */
+  --surface-100: 0 0% 10%;     /* #1A1A1A */
+  --surface-200: 0 0% 7%;      /* #121212 */
+  --surface-300: 0 0% 22%;     /* #383838 */
+  --surface-400: 0 0% 38%;     /* #616161 */
+  --surface-800: 0 0% 16%;     /* #2A2A2A */
+  --surface-900: 0 0% 4%;      /* #0A0A0A */
+  --surface-950: 0 0% 2%;      /* #050505 */
+
+  --accent:     345 100% 32%;  /* #A50034 */
+  --accent-dim: 345 100% 24%;  /* #7A0026 */
+  --accent-glow:349 100% 45%;  /* #E4002B */
+
+  --success: 123 46% 36%;
+  --warn:    30 94% 50%;
+  --danger:  349 100% 45%;
+
+  --bg:     0 0% 4%;           /* #0A0A0A */
+  --fg:     0 0% 98%;          /* #FAFAFA */
+  --muted:  0 0% 62%;          /* #9E9E9E */
+  --border: 0 0% 16%;          /* #2A2A2A */
+}
+
+/* ─── Base reset ─────────────────────────────────────────────────────────── */
+html, body {
+  background-color: hsl(var(--bg));
+  color: hsl(var(--fg));
+  font-family: var(--font-pretendard), Pretendard, -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  /* Safe areas for notch/home-indicator */
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* ─── Component utilities ────────────────────────────────────────────────── */
+@layer components {
+  /* Glass card — frosted surface */
+  .glass-card {
+    @apply rounded-2xl border backdrop-blur-xl;
+    background: hsl(var(--surface-100) / 0.85);
+    border-color: hsl(var(--border) / 0.6);
+    box-shadow: 0 2px 8px rgba(10,10,10,0.06);
+  }
+
+  .dark .glass-card {
+    background: hsl(var(--surface-100) / 0.5);
+    border-color: hsl(0 0% 100% / 0.06);
+  }
+
+  /* Subtle noise texture overlay */
+  .noise-bg::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* Gradient mesh background — subtle LG Red warmth */
+  .mesh-bg {
+    background:
+      radial-gradient(ellipse 80% 60% at 20% 30%, hsl(345 100% 32% / 0.04) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 80% at 80% 70%, hsl(349 100% 45% / 0.03) 0%, transparent 60%),
+      hsl(var(--bg));
+  }
+
+  /* Card surface — neutral gray shadows only (no colored shadows) */
+  .card {
+    @apply rounded-2xl border;
+    background: hsl(var(--surface-100));
+    border-color: hsl(var(--border));
+    box-shadow: 0 1px 3px rgba(10,10,10,0.06);
+  }
+
+  /* Accent highlight ring — LG Red */
+  .ring-accent-glow {
+    box-shadow: 0 0 0 2px hsl(var(--accent)), 0 0 8px 1px hsl(var(--accent) / 0.2);
+  }
+
+  /* Touch target baseline */
+  .touch-target {
+    @apply min-h-[44px] min-w-[44px];
+  }
+}
+
+/* ─── Focus-visible ring — Active Red outline + white inner ring ─────────── */
+:focus-visible {
+  outline: 2px solid hsl(var(--accent-glow));
+  outline-offset: 2px;
+  border-radius: 4px;
+  box-shadow: 0 0 0 2px hsl(0 0% 100%);
+}
+
+/* ─── Scrollbar (webkit) ─────────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: hsl(var(--surface-300));
+  border-radius: 9999px;
+}
+
+/* ─── Reduced motion ─────────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ─── ReactFlow overrides ────────────────────────────────────────────────── */
+.react-flow__background {
+  background-color: transparent !important;
+}
+.react-flow__controls {
+  background: hsl(var(--surface-100)) !important;
+  border: 1px solid hsl(var(--border)) !important;
+  border-radius: 12px !important;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(10,10,10,0.08) !important;
+}
+.react-flow__controls-button {
+  background: transparent !important;
+  border: none !important;
+  border-bottom: 1px solid hsl(var(--border)) !important;
+  color: hsl(var(--muted)) !important;
+}
+.react-flow__controls-button:hover {
+  background: hsl(var(--surface-200)) !important;
+  color: hsl(var(--fg)) !important;
+}
+.react-flow__edge-path {
+  stroke: hsl(var(--surface-300)) !important;
+}
+.react-flow__edge.animated .react-flow__edge-path {
+  stroke: hsl(var(--accent)) !important;
+}

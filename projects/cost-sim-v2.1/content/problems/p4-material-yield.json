@@ -1,0 +1,180 @@
+{
+  "id": "p4-material-yield",
+  "title": "재료비 절감 vs 수율 하락",
+  "scenario": "원재료 업체를 바꿔 Module BOM을 5% 절감했지만, Module 수율이 4%p 떨어졌습니다. 두 효과를 단계적으로 계산하세요.",
+  "columns": [
+    { "id": "ref", "header": "Reference", "subheader": "변경 전" },
+    { "id": "sim1", "header": "① 재료비 5%↓", "subheader": "Module BOM ×0.95" },
+    { "id": "sim2", "header": "① + 수율 4%p↓", "subheader": "Module 수율 97.2→93.2%" }
+  ],
+  "rows": [
+    {
+      "id": "price", "label": "Price", "isSummary": true,
+      "cells": {
+        "ref":  { "id": "price_ref", "type": "purple", "value": 200.00 },
+        "sim1": { "id": "price_s1",  "type": "purple", "value": 200.00 },
+        "sim2": { "id": "price_s2",  "type": "purple", "value": 200.00 }
+      }
+    },
+    {
+      "id": "bom_tft", "label": "TFT BOM", "indent": 1,
+      "cells": {
+        "ref":  { "id": "bt_ref", "type": "purple", "value": 6.00 },
+        "sim1": { "id": "bt_s1",  "type": "purple", "value": 6.00 },
+        "sim2": { "id": "bt_s2",  "type": "purple", "value": 6.00 }
+      }
+    },
+    {
+      "id": "bom_cf", "label": "CF BOM", "indent": 1,
+      "cells": {
+        "ref":  { "id": "bc_ref", "type": "purple", "value": 5.00 },
+        "sim1": { "id": "bc_s1",  "type": "purple", "value": 5.00 },
+        "sim2": { "id": "bc_s2",  "type": "purple", "value": 5.00 }
+      }
+    },
+    {
+      "id": "bom_cell", "label": "Cell BOM", "indent": 1,
+      "cells": {
+        "ref":  { "id": "bcl_ref", "type": "purple", "value": 1.50 },
+        "sim1": { "id": "bcl_s1",  "type": "purple", "value": 1.50 },
+        "sim2": { "id": "bcl_s2",  "type": "purple", "value": 1.50 }
+      }
+    },
+    {
+      "id": "bom_module", "label": "Module BOM", "indent": 1,
+      "cells": {
+        "ref":  { "id": "bm_ref", "type": "purple", "value": 75.00 },
+        "sim1": { "id": "bm_s1",  "type": "yellow", "answer": 71.25 },
+        "sim2": { "id": "bm_s2",  "type": "purple", "value": 71.25 }
+      }
+    },
+    {
+      "id": "yield_tft", "label": "TFT 수율", "indent": 1,
+      "cells": {
+        "ref":  { "id": "yt_ref", "type": "purple", "value": 0.99 },
+        "sim1": { "id": "yt_s1",  "type": "purple", "value": 0.99 },
+        "sim2": { "id": "yt_s2",  "type": "purple", "value": 0.99 }
+      }
+    },
+    {
+      "id": "yield_cf", "label": "CF 수율", "indent": 1,
+      "cells": {
+        "ref":  { "id": "yc_ref", "type": "purple", "value": 1.00 },
+        "sim1": { "id": "yc_s1",  "type": "purple", "value": 1.00 },
+        "sim2": { "id": "yc_s2",  "type": "purple", "value": 1.00 }
+      }
+    },
+    {
+      "id": "yield_cell", "label": "Cell 수율", "indent": 1,
+      "cells": {
+        "ref":  { "id": "ycl_ref", "type": "purple", "value": 0.95 },
+        "sim1": { "id": "ycl_s1",  "type": "purple", "value": 0.95 },
+        "sim2": { "id": "ycl_s2",  "type": "purple", "value": 0.95 }
+      }
+    },
+    {
+      "id": "yield_module", "label": "Module 수율", "indent": 1,
+      "cells": {
+        "ref":  { "id": "ym_ref", "type": "purple", "value": 0.972 },
+        "sim1": { "id": "ym_s1",  "type": "purple", "value": 0.972 },
+        "sim2": { "id": "ym_s2",  "type": "purple", "value": 0.932 }
+      }
+    },
+    {
+      "id": "material_cost", "label": "소요재료비", "isSummary": true,
+      "cells": {
+        "ref":  { "id": "mat_ref", "type": "purple", "value": 90.76 },
+        "sim1": { "id": "mat_s1",  "type": "yellow", "answer": 86.90 },
+        "sim2": { "id": "mat_s2",  "type": "yellow", "answer": 90.63 }
+      }
+    },
+    {
+      "id": "panel_labor", "label": "Panel 노무비", "indent": 1,
+      "cells": {
+        "ref":  { "id": "pl_ref", "type": "purple", "value": 21.30 },
+        "sim1": { "id": "pl_s1",  "type": "purple", "value": 21.30 },
+        "sim2": { "id": "pl_s2",  "type": "purple", "value": 21.30 }
+      }
+    },
+    {
+      "id": "panel_expense", "label": "Panel 경비", "indent": 1,
+      "cells": {
+        "ref":  { "id": "pe_ref", "type": "purple", "value": 11.50 },
+        "sim1": { "id": "pe_s1",  "type": "purple", "value": 11.50 },
+        "sim2": { "id": "pe_s2",  "type": "purple", "value": 11.50 }
+      }
+    },
+    {
+      "id": "panel_depreciation", "label": "Panel 감상비", "indent": 1,
+      "cells": {
+        "ref":  { "id": "pd_ref", "type": "purple", "value": 16.20 },
+        "sim1": { "id": "pd_s1",  "type": "purple", "value": 16.20 },
+        "sim2": { "id": "pd_s2",  "type": "purple", "value": 16.20 }
+      }
+    },
+    {
+      "id": "module_labor", "label": "Module 노무비", "indent": 1,
+      "cells": {
+        "ref":  { "id": "ml_ref", "type": "purple", "value": 8.70 },
+        "sim1": { "id": "ml_s1",  "type": "purple", "value": 8.70 },
+        "sim2": { "id": "ml_s2",  "type": "purple", "value": 8.70 }
+      }
+    },
+    {
+      "id": "module_expense", "label": "Module 경비", "indent": 1,
+      "cells": {
+        "ref":  { "id": "me_ref", "type": "purple", "value": 5.30 },
+        "sim1": { "id": "me_s1",  "type": "purple", "value": 5.30 },
+        "sim2": { "id": "me_s2",  "type": "purple", "value": 5.30 }
+      }
+    },
+    {
+      "id": "module_depreciation", "label": "Module 감상비", "indent": 1,
+      "cells": {
+        "ref":  { "id": "md_ref", "type": "purple", "value": 7.50 },
+        "sim1": { "id": "md_s1",  "type": "purple", "value": 7.50 },
+        "sim2": { "id": "md_s2",  "type": "purple", "value": 7.50 }
+      }
+    },
+    {
+      "id": "processing_cost", "label": "가공비 합계", "isSummary": true,
+      "cells": {
+        "ref":  { "id": "proc_ref", "type": "purple", "value": 70.50 },
+        "sim1": { "id": "proc_s1",  "type": "purple", "value": 70.50 },
+        "sim2": { "id": "proc_s2",  "type": "purple", "value": 70.50 }
+      }
+    },
+    {
+      "id": "com", "label": "COM (제조원가)", "isSummary": true,
+      "cells": {
+        "ref":  { "id": "com_ref", "type": "purple", "value": 161.26 },
+        "sim1": { "id": "com_s1",  "type": "blue" },
+        "sim2": { "id": "com_s2",  "type": "blue" }
+      }
+    },
+    {
+      "id": "sga", "label": "SGA (판관비)",
+      "cells": {
+        "ref":  { "id": "sga_ref", "type": "purple", "value": 28.40 },
+        "sim1": { "id": "sga_s1",  "type": "purple", "value": 28.40 },
+        "sim2": { "id": "sga_s2",  "type": "purple", "value": 28.40 }
+      }
+    },
+    {
+      "id": "cop", "label": "COP (총원가)", "isSummary": true,
+      "cells": {
+        "ref":  { "id": "cop_ref", "type": "purple", "value": 189.66 },
+        "sim1": { "id": "cop_s1",  "type": "blue" },
+        "sim2": { "id": "cop_s2",  "type": "blue" }
+      }
+    },
+    {
+      "id": "operating_profit", "label": "영업이익 (Price - COP)", "isSummary": true,
+      "cells": {
+        "ref":  { "id": "op_ref", "type": "purple", "value": 10.34 },
+        "sim1": { "id": "op_s1",  "type": "blue" },
+        "sim2": { "id": "op_s2",  "type": "blue" }
+      }
+    }
+  ]
+}

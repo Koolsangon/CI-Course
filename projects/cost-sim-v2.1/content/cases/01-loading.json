@@ -1,0 +1,55 @@
+{
+  "id": "01-loading",
+  "title": "Loading 변화",
+  "scenario": "고객사 주문 급감으로 설비 Loading(가동률)이 70%에서 50%로 떨어졌습니다.",
+  "adapter": "loading",
+  "reference": {
+    "price": 200,
+    "yields": { "tft": 0.99, "cf": 1.0, "cell": 0.95, "module": 0.972 },
+    "bom": { "tft": 6.0, "cf": 5.0, "cell": 1.5, "module": 75.0 },
+    "processing": {
+      "panel": { "labor": 21.3, "expense": 11.5, "depreciation": 16.2 },
+      "module": { "labor": 8.7, "expense": 5.3, "depreciation": 7.5 }
+    },
+    "sga": { "direct_dev": 4.7, "transport": 0.3, "business_unit": 16.0, "operation": 1.2, "corporate_oh": 6.2 },
+    "loading": 0.70
+  },
+  "variables": [
+    {
+      "key": "new_loading",
+      "ko": "새 Loading",
+      "min": 0.30,
+      "max": 1.00,
+      "step": 0.01,
+      "default": 0.50,
+      "unit": "%",
+      "format": "percent",
+      "description": "Loading 변경 → Panel·Module 가공비(노무비, 경비, 감상비) 6개 항목 → 가공비 합계 → COM → COP → 영업이익 연쇄 변동"
+    }
+  ],
+  "expected": {
+    "panel_labor": 29.82,
+    "panel_expense": 16.10,
+    "panel_depreciation": 22.68,
+    "module_labor": 12.18,
+    "module_expense": 7.42,
+    "module_depreciation": 10.50
+  },
+  "phases": {
+    "hook": "Loading이 70% → 50%로 떨어지면 원가에 어떤 일이 일어날까요?",
+    "discover": "슬라이더로 Loading을 움직여 보세요. 어떤 노드가 가장 크게 변하나요?",
+    "apply": {
+      "question": "Loading 50% 상태에서 Panel 노무비는 약 얼마가 될까요? (소수점 둘째 자리까지)",
+      "answer_key": 29.82,
+      "tolerance": 0.1,
+      "hint": "가공비 = 기준값 × (기준Loading / 새Loading). 21.3 × (0.70/0.50) = ?"
+    },
+    "reflect": "이 케이스의 핵심 메커니즘을 한 문장으로 정리해보세요."
+  },
+  "coach": {
+    "hook": "이번 라운드에서는 Loading(가동률)이 급락한 상황입니다. 가공비의 어떤 구성요소가 가장 크게 반응할까요?",
+    "discover": "가공비(노무비·경비·상각비)는 모두 고정비 성격입니다. 생산량이 줄면 단위당 분담액은 어떻게 될까요?",
+    "apply": "수식을 떠올려볼까요? 기준값 × (기준Loading ÷ 새Loading). 비례·반비례 중 어느 쪽인가요?",
+    "reflect": "한 문장으로 정리해봅시다. 'Loading이 내려가면 단위당 가공비가 ___' — 괄호를 채워보세요."
+  }
+}

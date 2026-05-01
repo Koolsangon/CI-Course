@@ -1,7 +1,31 @@
 {
   "permissions": {
     "allow": [
-      "Bash(mkdir:*)"
+      "Bash(mkdir:*)",
+      "Read(//mnt/c/Program Files/Amazon/AWSCLIV2/**)",
+      "Read(//mnt/c/Program Files \\(x86\\)/Amazon/AWSCLIV2/**)",
+      "Bash(command -v aws.exe)",
+      "Bash(/mnt/c/Windows/System32/cmd.exe /c \"where aws\")",
+      "Read(//tmp/**)",
+      "Bash(unzip -q -o awscliv2.zip)",
+      "Bash(sudo /tmp/aws/install)",
+      "Bash(aws --version)",
+      "Bash(rm -rf /tmp/aws /tmp/awscliv2.zip)",
+      "Read(//home/sam/**)",
+      "Bash(aws sts:*)",
+      "Bash(env)",
+      "Bash(sudo ls:*)",
+      "Read(//home/**)",
+      "Bash(CSV=\"/mnt/d/02. AI/02. Claude/Vibe Coding/28. CI 과정 시뮬레이션 개발/CI-Course/sam-cli_accessKeys.csv\")",
+      "Read(//mnt/d/02. AI/02. Claude/Vibe Coding/28. CI 과정 시뮬레이션 개발/CI-Course/**)",
+      "Bash(for R in ap-northeast-2 us-east-1 us-west-2 ap-northeast-1)",
+      "Bash(do echo:*)",
+      "Bash(aws amplify:*)",
+      "Bash(URL=\"https://master.d26yr76roz76fk.amplifyapp.com\" echo \"=== / \\(root\\) ===\" curl -sI \"$URL/\")",
+      "Bash(if grep:*)",
+      "Bash(then echo:*)",
+      "Bash(else echo:*)",
+      "Bash(fi)"
     ]
   }
 }

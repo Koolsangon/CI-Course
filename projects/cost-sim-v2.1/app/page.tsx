@@ -1,8 +1,10 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { TreePine, ClipboardList, ArrowRight, Zap } from "lucide-react";
+import { TreePine, ClipboardList, ArrowRight, Zap, Play } from "lucide-react";
+import { IntroSequence, INTRO_SEEN_KEY } from "@/components/Intro/IntroSequence";
 
 const cards = [
   {
@@ -44,6 +46,24 @@ const cards = [
 ];
 
 export default function HomePage() {
+  // null = still checking, true = show intro, false = show landing
+  const [introOpen, setIntroOpen] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    if (typeof window === "undefined") {
+      setIntroOpen(false);
+      return;
+    }
+    try {
+      const seen = window.localStorage.getItem(INTRO_SEEN_KEY);
+      setIntroOpen(seen ? false : true);
+    } catch {
+      setIntroOpen(false);
+    }
+  }, []);
+
+  const replayIntro = () => setIntroOpen(true);
+
   return (
     <main className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden mesh-bg">
       <div
@@ -149,16 +169,25 @@ export default function HomePage() {
           })}
         </motion.div>
 
-        {/* Footer */}
-        <motion.p
+        {/* Footer + intro replay */}
+        <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.5 }}
-          className="text-xs text-[hsl(var(--muted)/0.5)]"
+          className="flex flex-col items-center gap-2 text-xs text-[hsl(var(--muted)/0.6)]"
         >
-          Cost Sim v2.1 — 개발원가 시뮬레이션
-        </motion.p>
+          <button
+            type="button"
+            onClick={replayIntro}
+            className="inline-flex items-center gap-1.5 rounded-full border border-[hsl(var(--border))] bg-[hsl(var(--surface-100))] px-3 py-1.5 text-xs font-medium text-[hsl(var(--muted))] transition hover:border-[hsl(var(--accent)/0.4)] hover:text-[hsl(var(--accent))]"
+          >
+            <Play className="h-3 w-3" /> 인트로 다시 보기
+          </button>
+          <p>Cost Sim v2.1 — 개발원가 시뮬레이션</p>
+        </motion.div>
       </div>
+
+      {introOpen && <IntroSequence onComplete={() => setIntroOpen(false)} />}
     </main>
   );
 }

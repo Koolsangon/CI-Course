@@ -123,3 +123,42 @@ export function getYellowCount(problem: ProblemDef): number {
   }
   return count;
 }
+
+// Hint penalty — index = highest hint level revealed for the cell.
+//   level 0: no hint used → full credit (1.0)
+//   level 1: first (conceptual) hint → 70%
+//   level 2: mechanism hint → 40%
+//   level 3: formula hint → 20%
+// Wrong answers always score 0 regardless of hints used.
+export const HINT_PENALTY = [1.0, 0.7, 0.4, 0.2] as const;
+export type HintLevel = 0 | 1 | 2 | 3;
+
+export type HintLevelMap = Record<string, Record<string, HintLevel>>;
+
+export interface WeightedScore {
+  rawScore: number;          // count of correct cells (integer)
+  weightedScore: number;     // sum of HINT_PENALTY[level] over correct cells
+  total: number;             // total yellow cells
+  hintPenalty: number;       // rawScore − weightedScore (>= 0)
+}
+
+export function computeWeightedScore(
+  grades: GradeResult[],
+  hintLevels: HintLevelMap
+): WeightedScore {
+  let weighted = 0;
+  let raw = 0;
+  for (const g of grades) {
+    if (!g.correct) continue;
+    raw += 1;
+    const lvl = hintLevels[g.colId]?.[g.rowId] ?? 0;
+    weighted += HINT_PENALTY[lvl];
+  }
+  const weightedRounded = Math.round(weighted * 10) / 10;
+  return {
+    rawScore: raw,
+    weightedScore: weightedRounded,
+    total: grades.length,
+    hintPenalty: Math.round((raw - weightedRounded) * 10) / 10
+  };
+}

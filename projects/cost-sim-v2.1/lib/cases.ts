@@ -32,6 +32,11 @@ export interface CaseDef {
       answer_key: number;
       tolerance: number;
       hint: string;
+      hints?: {
+        l1: string;
+        l2: string;
+        l3: string;
+      };
     };
     reflect: string;
   };

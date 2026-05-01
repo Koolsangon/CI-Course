@@ -4,7 +4,14 @@ import { useState, useRef } from "react";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import type { ProblemDef } from "@/content/problems/types";
-import { gradeYellowCells, type GradeResult } from "@/lib/worksheet-engine";
+import {
+  gradeYellowCells,
+  computeWeightedScore,
+  type GradeResult,
+  type HintLevel,
+  type HintLevelMap,
+  type WeightedScore
+} from "@/lib/worksheet-engine";
 import WorksheetTable from "./WorksheetTable";
 import GradingPanel from "./GradingPanel";
 import CellCalculator, { evaluateTokens, type FormulaToken } from "./CellCalculator";
@@ -24,6 +31,8 @@ export default function ProblemPage({ problem, caseId }: ProblemPageProps) {
   const [answers, setAnswers] = useState<Record<string, Record<string, number>>>({});
   const [grades, setGrades] = useState<GradeResult[] | null>(null);
   const [score, setScore] = useState<number | null>(null);
+  const [hintLevels, setHintLevels] = useState<HintLevelMap>({});
+  const [weighted, setWeighted] = useState<WeightedScore | null>(null);
 
   const [showGuide, setShowGuide] = useState(true);
   const [activeCell, setActiveCell] = useState<{ colId: string; rowId: string } | null>(null);
@@ -52,6 +61,7 @@ export default function ProblemPage({ problem, caseId }: ProblemPageProps) {
     const result = gradeYellowCells(problem, answers);
     setGrades(result.grades);
     setScore(result.score);
+    setWeighted(computeWeightedScore(result.grades, hintLevels));
   }
 
   function handleReset() {
@@ -61,6 +71,20 @@ export default function ProblemPage({ problem, caseId }: ProblemPageProps) {
     setActiveCell(null);
     setCalculatorMode(false);
     setFormulaTokens([]);
+    setHintLevels({});
+    setWeighted(null);
+  }
+
+  function bumpHintLevel(colId: string, rowId: string) {
+    setHintLevels((prev) => {
+      const cur = prev[colId]?.[rowId] ?? 0;
+      if (cur >= 3) return prev;
+      const next = (cur + 1) as HintLevel;
+      return {
+        ...prev,
+        [colId]: { ...(prev[colId] ?? {}), [rowId]: next }
+      };
+    });
   }
 
   function handleCellClick(
@@ -171,12 +195,22 @@ export default function ProblemPage({ problem, caseId }: ProblemPageProps) {
             </div>
           </div>
 
+          <div className="flex items-start gap-3 rounded-2xl border border-[hsl(var(--warn)/0.35)] bg-[hsl(var(--warn)/0.06)] px-4 py-3">
+            <div className="text-lg" aria-hidden>🔆</div>
+            <div className="min-w-0 flex-1 text-xs text-[hsl(var(--fg)/0.85)]">
+              <span className="font-semibold text-[hsl(var(--warn))]">셀 힌트는 3단계로 제공됩니다.</span>{" "}
+              노란 셀의 <span className="font-mono">?</span> 버튼을 누르면 단계별로 더 구체적인 단서를 볼 수 있어요. 단계가 올라갈수록 그 셀의 정답 배점이 줄어듭니다 — {" "}
+              <span className="font-mono tabular-nums">100% → 70% → 40% → 20%</span>. 먼저 직접 풀어보고 막힐 때 사용해 주세요.
+            </div>
+          </div>
+
           <WorksheetTable
             problem={problem}
             answers={answers}
             grades={grades}
             activeCell={activeCell}
             calculatorMode={calculatorMode}
+            hintLevels={hintLevels}
             onAnswer={handleAnswer}
             onCellClick={handleCellClick}
             onHintClick={(colId, rowId) => setHintCell({ colId, rowId })}
@@ -209,6 +243,7 @@ export default function ProblemPage({ problem, caseId }: ProblemPageProps) {
             score={score}
             total={yellowCount}
             graded={grades !== null}
+            weighted={weighted}
           />
         </div>
       </main>
@@ -223,20 +258,25 @@ export default function ProblemPage({ problem, caseId }: ProblemPageProps) {
 
       {hintCell && (() => {
         const row = problem.rows.find((r) => r.id === hintCell.rowId);
-        const cell = row?.cells[hintCell.colId];
         const refCell = row?.cells["ref"];
-        const expected = cell?.type === "yellow" ? cell.answer : undefined;
         const refValue = refCell?.value;
-        const formulaHint =
+        const fallbackHint =
           caseDef?.phases.apply.hint ??
-          "이 케이스의 공식 힌트가 아직 등록되지 않았습니다.";
+          "이 케이스의 힌트가 아직 등록되지 않았습니다.";
+        const hints = caseDef?.phases.apply.hints ?? {
+          l1: fallbackHint,
+          l2: fallbackHint,
+          l3: fallbackHint
+        };
+        const level = hintLevels[hintCell.colId]?.[hintCell.rowId] ?? 0;
         return (
           <CellHintModal
             open
             title={row?.label ?? "셀"}
             refValue={refValue}
-            expected={expected}
-            formulaHint={formulaHint}
+            hints={hints}
+            level={level}
+            onAdvance={() => bumpHintLevel(hintCell.colId, hintCell.rowId)}
             onClose={() => setHintCell(null)}
           />
         );

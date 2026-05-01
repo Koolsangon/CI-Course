@@ -75,7 +75,7 @@ export default function CostTreeView({
   );
 
   return (
-    <div className="h-full w-full rounded-2xl overflow-hidden bg-[hsl(var(--surface-950))]">
+    <div className="h-full w-full rounded-2xl overflow-hidden bg-[hsl(var(--surface-50))]">
       <ReactFlow
         nodes={nodes}
         edges={edges}
@@ -90,7 +90,7 @@ export default function CostTreeView({
         elementsSelectable
       >
         <Background
-          color="hsl(220 16% 22%)"
+          color="hsl(var(--surface-300))"
           gap={24}
           size={1}
           variant={BackgroundVariant.Dots}

@@ -13,15 +13,23 @@ export interface CostTreeNodeData {
   changed?: boolean;
 }
 
-// Group → gradient + text token
-const groupStyles: Record<string, { bg: string; text: string; border: string }> = {
-  root:       { bg: "from-[hsl(345_100%_32%)] to-[hsl(345_100%_24%)]",  text: "text-white",                   border: "border-[hsl(var(--accent)/0.4)]" },
-  top:        { bg: "from-[hsl(235_72%_30%)] to-[hsl(235_72%_24%)]",   text: "text-white",                   border: "border-[hsl(235_72%_55%/0.35)]" },
-  com:        { bg: "from-[hsl(199_80%_25%)] to-[hsl(199_80%_20%)]",   text: "text-white",                   border: "border-[hsl(199_80%_55%/0.35)]" },
-  sga:        { bg: "from-[hsl(263_60%_28%)] to-[hsl(263_60%_22%)]",   text: "text-white",                   border: "border-[hsl(263_60%_60%/0.35)]" },
-  material:   { bg: "from-[hsl(160_58%_22%)] to-[hsl(160_58%_17%)]",   text: "text-[hsl(160_72%_80%)]",      border: "border-[hsl(160_58%_45%/0.35)]" },
-  processing: { bg: "from-[hsl(38_80%_22%)] to-[hsl(38_80%_17%)]",     text: "text-[hsl(38_92%_80%)]",       border: "border-[hsl(38_80%_50%/0.35)]" },
-  bom:        { bg: "from-[hsl(222_16%_16%)] to-[hsl(222_16%_12%)]",   text: "text-[hsl(222_12%_72%)]",      border: "border-[hsl(222_16%_28%/0.6)]" }
+// Group → light accent palette (left bar + subtle tint, dark text on white)
+// Each group keeps its semantic color for at-a-glance recognition,
+// but values render as dark text on near-white surface for system consistency.
+interface GroupStyle {
+  bar: string;       // left accent bar (4px)
+  tint: string;      // very subtle background tint
+  label: string;     // colored group label / cap text
+}
+
+const groupStyles: Record<string, GroupStyle> = {
+  root:       { bar: "bg-[hsl(var(--accent))]",         tint: "bg-[hsl(var(--accent)/0.04)]", label: "text-[hsl(var(--accent))]" },
+  top:        { bar: "bg-[hsl(235_72%_50%)]",           tint: "bg-[hsl(235_72%_50%/0.04)]",   label: "text-[hsl(235_72%_38%)]" },
+  com:        { bar: "bg-[hsl(199_80%_42%)]",           tint: "bg-[hsl(199_80%_42%/0.04)]",   label: "text-[hsl(199_80%_32%)]" },
+  sga:        { bar: "bg-[hsl(263_60%_50%)]",           tint: "bg-[hsl(263_60%_50%/0.04)]",   label: "text-[hsl(263_60%_42%)]" },
+  material:   { bar: "bg-[hsl(160_58%_38%)]",           tint: "bg-[hsl(160_58%_38%/0.04)]",   label: "text-[hsl(160_58%_28%)]" },
+  processing: { bar: "bg-[hsl(38_80%_45%)]",            tint: "bg-[hsl(38_80%_45%/0.05)]",    label: "text-[hsl(38_80%_34%)]" },
+  bom:        { bar: "bg-[hsl(var(--surface-400))]",    tint: "bg-[hsl(var(--surface-50))]",  label: "text-[hsl(var(--muted))]" }
 };
 
 function formatValue(value: number, unit?: "$" | "%"): string {
@@ -52,35 +60,35 @@ function CostTreeNodeComponent({ data }: NodeProps<CostTreeNodeData>) {
       animate={controls}
       title={data.formula}
       className={[
-        "relative min-w-[172px] rounded-2xl border bg-gradient-to-b px-4 py-3 text-center",
-        "shadow-[0_2px_8px_hsl(220_36%_4%/0.5)]",
-        style.bg,
-        style.text,
-        style.border,
+        "relative min-w-[172px] overflow-hidden rounded-xl border bg-white pl-4 pr-4 py-3 text-center",
+        "border-[hsl(var(--border))]",
+        "shadow-[0_1px_2px_rgba(10,10,10,0.04),0_4px_12px_rgba(10,10,10,0.04)]",
+        style.tint,
         data.changed
-          ? "ring-2 ring-[hsl(var(--accent))] shadow-[0_0_18px_3px_hsl(var(--accent)/0.35)]"
+          ? "ring-2 ring-[hsl(var(--accent))] shadow-[0_0_0_1px_hsl(var(--accent)/0.25),0_4px_16px_hsl(var(--accent)/0.18)]"
           : ""
       ].join(" ")}
     >
+      {/* Left accent bar — group color */}
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-x-0 top-0 h-px rounded-t-2xl bg-gradient-to-r from-transparent via-white/15 to-transparent"
+        className={["pointer-events-none absolute inset-y-0 left-0 w-1", style.bar].join(" ")}
       />
       <Handle
         type="target"
         position={Position.Left}
-        className="!h-2 !w-2 !rounded-full !border-none !bg-[hsl(var(--surface-300))]"
+        className="!h-2 !w-2 !rounded-full !border !border-[hsl(var(--border))] !bg-white"
       />
-      <div className="text-[11px] font-semibold uppercase tracking-wider opacity-70">
+      <div className={["text-[10px] font-semibold uppercase tracking-wider", style.label].join(" ")}>
         {data.label}
       </div>
-      <div className="mt-0.5 text-lg font-extrabold tabular-nums leading-tight">
+      <div className="mt-0.5 text-lg font-extrabold tabular-nums leading-tight text-[hsl(var(--fg))]">
         {formatValue(data.value, data.unit)}
       </div>
       <Handle
         type="source"
         position={Position.Right}
-        className="!h-2 !w-2 !rounded-full !border-none !bg-[hsl(var(--surface-300))]"
+        className="!h-2 !w-2 !rounded-full !border !border-[hsl(var(--border))] !bg-white"
       />
     </motion.div>
   );

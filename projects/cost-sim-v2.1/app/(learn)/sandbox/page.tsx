@@ -7,6 +7,7 @@ import Link from "next/link";
 import CostTreeView from "@/components/CostTree/CostTreeView";
 import ParamPanel from "@/components/ParamPanel/ParamPanel";
 import FormulaInspector from "@/components/FormulaInspector/FormulaInspector";
+import SandboxCoach from "@/components/Coach/SandboxCoach";
 import { CASE_ORDER, getCase } from "@/lib/cases";
 import { useStore } from "@/lib/store";
 
@@ -159,6 +160,13 @@ export default function SandboxPage() {
           )}
         </AnimatePresence>
       </div>
+
+      <SandboxCoach
+        caseId={caseId}
+        params={params}
+        result={result}
+        lastDelta={lastDelta}
+      />
 
       <div className="flex border-t border-[hsl(var(--border))] bg-[hsl(var(--surface-100)/0.9)] pb-[env(safe-area-inset-bottom)] md:hidden">
         <details className="flex-1">

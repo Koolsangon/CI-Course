@@ -1,5 +1,7 @@
 "use client";
 
+import type { MouseEvent as ReactMouseEvent } from "react";
+import { HelpCircle } from "lucide-react";
 import type { CellType } from "@/content/problems/types";
 
 interface WorksheetCellProps {
@@ -14,6 +16,7 @@ interface WorksheetCellProps {
   isSelectable?: boolean;
   isRefColumn?: boolean;
   onCellClick?: () => void;
+  onHintClick?: () => void;
 }
 
 const cellStyles: Record<CellType, string> = {
@@ -38,8 +41,13 @@ export default function WorksheetCell({
   isActive,
   isSelectable,
   isRefColumn,
-  onCellClick
+  onCellClick,
+  onHintClick
 }: WorksheetCellProps) {
+  const handleHintClick = (e: ReactMouseEvent) => {
+    e.stopPropagation();
+    onHintClick?.();
+  };
   if (type === "label") return null;
 
   const refBg = isRefColumn ? "bg-[hsl(var(--surface-200)/0.4)]" : "";
@@ -78,9 +86,20 @@ export default function WorksheetCell({
   return (
     <td
       data-test={userValue !== undefined ? "yellow-filled" : "yellow-empty"}
-      className={`border border-[hsl(var(--border))] px-3 py-2 text-right tabular-nums text-sm ${cellStyles.yellow} ${gradeBorder} ${activeRing} cursor-pointer select-none`}
+      className={`relative border border-[hsl(var(--border))] px-3 py-2 text-right tabular-nums text-sm ${cellStyles.yellow} ${gradeBorder} ${activeRing} cursor-pointer select-none`}
       onClick={onCellClick}
     >
+      {isActive && onHintClick && (
+        <button
+          type="button"
+          onClick={handleHintClick}
+          aria-label="이 셀의 힌트 보기"
+          title="이 셀의 힌트 보기"
+          className="absolute -left-2 -top-2 z-10 flex h-5 w-5 items-center justify-center rounded-full border border-[hsl(var(--accent))] bg-[hsl(var(--accent))] text-white shadow hover:scale-110 hover:bg-[hsl(var(--accent))/0.9]"
+        >
+          <HelpCircle className="h-3 w-3" />
+        </button>
+      )}
       {userValue !== undefined ? (
         <span className="font-medium text-[hsl(var(--fg))]">{fmt(userValue)}</span>
       ) : (

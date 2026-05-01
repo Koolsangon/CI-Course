@@ -6,6 +6,7 @@ import { calculate } from "./cost-engine/engine";
 import type { CostParams, CostResult } from "./cost-engine/types";
 import { diff, type DeltaTrace } from "./cost-engine/diff";
 import { cloneParams, ALL_REFERENCES } from "./cost-engine/presets";
+import type { CoachMessage } from "./coach/types";
 
 export type Mode = "sandbox" | "worksheet";
 
@@ -35,6 +36,9 @@ export interface StoreState {
   /** Worksheet grading results per problem */
   worksheetGrades: Record<string, WorksheetResult>;
 
+  /** Coach chat conversations: problemId -> messages */
+  coachConversations: Record<string, CoachMessage[]>;
+
   setMode: (mode: Mode) => void;
   loadCase: (caseId: string, params: CostParams) => void;
   setParams: (next: CostParams | ((prev: CostParams) => CostParams)) => void;
@@ -43,6 +47,11 @@ export interface StoreState {
   setWorksheetAnswer: (problemId: string, columnId: string, cellId: string, value: number) => void;
   gradeWorksheet: (problemId: string, grades: WorksheetResult) => void;
   resetWorksheet: (problemId: string) => void;
+
+  appendCoachMessage: (problemId: string, message: CoachMessage) => void;
+  updateCoachMessage: (problemId: string, messageId: string, updater: (prev: string) => string) => void;
+  seedCoachConversation: (problemId: string, message: CoachMessage) => void;
+  clearCoachConversation: (problemId: string) => void;
 }
 
 const DEFAULT_PARAMS = cloneParams(ALL_REFERENCES[1]);
@@ -58,6 +67,7 @@ export const useStore = create<StoreState>()(
 
   worksheetAnswers: {},
   worksheetGrades: {},
+  coachConversations: {},
 
   setMode: (mode) => set({ mode }),
 
@@ -113,15 +123,56 @@ export const useStore = create<StoreState>()(
     const nextGrades = { ...worksheetGrades };
     delete nextGrades[problemId];
     set({ worksheetAnswers: nextAnswers, worksheetGrades: nextGrades });
+  },
+
+  appendCoachMessage: (problemId, message) => {
+    const { coachConversations } = get();
+    const existing = coachConversations[problemId] ?? [];
+    set({
+      coachConversations: {
+        ...coachConversations,
+        [problemId]: [...existing, message]
+      }
+    });
+  },
+
+  updateCoachMessage: (problemId, messageId, updater) => {
+    const { coachConversations } = get();
+    const existing = coachConversations[problemId] ?? [];
+    const next = existing.map((m) =>
+      m.id === messageId ? { ...m, content: updater(m.content) } : m
+    );
+    set({
+      coachConversations: { ...coachConversations, [problemId]: next }
+    });
+  },
+
+  seedCoachConversation: (problemId, message) => {
+    const { coachConversations } = get();
+    if ((coachConversations[problemId] ?? []).length > 0) return;
+    set({
+      coachConversations: {
+        ...coachConversations,
+        [problemId]: [message]
+      }
+    });
+  },
+
+  clearCoachConversation: (problemId) => {
+    const { coachConversations } = get();
+    const next = { ...coachConversations };
+    delete next[problemId];
+    set({ coachConversations: next });
   }
     }),
     {
       name: "cost-sim-v2.1:state:v1",
       storage: createJSONStorage(() => localStorage),
-      version: 1,
+      version: 2,
       partialize: (state) => ({
         worksheetAnswers: state.worksheetAnswers,
-        worksheetGrades: state.worksheetGrades
+        worksheetGrades: state.worksheetGrades,
+        coachConversations: state.coachConversations
       })
     }
   )

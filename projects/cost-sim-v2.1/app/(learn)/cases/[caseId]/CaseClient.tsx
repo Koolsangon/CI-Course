@@ -25,5 +25,5 @@ export default function CaseClient() {
 
   if (!caseId || !caseDef || !problem) return notFound();
 
-  return <ProblemPage problem={problem} />;
+  return <ProblemPage problem={problem} caseId={caseId} />;
 }

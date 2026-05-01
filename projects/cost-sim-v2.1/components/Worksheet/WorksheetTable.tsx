@@ -13,6 +13,7 @@ interface WorksheetTableProps {
   calculatorMode: boolean;
   onAnswer: (colId: string, rowId: string, value: number) => void;
   onCellClick: (colId: string, rowId: string, value: number | undefined, label: string, type: string) => void;
+  onHintClick?: (colId: string, rowId: string) => void;
 }
 
 function getCellDisplayValue(
@@ -38,7 +39,8 @@ export default function WorksheetTable({
   activeCell,
   calculatorMode,
   onAnswer,
-  onCellClick
+  onCellClick,
+  onHintClick
 }: WorksheetTableProps) {
   const findGrade = (rowId: string, colId: string) =>
     grades?.find((g) => g.rowId === rowId && g.colId === colId);
@@ -112,6 +114,11 @@ export default function WorksheetTable({
                     isSelectable={isSelectable}
                     isRefColumn={isRef}
                     onCellClick={() => onCellClick(col.id, row.id, displayValue, row.label, cell.type)}
+                    onHintClick={
+                      cell.type === "yellow" && onHintClick
+                        ? () => onHintClick(col.id, row.id)
+                        : undefined
+                    }
                   />
                 );
               })}

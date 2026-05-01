@@ -10,12 +10,17 @@ import GradingPanel from "./GradingPanel";
 import CellCalculator, { evaluateTokens, type FormulaToken } from "./CellCalculator";
 import WorksheetGuide from "./WorksheetGuide";
 import { getYellowCount } from "@/lib/worksheet-engine";
+import FloatingCoach from "@/components/Coach/FloatingCoach";
+import CellHintModal from "./CellHintModal";
+import { getCase } from "@/lib/cases";
 
 interface ProblemPageProps {
   problem: ProblemDef;
+  caseId: string;
 }
 
-export default function ProblemPage({ problem }: ProblemPageProps) {
+export default function ProblemPage({ problem, caseId }: ProblemPageProps) {
+  const caseDef = getCase(caseId);
   const [answers, setAnswers] = useState<Record<string, Record<string, number>>>({});
   const [grades, setGrades] = useState<GradeResult[] | null>(null);
   const [score, setScore] = useState<number | null>(null);
@@ -25,6 +30,7 @@ export default function ProblemPage({ problem }: ProblemPageProps) {
   const [calculatorMode, setCalculatorMode] = useState(false);
   const [formulaTokens, setFormulaTokens] = useState<FormulaToken[]>([]);
   const [activeCellLabel, setActiveCellLabel] = useState("");
+  const [hintCell, setHintCell] = useState<{ colId: string; rowId: string } | null>(null);
 
   // Refs to avoid stale closures in callbacks
   const activeCellRef = useRef(activeCell);
@@ -158,6 +164,13 @@ export default function ProblemPage({ problem }: ProblemPageProps) {
             </div>
           </div>
 
+          <div className="flex items-center gap-3 rounded-2xl border border-dashed border-[hsl(var(--accent)/0.4)] bg-[hsl(var(--accent)/0.04)] px-4 py-3">
+            <div className="text-lg" aria-hidden>💡</div>
+            <div className="min-w-0 flex-1 text-xs text-[hsl(var(--muted))]">
+              화면 오른쪽에서 마우스를 따라 움직이는 <span className="font-semibold text-[hsl(var(--accent))]">AI 코치</span> 버튼을 클릭하면, 답을 직접 주지 않고 한 단계 앞의 사고 단서로 도와드립니다.
+            </div>
+          </div>
+
           <WorksheetTable
             problem={problem}
             answers={answers}
@@ -166,6 +179,7 @@ export default function ProblemPage({ problem }: ProblemPageProps) {
             calculatorMode={calculatorMode}
             onAnswer={handleAnswer}
             onCellClick={handleCellClick}
+            onHintClick={(colId, rowId) => setHintCell({ colId, rowId })}
           />
 
           {calculatorMode && activeCell && (
@@ -198,6 +212,35 @@ export default function ProblemPage({ problem }: ProblemPageProps) {
           />
         </div>
       </main>
+
+      <FloatingCoach
+        caseId={caseId}
+        problem={problem}
+        answers={answers}
+        grades={grades}
+        score={score}
+      />
+
+      {hintCell && (() => {
+        const row = problem.rows.find((r) => r.id === hintCell.rowId);
+        const cell = row?.cells[hintCell.colId];
+        const refCell = row?.cells["ref"];
+        const expected = cell?.type === "yellow" ? cell.answer : undefined;
+        const refValue = refCell?.value;
+        const formulaHint =
+          caseDef?.phases.apply.hint ??
+          "이 케이스의 공식 힌트가 아직 등록되지 않았습니다.";
+        return (
+          <CellHintModal
+            open
+            title={row?.label ?? "셀"}
+            refValue={refValue}
+            expected={expected}
+            formulaHint={formulaHint}
+            onClose={() => setHintCell(null)}
+          />
+        );
+      })()}
     </div>
   );
 }

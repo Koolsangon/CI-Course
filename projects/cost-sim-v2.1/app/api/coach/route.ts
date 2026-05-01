@@ -9,7 +9,7 @@ import p5 from "@/content/problems/p5-cuts-mask.json";
 import p6 from "@/content/problems/p6-tact-investment.json";
 import type { ProblemDef } from "@/content/problems/types";
 
-export const runtime = "edge";
+export const runtime = "nodejs";
 
 const PROBLEMS: Record<string, ProblemDef> = {
   "01-loading": p1 as unknown as ProblemDef,

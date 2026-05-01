@@ -2,6 +2,13 @@ __pycache__/
 *.pyc
 .env
 
+# AWS credentials (never commit)
+*_accessKeys.csv
+*accessKey*.csv
+.aws/
+credentials
+aws-credentials*
+
 # OMC runtime state — only plans are tracked
 **/.omc/sessions/
 **/.omc/state/

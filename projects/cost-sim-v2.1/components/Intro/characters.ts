@@ -18,7 +18,7 @@ export interface Character {
 export const CHARACTERS: Record<CharacterId, Character> = {
   manager: {
     id: "manager",
-    name: "박 그룹장",
+    name: "박선행 그룹장",
     role: "Mentor",
     color: "#0369a1", // sky-700 — calm, authoritative
     icon: Factory,
@@ -26,7 +26,7 @@ export const CHARACTERS: Record<CharacterId, Character> = {
   },
   lead: {
     id: "lead",
-    name: "강 선임",
+    name: "강지수 팀장",
     role: "Colleague",
     color: "#6d28d9", // violet-700 — friendly, readable on light bg
     icon: Wrench,
@@ -34,10 +34,11 @@ export const CHARACTERS: Record<CharacterId, Character> = {
   },
   player: {
     id: "player",
-    name: "자네",
-    role: "사원",
+    name: "나",
+    role: "책임",
     color: "#15803d", // green-700
-    icon: HardHat
+    icon: HardHat,
+    avatarSrc: "/intro/player.png"
   },
   narrator: {
     id: "narrator",

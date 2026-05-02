@@ -16,15 +16,22 @@ export function DialogueScene({ beat, onAdvance, reducedMotion }: DialogueSceneP
   const position = beat.position ?? "center";
   const manager = CHARACTERS.manager;
   const lead = CHARACTERS.lead;
+  const player = CHARACTERS.player;
 
   return (
     <div className="flex w-full max-w-5xl flex-col items-center gap-6 sm:gap-10">
-      {/* Character row — both mentor + lead are visible; active is highlighted. */}
-      <div className="flex w-full items-end justify-between gap-6 px-2 sm:gap-12 sm:px-8">
+      {/* Character row — mentor (left) · player (center) · lead (right). Active speaker is highlighted. */}
+      <div className="flex w-full items-end justify-between gap-4 px-2 sm:gap-10 sm:px-8">
         <CharacterSlot
           character={manager}
           active={beat.speaker === "manager"}
           side="left"
+          reducedMotion={reducedMotion}
+        />
+        <CharacterSlot
+          character={player}
+          active={beat.speaker === "player"}
+          side="center"
           reducedMotion={reducedMotion}
         />
         <CharacterSlot

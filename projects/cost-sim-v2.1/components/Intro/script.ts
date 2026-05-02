@@ -16,37 +16,37 @@ export const INTRO_SCRIPT: IntroBeat[] = [
     id: "open",
     speaker: "narrator",
     position: "center",
-    text: "2026년 봄. 자네는 갓 들어온 신입 사원이다. 첫 출근, 공장 정문 앞."
+    text: "2026년 봄. 나는 새 라인의 파트리더(책임)로 발령받았다. 첫 회의 30분 전, 원가 회의실 앞."
   },
   {
     id: "manager-1",
     speaker: "manager",
     position: "left",
-    text: "어서 오게. 이 공장에선 매달 수억의 원가가 살아 움직여. 자네 임무는 그 흐름을 눈으로 보는 것."
+    text: "어서 오게, 책임. 이 라인은 매달 수억의 원가가 살아 움직이는 현장이야. 흐름을 먼저 보는 사람이 결국 답을 낸다네."
   },
   {
     id: "lead-1",
     speaker: "lead",
     position: "right",
-    text: "COP · COM · SGA — 이 세 갈래만 잡으면 돼요. 어렵지 않아요, 같이 가요."
+    text: "현업에선 결국 COP · COM · SGA 세 갈래만 잡으면 돼요. 책임님이 어디를 흔들고 싶은지 같이 짚어봐요."
   },
   {
     id: "player-1",
     speaker: "player",
     position: "center",
-    text: "...좋습니다. 어디서부터 시작하면 됩니까?",
+    text: "...좋습니다. 어디부터 시작하면 됩니까?",
     choice: "좋습니다, 시작하죠"
   },
   {
     id: "manager-2",
     speaker: "manager",
     position: "left",
-    text: "두 가지 도구가 있어. 변수를 직접 흔들어보는 자유 실험실과, 엑셀처럼 풀어보는 원가 워크시트."
+    text: "두 가지 도구가 있네. 변수를 직접 흔드는 자유 실험실, 그리고 엑셀처럼 풀어보는 원가 워크시트."
   },
   {
     id: "close",
     speaker: "narrator",
     position: "center",
-    text: "미션 시작 — 원가의 흐름을 추적하라."
+    text: "미션 시작 — 파트의 원가 흐름을 추적하라."
   }
 ];

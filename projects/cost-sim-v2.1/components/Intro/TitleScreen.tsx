@@ -64,7 +64,7 @@ export function TitleScreen({ onStart, onSkip, reducedMotion }: TitleScreenProps
         transition={{ duration: reducedMotion ? 0 : 0.5, delay: reducedMotion ? 0 : 0.25 }}
         className="max-w-md text-sm leading-relaxed text-[hsl(var(--muted))] sm:text-base"
       >
-        신입 사원 — 자네의 임무는 공장의 원가 흐름을 추적하고,
+        파트리더(책임) — 나의 임무는 라인의 원가 흐름을 추적하고,
         <br className="hidden sm:block" />
         COP · COM · SGA의 비밀을 풀어내는 것이다.
       </motion.p>

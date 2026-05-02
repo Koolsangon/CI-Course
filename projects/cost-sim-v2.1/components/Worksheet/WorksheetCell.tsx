@@ -3,6 +3,8 @@
 import type { MouseEvent as ReactMouseEvent } from "react";
 import { HelpCircle } from "lucide-react";
 import type { CellType } from "@/content/problems/types";
+import type { HintLevel } from "@/lib/worksheet-engine";
+import { HINT_PENALTY } from "@/lib/worksheet-engine";
 
 interface WorksheetCellProps {
   type: CellType;
@@ -15,6 +17,7 @@ interface WorksheetCellProps {
   isActive?: boolean;
   isSelectable?: boolean;
   isRefColumn?: boolean;
+  hintLevel?: HintLevel;
   onCellClick?: () => void;
   onHintClick?: () => void;
 }
@@ -41,6 +44,7 @@ export default function WorksheetCell({
   isActive,
   isSelectable,
   isRefColumn,
+  hintLevel,
   onCellClick,
   onHintClick
 }: WorksheetCellProps) {
@@ -99,6 +103,15 @@ export default function WorksheetCell({
         >
           <HelpCircle className="h-3 w-3" />
         </button>
+      )}
+      {hintLevel !== undefined && hintLevel > 0 && (
+        <span
+          aria-label={`힌트 ${hintLevel}단계 사용 — 배점 ${Math.round(HINT_PENALTY[hintLevel] * 100)}%`}
+          title={`힌트 ${hintLevel}단계 사용 → 이 셀 배점 ${Math.round(HINT_PENALTY[hintLevel] * 100)}%`}
+          className="absolute -right-1.5 -top-1.5 z-10 flex h-4 min-w-[1rem] items-center justify-center rounded-full border border-[hsl(var(--warn))] bg-[hsl(var(--warn))] px-1 text-[9px] font-bold leading-none text-white shadow"
+        >
+          H{hintLevel}
+        </span>
       )}
       {userValue !== undefined ? (
         <span className="font-medium text-[hsl(var(--fg))]">{fmt(userValue)}</span>

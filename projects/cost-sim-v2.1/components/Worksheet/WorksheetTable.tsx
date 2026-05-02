@@ -1,7 +1,7 @@
 "use client";
 
 import type { ProblemDef } from "@/content/problems/types";
-import type { GradeResult } from "@/lib/worksheet-engine";
+import type { GradeResult, HintLevel, HintLevelMap } from "@/lib/worksheet-engine";
 import { computeBlue } from "@/lib/worksheet-engine";
 import WorksheetCell from "./WorksheetCell";
 
@@ -11,6 +11,7 @@ interface WorksheetTableProps {
   grades: GradeResult[] | null;
   activeCell: { colId: string; rowId: string } | null;
   calculatorMode: boolean;
+  hintLevels?: HintLevelMap;
   onAnswer: (colId: string, rowId: string, value: number) => void;
   onCellClick: (colId: string, rowId: string, value: number | undefined, label: string, type: string) => void;
   onHintClick?: (colId: string, rowId: string) => void;
@@ -38,6 +39,7 @@ export default function WorksheetTable({
   grades,
   activeCell,
   calculatorMode,
+  hintLevels,
   onAnswer,
   onCellClick,
   onHintClick
@@ -100,6 +102,9 @@ export default function WorksheetTable({
 
                 const displayValue = getCellDisplayValue(problem, col.id, row.id, answers);
 
+                const hintLevel: HintLevel | undefined =
+                  cell.type === "yellow" ? hintLevels?.[col.id]?.[row.id] : undefined;
+
                 return (
                   <WorksheetCell
                     key={col.id}
@@ -113,6 +118,7 @@ export default function WorksheetTable({
                     isActive={isActive}
                     isSelectable={isSelectable}
                     isRefColumn={isRef}
+                    hintLevel={hintLevel}
                     onCellClick={() => onCellClick(col.id, row.id, displayValue, row.label, cell.type)}
                     onHintClick={
                       cell.type === "yellow" && onHintClick

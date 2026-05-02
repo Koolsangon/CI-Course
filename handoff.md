@@ -1,6 +1,63 @@
 # handoff.md - 인수인계 메모
 
-## 최종 갱신: 2026-05-01 (cost-sim-v2.1 SSR 배포)
+## 최종 갱신: 2026-05-02 (Sandbox AI 코치 + 라이트 트리 + 3단계 힌트)
+
+### 현재 상태
+
+- **cost-sim-v2.1**: 인트로(게임 스타일) → 케이스 워크시트(3단계 힌트) → 자유 실험실(Sandbox AI 코치) 통합 완료, master 머지됨, 푸시 대기
+- **AWS Amplify SSR 배포**: 이전 세션 완료 상태 유지, 이번 변경사항 푸시 시 자동 재배포 예정
+
+### 이번 세션 작업 내용
+
+1. **Sandbox AI 코치** (`components/Coach/SandboxCoach.tsx`)
+   - 자유 실험실에서 마우스를 따라다니는 떠다니는 코치 버튼 (FloatingCoach 패턴 재사용)
+   - 컨텍스트: 현재 케이스 + 실시간 슬라이더 값(`params`) + 실시간 결과(`result`) + 변경된 노드(`lastDelta`) 자동 주입
+   - `/api/coach` 라우트 확장: 워크시트 모드(`problem` 키) / 샌드박스 모드(`caseId+params+result+lastDelta` 키) 분기
+   - 시스템 프롬프트(`lib/coach/system-prompt.ts`)에 sandbox-mode 분기 추가, 답을 직접 주지 않고 한 단계 앞의 사고 단서를 제공
+2. **라이트 테마 코스트 트리** (`components/CostTree/CostTreeNode.tsx`)
+   - 다크 → 라이트 + 그룹별 약한 색상 액센트(BOM/COM/COP/SGA 카테고리별)
+3. **3단계 누적 힌트 시스템** (`lib/worksheet-engine.ts`, `components/Worksheet/CellHintModal.tsx`)
+   - `HINT_PENALTY = [1.0, 0.7, 0.4, 0.2]` (0단계 미사용 = 100%, 3단계 = 20%)
+   - 각 단계: 1단계 개념 / 2단계 메커니즘 / 3단계 공식 — 어느 단계도 정답 숫자를 노출하지 않음
+   - `WorksheetCell` 우상단에 H1/H2/H3 노란 배지 표시
+   - `GradingPanel`이 가중 점수 + 정답/힌트 차감 분해 표시 (예: `4.1 / 6 (정답 5/6 · 힌트 차감 −0.9)`)
+   - 사용자에게 명시: 워크시트 상단 안내 배너 + 모달 헤더 현재/다음 배점 + footer 안내
+4. **케이스 JSON에 `phases.apply.hints {l1, l2, l3}` 필드 추가** — 04-material-yield, 05-cuts-mask, 06-tact-investment (01-loading은 기존 `hint` 유지, 다른 셀에 fallback)
+5. **인트로 머지**: master의 `9c4f263` (게임 스타일 인트로 6-비트 다이얼로그) 가져오기 — 충돌 없음 (서로 다른 파일)
+6. **dev 서버 정리**: 옛 워크트리(cost-sim-intro:3003) 종료, sandbox-coach 워크트리(:3001)로 통일, `.next` 캐시 정리 후 재기동
+
+### 커밋 이력 (이번 세션)
+
+| Commit | 메시지 |
+|--------|--------|
+| `ee97b91` | feat(cost-sim-v2.1): add Sandbox AI coach + light theme cost tree |
+| `e75f93c` | feat(worksheet): 3-level progressive hints with score penalty |
+| `bb59efc` | Merge master — bring in v2.1 game-style intro layer onto sandbox-coach feature branch |
+| `(merge)` | Merge feat/sandbox-coach-tree → master (no-ff) |
+
+### 검증 결과
+
+- `npm run typecheck`: 0 에러
+- `npm run test` (vitest): 37/37 통과
+- `npm run build`: 11/11 라우트 생성
+- 로컬 dev 서버 (`localhost:3001`): 인트로 → /sandbox(코치 응답 200) → /cases/[caseId](힌트 모달 동작) 모두 정상
+
+### 다음 작업자가 할 일
+
+1. **`git push origin master`** → Amplify 자동 빌드 트리거 → 라이브 검증 (`/api/coach` MOCK 마커 미포함, sandbox 코치 라이브 응답)
+2. **(보류) 워킹트리 정리**: `projects/_archive/cost-sim-v3/` 신규, `projects/cost-sim-v3/` 대량 삭제, `projects/CI 과정 활용 자료/...` 신규 — 이전 세션부터 보류 중, 별도 결정 필요
+3. **(선택) 01-loading 케이스에도 `hints {l1,l2,l3}` 추가** — 현재는 fallback `hint` 단일 텍스트 반복
+
+### 막힌 부분 / 주의사항
+
+- dev 서버를 장시간 띄워두면 정적 청크 404로 흰 화면이 발생 — 머지/캐시 어긋남 시 `.next` 삭제 후 재기동 필요
+- 두 개 이상의 워크트리에서 dev 서버를 띄우면 포트 충돌(3001/3003 등) — 어느 쪽이 최신인지 헷갈리지 않도록 옛 dev 서버는 명시적으로 종료
+- Sandbox 코치 컨텍스트의 슬라이더 값은 zustand store에서 가져오므로 ParamPanel 변경 시 자동 반영 — 별도 동기화 불필요
+- 힌트 모달에서 `l1/l2/l3` 누락 시 `phases.apply.hint` 단일 텍스트로 fallback (3단계 모두 동일 텍스트 표시) — 케이스 JSON 보강 권장
+
+---
+
+## 2026-05-01 (cost-sim-v2.1 SSR 배포)
 
 ### 현재 상태
 

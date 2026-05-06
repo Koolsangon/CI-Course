@@ -11,12 +11,33 @@ export type AdapterFn = (base: CostParams, values: Record<string, number>) => Co
 const loading: AdapterFn = (base, v) =>
   applyLoadingChange(base, Number(v.new_loading ?? base.loading));
 
-const materialYield: AdapterFn = (base, v) =>
-  applyMaterialYieldChange(
+const materialYield: AdapterFn = (base, v) => {
+  const moduleYieldChange = Number(v.module_yield_change ?? 0);
+  const next = applyMaterialYieldChange(
     base,
     Number(v.material_change_pct ?? 0),
-    Number(v.module_yield_change ?? 0)
+    moduleYieldChange
   );
+  // Module 수율 변동은 Panel/Module 가공비 6개 항목에도 (yield_old / yield_new)
+  // 비율로 영향을 준다. 엔진은 Python 오라클과 1:1 패리티를 유지해야 하므로
+  // 여기 어댑터 단계에서만 Sandbox UI 용도로 스케일링한다.
+  if (next && Math.abs(moduleYieldChange) > 1e-9) {
+    const yieldRatio = base.yields.module / next.yields.module;
+    next.processing = {
+      panel: {
+        labor:        base.processing.panel.labor        * yieldRatio,
+        expense:      base.processing.panel.expense      * yieldRatio,
+        depreciation: base.processing.panel.depreciation * yieldRatio
+      },
+      module: {
+        labor:        base.processing.module.labor        * yieldRatio,
+        expense:      base.processing.module.expense      * yieldRatio,
+        depreciation: base.processing.module.depreciation * yieldRatio
+      }
+    };
+  }
+  return next;
+};
 
 const cutsMask: AdapterFn = (base, v) =>
   applyCutsMaskChange(

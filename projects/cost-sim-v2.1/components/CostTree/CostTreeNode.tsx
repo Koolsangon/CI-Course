@@ -29,12 +29,13 @@ const groupStyles: Record<string, GroupStyle> = {
   sga:        { bar: "bg-[hsl(263_60%_50%)]",           tint: "bg-[hsl(263_60%_50%/0.04)]",   label: "text-[hsl(263_60%_42%)]" },
   material:   { bar: "bg-[hsl(160_58%_38%)]",           tint: "bg-[hsl(160_58%_38%/0.04)]",   label: "text-[hsl(160_58%_28%)]" },
   processing: { bar: "bg-[hsl(38_80%_45%)]",            tint: "bg-[hsl(38_80%_45%/0.05)]",    label: "text-[hsl(38_80%_34%)]" },
+  profit:     { bar: "bg-[hsl(235_72%_50%)]",           tint: "bg-[hsl(235_72%_50%/0.05)]",   label: "text-[hsl(235_72%_38%)]" },
   bom:        { bar: "bg-[hsl(var(--surface-400))]",    tint: "bg-[hsl(var(--surface-50))]",  label: "text-[hsl(var(--muted))]" }
 };
 
 function formatValue(value: number, unit?: "$" | "%"): string {
   if (unit === "%") return `${(value * 100).toFixed(1)}%`;
-  const v = Math.abs(value) >= 100 ? value.toFixed(1) : value.toFixed(2);
+  const v = value.toFixed(1);
   return unit === "$" ? `$${v}` : v;
 }
 
@@ -82,7 +83,12 @@ function CostTreeNodeComponent({ data }: NodeProps<CostTreeNodeData>) {
       <div className={["text-[10px] font-semibold uppercase tracking-wider", style.label].join(" ")}>
         {data.label}
       </div>
-      <div className="mt-0.5 text-lg font-extrabold tabular-nums leading-tight text-[hsl(var(--fg))]">
+      <div
+        className={[
+          "mt-0.5 text-lg font-extrabold tabular-nums leading-tight",
+          data.changed ? "text-[hsl(var(--danger))]" : "text-[hsl(var(--fg))]"
+        ].join(" ")}
+      >
         {formatValue(data.value, data.unit)}
       </div>
       <Handle

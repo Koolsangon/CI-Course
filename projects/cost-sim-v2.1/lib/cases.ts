@@ -16,6 +16,28 @@ export interface CaseVariable {
   description?: string;
 }
 
+export interface InspectorLine {
+  label: string;
+  expr_template: string;
+}
+
+export interface InspectorGroup {
+  title: string;
+  lines: InspectorLine[];
+}
+
+export interface InspectorSpec {
+  delta_lines?: InspectorLine[];
+  delta_groups?: InspectorGroup[];
+  result_fields: string[];
+}
+
+export interface TreeInfoEntry {
+  label: string;
+  field: string;
+  format: "percent1" | "dollar1";
+}
+
 export interface CaseDef {
   id: string;
   title: string;
@@ -24,6 +46,8 @@ export interface CaseDef {
   reference: CostParams;
   variables: CaseVariable[];
   expected: Record<string, number>;
+  inspector?: InspectorSpec;
+  tree_info?: TreeInfoEntry[];
   phases: {
     hook: string;
     discover: string;

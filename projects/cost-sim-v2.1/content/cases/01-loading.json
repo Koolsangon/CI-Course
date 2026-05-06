@@ -1,6 +1,6 @@
 {
   "id": "01-loading",
-  "title": "Loading 변화",
+  "title": "Loading율 변동",
   "scenario": "고객사 주문 급감으로 설비 Loading(가동률)이 70%에서 50%로 떨어졌습니다.",
   "adapter": "loading",
   "reference": {
@@ -17,16 +17,27 @@
   "variables": [
     {
       "key": "new_loading",
-      "ko": "새 Loading",
+      "ko": "Loading율",
       "min": 0.30,
       "max": 1.00,
       "step": 0.01,
-      "default": 0.50,
+      "default": 0.70,
       "unit": "%",
       "format": "percent",
       "description": "Loading 변경 → Panel·Module 가공비(노무비, 경비, 감상비) 6개 항목 → 가공비 합계 → COM → COP → 영업이익 연쇄 변동"
     }
   ],
+  "inspector": {
+    "delta_lines": [
+      { "label": "Panel 노무비",  "expr_template": "21.3 × 70 ÷ {slider:new_loading_pct}" },
+      { "label": "Panel 경비",    "expr_template": "11.5 × 70 ÷ {slider:new_loading_pct}" },
+      { "label": "Panel 감상비",  "expr_template": "16.2 × 70 ÷ {slider:new_loading_pct}" },
+      { "label": "Module 노무비", "expr_template": "8.7 × 70 ÷ {slider:new_loading_pct}" },
+      { "label": "Module 경비",   "expr_template": "5.3 × 70 ÷ {slider:new_loading_pct}" },
+      { "label": "Module 감상비", "expr_template": "7.5 × 70 ÷ {slider:new_loading_pct}" }
+    ],
+    "result_fields": ["processing_cost", "com", "cop", "operating_profit"]
+  },
   "expected": {
     "panel_labor": 29.82,
     "panel_expense": 16.10,

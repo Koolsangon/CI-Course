@@ -140,7 +140,12 @@ export default function SandboxPage() {
         </AnimatePresence>
 
         <div className="flex-1 overflow-hidden rounded-2xl border border-[hsl(var(--border))] shadow-card">
-          <CostTreeView result={result} params={params} changedPaths={lastDelta} />
+          <CostTreeView
+            result={result}
+            params={params}
+            changedPaths={lastDelta}
+            treeInfo={currentCase?.tree_info}
+          />
         </div>
 
         <AnimatePresence initial={false}>

@@ -30,6 +30,8 @@ export interface StoreState {
   params: CostParams;
   result: CostResult;
   lastDelta: DeltaTrace[];
+  /** Current slider values for the active case (used by inspector / tree-info card). */
+  sliderValues: Record<string, number>;
 
   /** Worksheet answers: problemId -> columnId -> cellId -> user input value */
   worksheetAnswers: Record<string, Record<string, Record<string, number>>>;
@@ -42,6 +44,7 @@ export interface StoreState {
   setMode: (mode: Mode) => void;
   loadCase: (caseId: string, params: CostParams) => void;
   setParams: (next: CostParams | ((prev: CostParams) => CostParams)) => void;
+  setSliderValues: (values: Record<string, number>) => void;
   resetCase: () => void;
 
   setWorksheetAnswer: (problemId: string, columnId: string, cellId: string, value: number) => void;
@@ -64,6 +67,7 @@ export const useStore = create<StoreState>()(
   params: DEFAULT_PARAMS,
   result: calculate(DEFAULT_PARAMS),
   lastDelta: [],
+  sliderValues: {},
 
   worksheetAnswers: {},
   worksheetGrades: {},
@@ -79,9 +83,12 @@ export const useStore = create<StoreState>()(
       caseId,
       params: next,
       result: calculate(next),
-      lastDelta: []
+      lastDelta: [],
+      sliderValues: {}
     });
   },
+
+  setSliderValues: (values) => set({ sliderValues: values }),
 
   setParams: (next) => {
     const prevResult = get().result;

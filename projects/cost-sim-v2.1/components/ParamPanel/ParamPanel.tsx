@@ -43,6 +43,7 @@ export default function ParamPanel({ caseId }: ParamPanelProps) {
   const caseDef = getCase(caseId);
   const loadCase = useStore((s) => s.loadCase);
   const setParams = useStore((s) => s.setParams);
+  const setSliderValues = useStore((s) => s.setSliderValues);
 
   const defaults = useMemo(() => {
     if (!caseDef) return {};
@@ -64,9 +65,10 @@ export default function ParamPanel({ caseId }: ParamPanelProps) {
     if (!caseDef) return;
     loadCase(caseDef.id, caseDef.reference);
     reset(defaults);
+    setSliderValues(defaults);
     const initial = applyCaseAdapter(caseDef.adapter, caseDef.reference, defaults);
     if (initial) setParams(initial);
-  }, [caseDef, loadCase, reset, defaults, setParams]);
+  }, [caseDef, loadCase, reset, defaults, setParams, setSliderValues]);
 
   useEffect(() => {
     if (!caseDef) return;
@@ -75,11 +77,12 @@ export default function ParamPanel({ caseId }: ParamPanelProps) {
       for (const [k, v] of Object.entries(values)) {
         if (typeof v === "number") coerced[k] = v;
       }
+      setSliderValues(coerced);
       const next = applyCaseAdapter(caseDef.adapter, caseDef.reference, coerced);
       if (next) setParams(next);
     });
     return () => sub.unsubscribe();
-  }, [watch, caseDef, setParams]);
+  }, [watch, caseDef, setParams, setSliderValues]);
 
   if (!caseDef) {
     return (

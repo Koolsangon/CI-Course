@@ -8,7 +8,7 @@ import type { CostResult, CostParams } from "@/lib/cost-engine/types";
 export interface TreeNodeDef {
   id: string;
   label: string;
-  group: "root" | "top" | "com" | "sga" | "material" | "processing" | "bom";
+  group: "root" | "top" | "com" | "sga" | "material" | "processing" | "bom" | "profit";
   /** Derive the current display value from a CostResult snapshot. */
   valueOf: (r: CostResult, p: CostParams) => number;
   unit?: "$" | "%";
@@ -22,6 +22,14 @@ export interface TreeEdgeDef {
 
 export const TREE_NODES: TreeNodeDef[] = [
   { id: "price", label: "Price", group: "root", valueOf: (r) => r.price, unit: "$" },
+  {
+    id: "operating_profit",
+    label: "영업이익",
+    group: "profit",
+    valueOf: (r) => r.operating_profit,
+    unit: "$",
+    formula: "영업이익 = Price − COP"
+  },
   { id: "cop", label: "COP", group: "top", valueOf: (r) => r.cop, unit: "$", formula: "COP = COM + SGA" },
   { id: "com", label: "COM", group: "com", valueOf: (r) => r.com, unit: "$", formula: "COM = 소요재료비 + 가공비" },
   { id: "sga", label: "SGA", group: "sga", valueOf: (r) => r.sga, unit: "$", formula: "SGA = 직개발 + 운반 + 사업부 + 운영 + Corp OH" },
@@ -73,7 +81,7 @@ export const TREE_NODES: TreeNodeDef[] = [
   },
   {
     id: "panel_depreciation",
-    label: "Panel 상각비",
+    label: "Panel 감상비",
     group: "processing",
     valueOf: (r) => r.panel_depreciation,
     unit: "$"
@@ -94,7 +102,7 @@ export const TREE_NODES: TreeNodeDef[] = [
   },
   {
     id: "module_depreciation",
-    label: "Module 상각비",
+    label: "Module 감상비",
     group: "processing",
     valueOf: (r) => r.module_depreciation,
     unit: "$"
@@ -102,7 +110,8 @@ export const TREE_NODES: TreeNodeDef[] = [
 ];
 
 export const TREE_EDGES: TreeEdgeDef[] = [
-  { from: "price", to: "cop" },
+  { from: "price", to: "operating_profit" },
+  { from: "operating_profit", to: "cop" },
   { from: "cop", to: "com" },
   { from: "cop", to: "sga" },
   { from: "com", to: "material" },
@@ -125,6 +134,7 @@ export const TREE_EDGES: TreeEdgeDef[] = [
  */
 export const FIELD_TO_NODE: Record<string, string> = {
   price: "price",
+  operating_profit: "operating_profit",
   cop: "cop",
   com: "com",
   sga: "sga",

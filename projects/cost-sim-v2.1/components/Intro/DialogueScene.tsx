@@ -9,14 +9,17 @@ interface DialogueSceneProps {
   beat: IntroBeat;
   onAdvance: () => void;
   reducedMotion: boolean;
+  playerName?: string;
 }
 
-export function DialogueScene({ beat, onAdvance, reducedMotion }: DialogueSceneProps) {
-  const speaker = CHARACTERS[beat.speaker];
-  const position = beat.position ?? "center";
+export function DialogueScene({ beat, onAdvance, reducedMotion, playerName }: DialogueSceneProps) {
   const manager = CHARACTERS.manager;
   const lead = CHARACTERS.lead;
-  const player = CHARACTERS.player;
+  const player = playerName
+    ? { ...CHARACTERS.player, name: playerName }
+    : CHARACTERS.player;
+  const speaker = beat.speaker === "player" ? player : CHARACTERS[beat.speaker];
+  const position = beat.position ?? "center";
 
   return (
     <div className="flex w-full max-w-5xl flex-col items-center gap-6 sm:gap-10">

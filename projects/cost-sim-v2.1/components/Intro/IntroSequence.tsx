@@ -5,7 +5,9 @@ import { AnimatePresence, motion } from "framer-motion";
 import { X } from "lucide-react";
 import { TitleScreen } from "./TitleScreen";
 import { DialogueScene } from "./DialogueScene";
+import { NameInput } from "./NameInput";
 import { INTRO_SCRIPT } from "./script";
+import { applyPlayerTokens, loadPlayerName, savePlayerName } from "@/lib/player";
 
 export const INTRO_SEEN_KEY = "cost-sim:intro-seen";
 
@@ -13,12 +15,17 @@ interface IntroSequenceProps {
   onComplete: () => void;
 }
 
-type Stage = "title" | "dialogue" | "fadeout";
+type Stage = "title" | "name-input" | "dialogue" | "fadeout";
 
 export function IntroSequence({ onComplete }: IntroSequenceProps) {
   const [stage, setStage] = useState<Stage>("title");
   const [beatIndex, setBeatIndex] = useState(0);
   const [reducedMotion, setReducedMotion] = useState(false);
+  const [playerName, setPlayerName] = useState("");
+
+  useEffect(() => {
+    setPlayerName(loadPlayerName());
+  }, []);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -64,7 +71,16 @@ export function IntroSequence({ onComplete }: IntroSequenceProps) {
     return () => window.removeEventListener("keydown", onKey);
   }, [finish]);
 
-  const beat = INTRO_SCRIPT[beatIndex];
+  const handleNameSubmit = useCallback((name: string) => {
+    savePlayerName(name);
+    setPlayerName(name);
+    setStage("dialogue");
+  }, []);
+
+  const rawBeat = INTRO_SCRIPT[beatIndex];
+  const beat = rawBeat
+    ? { ...rawBeat, text: applyPlayerTokens(rawBeat.text, playerName) }
+    : rawBeat;
 
   return (
     <AnimatePresence>
@@ -135,8 +151,25 @@ export function IntroSequence({ onComplete }: IntroSequenceProps) {
                   transition={{ duration: reducedMotion ? 0 : 0.3 }}
                 >
                   <TitleScreen
-                    onStart={() => setStage("dialogue")}
+                    onStart={() =>
+                      setStage(playerName ? "dialogue" : "name-input")
+                    }
                     onSkip={finish}
+                    reducedMotion={reducedMotion}
+                  />
+                </motion.div>
+              )}
+
+              {stage === "name-input" && (
+                <motion.div
+                  key="name-input"
+                  initial={reducedMotion ? false : { opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: reducedMotion ? 0 : 0.3 }}
+                >
+                  <NameInput
+                    onSubmit={handleNameSubmit}
                     reducedMotion={reducedMotion}
                   />
                 </motion.div>
@@ -155,6 +188,7 @@ export function IntroSequence({ onComplete }: IntroSequenceProps) {
                     beat={beat}
                     onAdvance={advanceBeat}
                     reducedMotion={reducedMotion}
+                    playerName={playerName}
                   />
                 </motion.div>
               )}

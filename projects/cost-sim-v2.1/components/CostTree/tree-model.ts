@@ -110,8 +110,8 @@ export const TREE_NODES: TreeNodeDef[] = [
 ];
 
 export const TREE_EDGES: TreeEdgeDef[] = [
+  { from: "price", to: "cop" },
   { from: "price", to: "operating_profit" },
-  { from: "operating_profit", to: "cop" },
   { from: "cop", to: "com" },
   { from: "cop", to: "sga" },
   { from: "com", to: "material" },

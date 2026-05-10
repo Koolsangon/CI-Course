@@ -77,7 +77,7 @@
       "cells": {
         "ref":  { "id": "ym_ref", "type": "purple", "value": 0.972 },
         "sim1": { "id": "ym_s1",  "type": "purple", "value": 0.972 },
-        "sim2": { "id": "ym_s2",  "type": "purple", "value": 0.932 }
+        "sim2": { "id": "ym_s2",  "type": "yellow", "answer": 0.932 }
       }
     },
     {
@@ -93,7 +93,7 @@
       "cells": {
         "ref":  { "id": "pl_ref", "type": "purple", "value": 21.30 },
         "sim1": { "id": "pl_s1",  "type": "purple", "value": 21.30 },
-        "sim2": { "id": "pl_s2",  "type": "purple", "value": 21.30 }
+        "sim2": { "id": "pl_s2",  "type": "yellow", "answer": 22.21 }
       }
     },
     {
@@ -101,7 +101,7 @@
       "cells": {
         "ref":  { "id": "pe_ref", "type": "purple", "value": 11.50 },
         "sim1": { "id": "pe_s1",  "type": "purple", "value": 11.50 },
-        "sim2": { "id": "pe_s2",  "type": "purple", "value": 11.50 }
+        "sim2": { "id": "pe_s2",  "type": "yellow", "answer": 11.99 }
       }
     },
     {
@@ -109,7 +109,7 @@
       "cells": {
         "ref":  { "id": "pd_ref", "type": "purple", "value": 16.20 },
         "sim1": { "id": "pd_s1",  "type": "purple", "value": 16.20 },
-        "sim2": { "id": "pd_s2",  "type": "purple", "value": 16.20 }
+        "sim2": { "id": "pd_s2",  "type": "yellow", "answer": 16.90 }
       }
     },
     {
@@ -117,7 +117,7 @@
       "cells": {
         "ref":  { "id": "ml_ref", "type": "purple", "value": 8.70 },
         "sim1": { "id": "ml_s1",  "type": "purple", "value": 8.70 },
-        "sim2": { "id": "ml_s2",  "type": "purple", "value": 8.70 }
+        "sim2": { "id": "ml_s2",  "type": "yellow", "answer": 9.07 }
       }
     },
     {
@@ -125,7 +125,7 @@
       "cells": {
         "ref":  { "id": "me_ref", "type": "purple", "value": 5.30 },
         "sim1": { "id": "me_s1",  "type": "purple", "value": 5.30 },
-        "sim2": { "id": "me_s2",  "type": "purple", "value": 5.30 }
+        "sim2": { "id": "me_s2",  "type": "yellow", "answer": 5.53 }
       }
     },
     {
@@ -133,7 +133,7 @@
       "cells": {
         "ref":  { "id": "md_ref", "type": "purple", "value": 7.50 },
         "sim1": { "id": "md_s1",  "type": "purple", "value": 7.50 },
-        "sim2": { "id": "md_s2",  "type": "purple", "value": 7.50 }
+        "sim2": { "id": "md_s2",  "type": "yellow", "answer": 7.82 }
       }
     },
     {
@@ -141,7 +141,7 @@
       "cells": {
         "ref":  { "id": "proc_ref", "type": "purple", "value": 70.50 },
         "sim1": { "id": "proc_s1",  "type": "purple", "value": 70.50 },
-        "sim2": { "id": "proc_s2",  "type": "purple", "value": 70.50 }
+        "sim2": { "id": "proc_s2",  "type": "blue" }
       }
     },
     {

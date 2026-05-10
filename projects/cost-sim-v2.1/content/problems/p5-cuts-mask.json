@@ -21,7 +21,7 @@
       "cells": {
         "ref":  { "id": "bt_ref", "type": "purple", "value": 6.00 },
         "sim1": { "id": "bt_s1",  "type": "yellow", "answer": 5.17 },
-        "sim2": { "id": "bt_s2",  "type": "purple", "value": 5.17 }
+        "sim2": { "id": "bt_s2",  "type": "yellow", "answer": 5.27 }
       }
     },
     {
@@ -85,7 +85,7 @@
       "cells": {
         "ref":  { "id": "mat_ref", "type": "purple", "value": 90.76 },
         "sim1": { "id": "mat_s1",  "type": "yellow", "answer": 88.89 },
-        "sim2": { "id": "mat_s2",  "type": "purple", "value": 88.89 }
+        "sim2": { "id": "mat_s2",  "type": "purple", "value": 88.99 }
       }
     },
     {

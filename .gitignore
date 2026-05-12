@@ -2,6 +2,10 @@ __pycache__/
 *.pyc
 .env
 
+# Office app lock files (LibreOffice/Excel)
+.~lock.*#
+~$*
+
 # AWS credentials (never commit)
 *_accessKeys.csv
 *accessKey*.csv

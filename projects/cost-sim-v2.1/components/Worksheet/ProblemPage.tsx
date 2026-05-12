@@ -7,6 +7,7 @@ import type { ProblemDef } from "@/content/problems/types";
 import {
   gradeYellowCells,
   computeWeightedScore,
+  resolveHints,
   type GradeResult,
   type HintLevel,
   type HintLevelMap,
@@ -258,16 +259,8 @@ export default function ProblemPage({ problem, caseId }: ProblemPageProps) {
 
       {hintCell && (() => {
         const row = problem.rows.find((r) => r.id === hintCell.rowId);
-        const refCell = row?.cells["ref"];
-        const refValue = refCell?.value;
-        const fallbackHint =
-          caseDef?.phases.apply.hint ??
-          "이 케이스의 힌트가 아직 등록되지 않았습니다.";
-        const hints = caseDef?.phases.apply.hints ?? {
-          l1: fallbackHint,
-          l2: fallbackHint,
-          l3: fallbackHint
-        };
+        const refValue = row?.cells["ref"]?.value;
+        const hints = resolveHints(problem, caseDef, hintCell.colId, hintCell.rowId);
         const level = hintLevels[hintCell.colId]?.[hintCell.rowId] ?? 0;
         return (
           <CellHintModal

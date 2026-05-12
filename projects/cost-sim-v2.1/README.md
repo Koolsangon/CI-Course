@@ -1,4 +1,4 @@
-# cost-sim-v2-game
+# cost-sim-v2.1
 
 > **개발원가 시뮬레이션 v2** — v1의 교육용 인터랙티브 도구를 **몰입형 게임**으로 전환합니다.
 >
@@ -23,7 +23,7 @@ npx playwright test  # E2E (sandbox dropdown / guided flow / design QA / formula
 
 - ✅ Pure TS cost engine (`lib/cost-engine/`) + 27 골든 픽스처 ±0.001
 - ✅ Living Cost Tree (reactflow LR 레이아웃, Framer Motion 펄스, 디자이너 에이전트 디자인 토큰)
-- ✅ 6 케이스 Sandbox + Guided 4-phase (Hook → Discover → Apply → Reflect)
+- ✅ 4 케이스 Sandbox (Loading / Material-Yield / Cuts-Mask / Tact-Investment) — v2.1에서 Guided 4-phase는 Worksheet 3단계 힌트 시스템으로 교체
 - ✅ ParamPanel (RHF + zod) · FormulaInspector (관련 수식 자동 수집) · Coach Drawer (정적 + AI fallback)
 - ✅ PWA (manifest + 서비스 워커) · 다크 모드 · 모바일 반응형
 - ✅ Playwright 14 spec E2E (sandbox 드롭다운 / guided flow / design QA / formula inspector / case 3 mutation)

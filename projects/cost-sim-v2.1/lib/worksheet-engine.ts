@@ -1,4 +1,5 @@
-import type { ProblemDef, RowDef, CellDef } from "@/content/problems/types";
+import type { ProblemDef, RowDef, CellDef, CellHints } from "@/content/problems/types";
+import type { CaseDef } from "./cases";
 
 type CellValues = Record<string, Record<string, number>>;
 
@@ -140,6 +141,35 @@ export interface WeightedScore {
   weightedScore: number;     // sum of HINT_PENALTY[level] over correct cells
   total: number;             // total yellow cells
   hintPenalty: number;       // rawScore − weightedScore (>= 0)
+}
+
+/**
+ * Hint resolver — 4-단계 cascade.
+ *
+ *   1. cell.hints       (가장 구체적; 셀별 메커니즘이 다를 때)
+ *   2. row.hints        (같은 메커니즘을 공유하는 행 단위)
+ *   3. caseDef.phases.apply.hints  (케이스 전체 단일 세트)
+ *   4. caseDef.phases.apply.hint   (legacy 단일 문자열 → 3 레벨 모두에 동일 텍스트로 fallback)
+ *
+ * 정의된 값이 하나도 없으면 placeholder 문자열로 채워 모달이 깨지지 않게 한다.
+ */
+export function resolveHints(
+  problem: ProblemDef,
+  caseDef: CaseDef | undefined,
+  colId: string,
+  rowId: string
+): CellHints {
+  const row = problem.rows.find((r) => r.id === rowId);
+  const cell = row?.cells[colId];
+
+  if (cell?.hints) return cell.hints;
+  if (row?.hints) return row.hints;
+  if (caseDef?.phases.apply.hints) return caseDef.phases.apply.hints;
+
+  const fallback =
+    caseDef?.phases.apply.hint ??
+    "이 셀의 힌트가 아직 등록되지 않았습니다.";
+  return { l1: fallback, l2: fallback, l3: fallback };
 }
 
 export function computeWeightedScore(

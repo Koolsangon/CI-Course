@@ -81,42 +81,96 @@
       "id": "panel_labor", "label": "Panel 노무비", "indent": 1,
       "cells": {
         "ref":  { "id": "pl_ref",  "type": "purple", "value": 21.30 },
-        "sim1": { "id": "pl_sim1", "type": "yellow", "answer": 29.82 }
+        "sim1": {
+          "id": "pl_sim1",
+          "type": "yellow",
+          "answer": 29.82,
+          "hints": {
+            "l1": "이 셀은 Loading(가동률)이 70%에서 50%로 떨어진 상태의 Panel 노무비입니다. 노무비는 사람 인건비 — 생산량이 줄어도 총액이 거의 그대로 나가는 고정비 성격이라는 점을 먼저 떠올려 보세요.",
+            "l2": "고정비는 같은 금액을 더 적은 생산량에 분담시키므로, 단위당 비용은 Loading에 반비례합니다. Loading이 70% → 50%로 줄어들 때 분모(생산량)는 작아지고 분자(노무비 총액)는 그대로 — 단위당 노무비는 어느 방향으로 움직일까요?",
+            "l3": "공식은 다음과 같습니다 — 새 Panel 노무비 = 기준 노무비 × (기준 Loading ÷ 새 Loading). Reference 컬럼의 21.30에 두 Loading의 비율을 곱해서 직접 계산해 보세요. (정답 숫자는 직접 계산해 주세요.)"
+          }
+        }
       }
     },
     {
       "id": "panel_expense", "label": "Panel 경비", "indent": 1,
       "cells": {
         "ref":  { "id": "pe_ref",  "type": "purple", "value": 11.50 },
-        "sim1": { "id": "pe_sim1", "type": "yellow", "answer": 16.10 }
+        "sim1": {
+          "id": "pe_sim1",
+          "type": "yellow",
+          "answer": 16.10,
+          "hints": {
+            "l1": "이 셀은 Loading 70% → 50% 상태의 Panel 경비입니다. 경비는 공장 운영에 들어가는 간접비(시설 유지·공통자재·관리비 등) — 노무비처럼 고정비 성격이 강해 생산량과 무관하게 거의 그대로 나간다는 점을 먼저 떠올려 보세요.",
+            "l2": "고정비는 같은 금액을 더 적은 생산량에 분담시키므로, 단위당 비용은 Loading에 반비례합니다. Loading이 70% → 50%로 줄어들 때 분모(생산량)는 작아지고 분자(경비 총액)는 그대로 — 단위당 경비는 어느 방향으로 움직일까요?",
+            "l3": "공식은 다음과 같습니다 — 새 Panel 경비 = 기준 경비 × (기준 Loading ÷ 새 Loading). Reference 컬럼의 11.50에 두 Loading의 비율을 곱해서 직접 계산해 보세요. (정답 숫자는 직접 계산해 주세요.)"
+          }
+        }
       }
     },
     {
       "id": "panel_depreciation", "label": "Panel 감상비", "indent": 1,
       "cells": {
         "ref":  { "id": "pd_ref",  "type": "purple", "value": 16.20 },
-        "sim1": { "id": "pd_sim1", "type": "yellow", "answer": 22.68 }
+        "sim1": {
+          "id": "pd_sim1",
+          "type": "yellow",
+          "answer": 22.68,
+          "hints": {
+            "l1": "이 셀은 Loading 70% → 50% 상태의 Panel 감상비입니다. 감상비는 설비 감가상각비 — 시간이 지나면 발생하는 비용이라 가동률과 완전히 독립입니다. 생산량이 줄어도 같은 금액이 그대로 빠진다는 점을 먼저 떠올려 보세요.",
+            "l2": "감상비는 가장 고정적인 비용이라 같은 금액이 더 적은 생산량에 분담됩니다. 단위당 감상비는 Loading에 반비례 — Loading이 70% → 50%로 줄어들 때 분모(생산량)는 작아지고 분자(감상비 총액)는 그대로 — 단위당 감상비는 어느 방향으로 움직일까요?",
+            "l3": "공식은 다음과 같습니다 — 새 Panel 감상비 = 기준 감상비 × (기준 Loading ÷ 새 Loading). Reference 컬럼의 16.20에 두 Loading의 비율을 곱해서 직접 계산해 보세요. (정답 숫자는 직접 계산해 주세요.)"
+          }
+        }
       }
     },
     {
       "id": "module_labor", "label": "Module 노무비", "indent": 1,
       "cells": {
         "ref":  { "id": "ml_ref",  "type": "purple", "value": 8.70 },
-        "sim1": { "id": "ml_sim1", "type": "yellow", "answer": 12.18 }
+        "sim1": {
+          "id": "ml_sim1",
+          "type": "yellow",
+          "answer": 12.18,
+          "hints": {
+            "l1": "이 셀은 Loading 70% → 50% 상태의 Module 노무비입니다. Module 공정의 노무비도 Panel과 같은 사람 인건비라, 생산량과 무관하게 거의 같은 금액이 나가는 고정비 성격임을 먼저 떠올려 보세요.",
+            "l2": "고정비는 같은 금액을 더 적은 생산량에 분담시키므로, 단위당 비용은 Loading에 반비례합니다. Loading이 70% → 50%로 줄어들 때 분모(생산량)는 작아지고 분자(Module 노무비 총액)는 그대로 — 단위당 노무비는 어느 방향으로 움직일까요?",
+            "l3": "공식은 다음과 같습니다 — 새 Module 노무비 = 기준 노무비 × (기준 Loading ÷ 새 Loading). Reference 컬럼의 8.70에 두 Loading의 비율을 곱해서 직접 계산해 보세요. (정답 숫자는 직접 계산해 주세요.)"
+          }
+        }
       }
     },
     {
       "id": "module_expense", "label": "Module 경비", "indent": 1,
       "cells": {
         "ref":  { "id": "me_ref",  "type": "purple", "value": 5.30 },
-        "sim1": { "id": "me_sim1", "type": "yellow", "answer": 7.42 }
+        "sim1": {
+          "id": "me_sim1",
+          "type": "yellow",
+          "answer": 7.42,
+          "hints": {
+            "l1": "이 셀은 Loading 70% → 50% 상태의 Module 경비입니다. Module 공정의 간접비도 Panel과 마찬가지로 고정비 성격 — 생산량이 줄어도 거의 같은 금액이 빠진다는 점을 먼저 떠올려 보세요.",
+            "l2": "고정비는 같은 금액을 더 적은 생산량에 분담시키므로, 단위당 비용은 Loading에 반비례합니다. Loading이 70% → 50%로 줄어들 때 분모(생산량)는 작아지고 분자(Module 경비 총액)는 그대로 — 단위당 경비는 어느 방향으로 움직일까요?",
+            "l3": "공식은 다음과 같습니다 — 새 Module 경비 = 기준 경비 × (기준 Loading ÷ 새 Loading). Reference 컬럼의 5.30에 두 Loading의 비율을 곱해서 직접 계산해 보세요. (정답 숫자는 직접 계산해 주세요.)"
+          }
+        }
       }
     },
     {
       "id": "module_depreciation", "label": "Module 감상비", "indent": 1,
       "cells": {
         "ref":  { "id": "md_ref",  "type": "purple", "value": 7.50 },
-        "sim1": { "id": "md_sim1", "type": "yellow", "answer": 10.50 }
+        "sim1": {
+          "id": "md_sim1",
+          "type": "yellow",
+          "answer": 10.50,
+          "hints": {
+            "l1": "이 셀은 Loading 70% → 50% 상태의 Module 감상비입니다. Module 설비의 감가상각비도 시간이 지나면 발생 — 가동률과 완전히 독립이라 생산량이 줄어도 같은 금액이 그대로 빠진다는 점을 먼저 떠올려 보세요.",
+            "l2": "감상비는 가장 고정적인 비용이라 같은 금액이 더 적은 생산량에 분담됩니다. 단위당 감상비는 Loading에 반비례 — Loading이 70% → 50%로 줄어들 때 분모(생산량)는 작아지고 분자(Module 감상비 총액)는 그대로 — 단위당 감상비는 어느 방향으로 움직일까요?",
+            "l3": "공식은 다음과 같습니다 — 새 Module 감상비 = 기준 감상비 × (기준 Loading ÷ 새 Loading). Reference 컬럼의 7.50에 두 Loading의 비율을 곱해서 직접 계산해 보세요. (정답 숫자는 직접 계산해 주세요.)"
+          }
+        }
       }
     },
     {

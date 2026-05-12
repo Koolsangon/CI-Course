@@ -1,6 +1,92 @@
 # handoff.md - 인수인계 메모
 
-## 최종 갱신: 2026-05-02 (Sandbox AI 코치 + 라이트 트리 + 3단계 힌트)
+## 최종 갱신: 2026-05-12 (4-케이스 정합 + 워크시트 셀별 힌트 시스템 도입)
+
+### 현재 상태
+
+- **cost-sim-v2.1**: 워크시트 hint 시스템이 *케이스 단일 세트*에서 **cell → row → case → fallback 4단계 cascade**로 전환됨. p1·p4·p6 워크시트의 yellow 셀 20개가 셀별 단계 힌트(개념/메커니즘/공식 3단계)를 갖춤. p5는 도메인 ambiguity로 보류.
+- **글로서리·README·decision-log**: 4-케이스(01·04·05·06) canon으로 정리됨. 02(인건비) / 03(한계이익률)은 v2.1 스코프 제외 결정 박제.
+- **검증**: typecheck 0, vitest 43/43 (worksheet-engine cascade 6 tests 신규 + cost-engine 37 기존).
+- **변경 8개 파일, 커밋 대기**.
+
+### 이번 세션 작업 내용
+
+1. **A축 — 4-케이스 정합 (콘텐츠 커버리지 → 문서 정합 변환)**
+   - `context/glossary.md`: "6개 케이스 요약" → "4개 케이스 요약"으로 정리, 빠진 2 케이스 cross-ref 추가
+   - `decision-log.md`: 4-케이스 canon 결정 박제 (2026-05-12 항목 — Scope/결정/이유/영향/거부된 대안 4-필드)
+   - `projects/cost-sim-v2.1/README.md`: 헤더 `cost-sim-v2-game` → `cost-sim-v2.1`, "6 케이스 + Guided 4-phase" 행 → "4 케이스 + Sandbox/Worksheet"
+
+2. **B축 — 워크시트 셀별 힌트 시스템 도입 (cascade resolver)**
+   - **데이터 모델 확장** (`content/problems/types.ts`): `CellHints` 인터페이스 신규 + `CellDef.hints?` + `RowDef.hints?` 두 필드 optional 추가. 기존 데이터 backward-compat 100%.
+   - **resolver** (`lib/worksheet-engine.ts`): `resolveHints(problem, caseDef, colId, rowId)` 함수 신규. **cell → row → case.hints → case.hint(legacy string)** 4단계 cascade.
+   - **회귀 방어** (`lib/worksheet-engine.test.ts`, 신규): 6 vitest — cell 우선 / row fallback / case fallback / legacy string fallback / placeholder / row id not found.
+   - **호출부 단순화** (`components/Worksheet/ProblemPage.tsx`): IIFE 안 11줄 fallback 분기 → `resolveHints` 호출 1줄.
+   - **콘텐츠 작성** — yellow 20셀 × 3단계 = 60 hint 텍스트:
+     - `p1-loading.json`: 6 yellow 모두 (Loading 70%→50% 공식 패턴, 셀 이름·기준값 명시)
+     - `p4-material-yield.json`: 10 yellow 모두 — ①단계 (BOM 5% 절감 + 소요재료비), ②단계 (BOM+수율 결합 + 가공비 수율 연쇄)
+     - `p6-tact-investment.json`: 4 yellow 모두 — ①단계 (Tact 1.2× 곱셈), ②단계 (Tact 곱셈 + 투자 상각비 덧셈)
+
+3. **보류 — p5-cuts-mask (11 yellow)**:
+   - `bom_tft sim2 = 5.27`의 mechanism이 글로서리·case JSON·문제 JSON 어디에도 명시되지 않음
+   - sim1 = `6.0 × (25/29) = 5.17` (면취수만), sim2 = 5.27 → 차이 +0.10의 출처 불명. Mask가 TFT BOM에 영향 준다는 도메인 규칙이 글로서리에 없음
+   - 같은 행 bom_cf/bom_cell의 sim2는 purple(변화 없음)으로 정합 깨짐
+   - **엑셀 원본 확인 후** 도메인 규칙 추가 vs 데이터 오류 수정 결정 필요
+
+### 변경 파일 (커밋 대기)
+
+| 파일 | 변경 종류 |
+|------|-----------|
+| `context/glossary.md` | 케이스 표 6→4 |
+| `decision-log.md` | 2026-05-12 항목 prepend |
+| `handoff.md` | 본 항목 prepend |
+| `projects/cost-sim-v2.1/README.md` | 헤더 + 1행 |
+| `projects/cost-sim-v2.1/content/problems/types.ts` | `CellHints` + cell/row `hints?` |
+| `projects/cost-sim-v2.1/lib/worksheet-engine.ts` | `resolveHints` 함수 |
+| `projects/cost-sim-v2.1/lib/worksheet-engine.test.ts` | 6 vitest (신규 파일) |
+| `projects/cost-sim-v2.1/components/Worksheet/ProblemPage.tsx` | resolver 호출 1줄로 단순화 |
+| `projects/cost-sim-v2.1/content/problems/p1-loading.json` | yellow 6셀 hints |
+| `projects/cost-sim-v2.1/content/problems/p4-material-yield.json` | yellow 10셀 hints |
+| `projects/cost-sim-v2.1/content/problems/p6-tact-investment.json` | yellow 4셀 hints |
+
+### 검증 결과
+
+- `npm run typecheck`: **0 에러**
+- `npm run test`: **43/43 통과** (worksheet-engine.test.ts 6 신규 + cost-engine 기존 37)
+- **시각 회귀 미수행**: dev 서버 띄워 워크시트 모달의 단계 힌트가 셀별로 다르게 나오는지, 점수 차감(100/70/40/20%) 표시가 정상인지는 다음 세션에서 확인 필요.
+
+### 다음 작업자가 할 일
+
+1. **(우선) p5 도메인 명확화**: `bom_tft sim2 = 5.27`의 mechanism이
+   - (가) 의도된 값 → Mask→TFT BOM 영향 규칙이 무엇인지 확정 + 글로서리에 추가
+   - (나) 데이터 오류 → sim2를 `purple 5.17`로 수정 (bom_cf/bom_cell sim2와 정합)
+
+   엑셀 원본 확인 후 위 둘 중 결정.
+
+2. **(우선) p5 hints 작성** — 1번 결정 후 11 yellow × 3단계 = 33 hint. p4 톤·구조 그대로 적용. 한 row 안에서 sim1/sim2 mechanism이 다른 점(panel_labor 등)이 cascade 가치의 핵심 사례.
+
+3. **(선택) 시각 회귀 검증**: 로컬 dev 서버 → /cases → 각 문제 → yellow 셀 `?` 버튼 → 단계별 힌트 모달 동작 + 점수 차감 표시 확인.
+
+4. **(보류) 다른 축 진행**:
+   - **C**: README v2-game Phase A/B/C 게임화 로드맵 cleanup (죽은 로드맵 제거 vs "참고 보존" 표기)
+   - **D**: `tests/e2e/` 빈 디렉토리에 worksheet/sandbox 회귀 테스트 추가
+   - **E**: GEMINI_API_KEY 빌드 인라인 운영 ADR (현재 SSR Lambda 빌드 산출물에 평문 박힌 상태)
+   - **F**: 모바일 실기기 UX 테스트 / 접근성(ARIA/키보드/대비) 감사
+
+### 막힌 부분 / 주의사항
+
+- **모달 마크다운 미렌더링**: `CellHintModal.tsx`는 `whitespace-pre-wrap`만 적용해 별표·코드 등 마크다운 마크업을 그대로 텍스트로 출력. 이번 세션 추가된 60 hint는 *평문* 톤으로 통일 (강조 표기 없음). 향후 마크다운 도입 시 기존 hint 일괄 재작성 필요.
+- **`refValue` 모달 표시**: `CellHintModal`은 항상 `ref` 컬럼의 값만 노출. p5/p6 단계형 컬럼에서는 *이전 단계*의 값이 단서가 되는 셀이 많아 cell hint l3에서 "sim1에서 입력한 …" 식으로 자연어 보조. 향후 `refColumnId?: string` 필드 추가로 셀별 표시 컬럼 지정 검토.
+- **셀 ID 명명 비일관**: p1은 `_sim1`/`_ref`, p4-p6은 `_s1`/`_s2`/`_ref`. cell hints는 row+col 기반 lookup이라 영향 없으나 향후 정합 정리 고려.
+- **commit 미수행**: 본 세션 변경 8개 파일은 워크트리 변경 상태. 시각 회귀 검증 후 commit 권장. CLAUDE.md 규칙상 사용자 명시 요청 없이 commit 금지.
+
+### 측정
+
+- 소요: 1 세션 (grill-with-docs 패턴, 사용자 결정 9회 — A1·B(α)·B(ii)·B(e)+B(a)·a·라)
+- 산출: 60 hint 텍스트 작성, 1 cascade resolver, 6 회귀 테스트, 1 결정 박제, 3 문서 정합
+
+---
+
+## 2026-05-02 (Sandbox AI 코치 + 라이트 트리 + 3단계 힌트)
 
 ### 현재 상태
 

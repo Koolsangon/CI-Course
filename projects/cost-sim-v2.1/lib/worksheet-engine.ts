@@ -1,5 +1,7 @@
-import type { ProblemDef, RowDef, CellDef, CellHints } from "@/content/problems/types";
-import type { CaseDef } from "./cases";
+import type { ProblemDef, RowDef } from "@/content/problems/types";
+import type { CaseDef, CaseHints } from "./cases";
+
+export type { CaseHints };
 
 type CellValues = Record<string, Record<string, number>>;
 
@@ -134,8 +136,6 @@ export function getYellowCount(problem: ProblemDef): number {
 export const HINT_PENALTY = [1.0, 0.7, 0.4, 0.2] as const;
 export type HintLevel = 0 | 1 | 2 | 3;
 
-export type HintLevelMap = Record<string, Record<string, HintLevel>>;
-
 export interface WeightedScore {
   rawScore: number;          // count of correct cells (integer)
   weightedScore: number;     // sum of HINT_PENALTY[level] over correct cells
@@ -144,26 +144,14 @@ export interface WeightedScore {
 }
 
 /**
- * Hint resolver — 4-단계 cascade.
+ * Hint resolver — case 레벨 단일 lookup.
  *
- *   1. cell.hints       (가장 구체적; 셀별 메커니즘이 다를 때)
- *   2. row.hints        (같은 메커니즘을 공유하는 행 단위)
- *   3. caseDef.phases.apply.hints  (케이스 전체 단일 세트)
- *   4. caseDef.phases.apply.hint   (legacy 단일 문자열 → 3 레벨 모두에 동일 텍스트로 fallback)
+ *   1. caseDef.phases.apply.hints  (케이스 전체 단일 3-level 세트)
+ *   2. caseDef.phases.apply.hint   (legacy 단일 문자열 → 3 레벨 모두에 동일 텍스트로 fallback)
  *
  * 정의된 값이 하나도 없으면 placeholder 문자열로 채워 모달이 깨지지 않게 한다.
  */
-export function resolveHints(
-  problem: ProblemDef,
-  caseDef: CaseDef | undefined,
-  colId: string,
-  rowId: string
-): CellHints {
-  const row = problem.rows.find((r) => r.id === rowId);
-  const cell = row?.cells[colId];
-
-  if (cell?.hints) return cell.hints;
-  if (row?.hints) return row.hints;
+export function resolveHints(caseDef: CaseDef | undefined): CaseHints {
   if (caseDef?.phases.apply.hints) return caseDef.phases.apply.hints;
 
   const fallback =
@@ -172,17 +160,24 @@ export function resolveHints(
   return { l1: fallback, l2: fallback, l3: fallback };
 }
 
+/**
+ * 문제 단위 hint level + 강사 토글 (hintPenaltyEnabled) 을 받아 가중 점수 계산.
+ *
+ *   - 모든 정답 셀에 같은 hintLevel 적용 (S6 — 문제 단위 힌트)
+ *   - hintPenaltyEnabled=false 시 차감 없음 (모든 정답 100% 배점)
+ */
 export function computeWeightedScore(
   grades: GradeResult[],
-  hintLevels: HintLevelMap
+  hintLevel: HintLevel,
+  hintPenaltyEnabled: boolean = true
 ): WeightedScore {
-  let weighted = 0;
+  const penalty = hintPenaltyEnabled ? HINT_PENALTY[hintLevel] : 1.0;
   let raw = 0;
+  let weighted = 0;
   for (const g of grades) {
     if (!g.correct) continue;
     raw += 1;
-    const lvl = hintLevels[g.colId]?.[g.rowId] ?? 0;
-    weighted += HINT_PENALTY[lvl];
+    weighted += penalty;
   }
   const weightedRounded = Math.round(weighted * 10) / 10;
   return {

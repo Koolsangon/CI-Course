@@ -1,10 +1,8 @@
 "use client";
 
-import type { MouseEvent as ReactMouseEvent } from "react";
-import { HelpCircle } from "lucide-react";
+import { useEffect, useState } from "react";
 import type { CellType } from "@/content/problems/types";
-import type { HintLevel } from "@/lib/worksheet-engine";
-import { HINT_PENALTY } from "@/lib/worksheet-engine";
+import { parseFormula } from "@/lib/formula-parser";
 
 interface WorksheetCellProps {
   type: CellType;
@@ -17,9 +15,9 @@ interface WorksheetCellProps {
   isActive?: boolean;
   isSelectable?: boolean;
   isRefColumn?: boolean;
-  hintLevel?: HintLevel;
   onCellClick?: () => void;
-  onHintClick?: () => void;
+  /** Yellow cell direct keyboard input. parseFormula 로 평가된 결과만 호출됨. */
+  onAnswer?: (value: number) => void;
 }
 
 const cellStyles: Record<CellType, string> = {
@@ -44,14 +42,30 @@ export default function WorksheetCell({
   isActive,
   isSelectable,
   isRefColumn,
-  hintLevel,
   onCellClick,
-  onHintClick
+  onAnswer
 }: WorksheetCellProps) {
-  const handleHintClick = (e: ReactMouseEvent) => {
-    e.stopPropagation();
-    onHintClick?.();
-  };
+  const [inputVal, setInputVal] = useState(
+    userValue !== undefined ? userValue.toFixed(2) : ""
+  );
+
+  useEffect(() => {
+    setInputVal(userValue !== undefined ? userValue.toFixed(2) : "");
+  }, [userValue]);
+
+  function commitInput() {
+    if (!onAnswer) return;
+    const parsed = parseFormula(inputVal);
+    if (parsed !== null && parsed !== userValue) {
+      onAnswer(parsed);
+    } else if (inputVal === "" && userValue !== undefined) {
+      // Intentional blank — leave as-is to avoid accidental data loss (use handleReset).
+    } else if (parsed === null && userValue !== undefined) {
+      // Failed parse — revert to last committed value.
+      setInputVal(userValue.toFixed(2));
+    }
+  }
+
   if (type === "label") return null;
 
   const refBg = isRefColumn ? "bg-[hsl(var(--surface-200)/0.4)]" : "";
@@ -93,38 +107,35 @@ export default function WorksheetCell({
       className={`relative border border-[hsl(var(--border))] px-3 py-2 text-right tabular-nums text-sm ${cellStyles.yellow} ${gradeBorder} ${activeRing} cursor-pointer select-none`}
       onClick={onCellClick}
     >
-      {isActive && onHintClick && (
-        <button
-          type="button"
-          onClick={handleHintClick}
-          aria-label="이 셀의 힌트 보기"
-          title="이 셀의 힌트 보기"
-          className="absolute -left-2 -top-2 z-10 flex h-5 w-5 items-center justify-center rounded-full border border-[hsl(var(--accent))] bg-[hsl(var(--accent))] text-white shadow hover:scale-110 hover:bg-[hsl(var(--accent))/0.9]"
-        >
-          <HelpCircle className="h-3 w-3" />
-        </button>
-      )}
-      {hintLevel !== undefined && hintLevel > 0 && (
-        <span
-          aria-label={`힌트 ${hintLevel}단계 사용 — 배점 ${Math.round(HINT_PENALTY[hintLevel] * 100)}%`}
-          title={`힌트 ${hintLevel}단계 사용 → 이 셀 배점 ${Math.round(HINT_PENALTY[hintLevel] * 100)}%`}
-          className="absolute -right-1.5 -top-1.5 z-10 flex h-4 min-w-[1rem] items-center justify-center rounded-full border border-[hsl(var(--warn))] bg-[hsl(var(--warn))] px-1 text-[9px] font-bold leading-none text-white shadow"
-        >
-          H{hintLevel}
-        </span>
-      )}
-      {userValue !== undefined ? (
+      {onAnswer ? (
+        <input
+          type="text"
+          inputMode="text"
+          value={inputVal}
+          onChange={(e) => setInputVal(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              e.preventDefault();
+              commitInput();
+              (e.target as HTMLInputElement).blur();
+            }
+          }}
+          onBlur={commitInput}
+          onClick={(e) => e.stopPropagation()}
+          placeholder="?"
+          aria-label="셀 값 입력 (수식 가능, 예: 21.3*70%)"
+          className="w-full bg-transparent text-right font-medium tabular-nums text-[hsl(var(--fg))] placeholder:text-[hsl(var(--muted)/0.4)] outline-none focus:ring-1 focus:ring-[hsl(var(--accent)/0.5)] rounded"
+        />
+      ) : userValue !== undefined ? (
         <span className="font-medium text-[hsl(var(--fg))]">{fmt(userValue)}</span>
       ) : (
         <span className="text-[hsl(var(--muted)/0.4)]">?</span>
       )}
-      {graded && !correct && expected !== undefined && (
-        <div className="text-[10px] text-[hsl(var(--danger))]">
-          정답: {fmt(expected)}
-        </div>
+      {graded && !correct && (
+        <div className="text-[11px] font-bold text-[hsl(var(--danger))]">X</div>
       )}
       {graded && correct && (
-        <div className="text-[10px] text-[hsl(var(--success))]">O</div>
+        <div className="text-[11px] font-bold text-[hsl(var(--success))]">O</div>
       )}
     </td>
   );

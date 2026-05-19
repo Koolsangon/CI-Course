@@ -1,26 +1,22 @@
 "use client";
 
 import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { ChevronDown, TreePine, ArrowLeft, PanelLeftClose, PanelLeftOpen, PanelRightClose, PanelRightOpen, Maximize2, Minimize2 } from "lucide-react";
+import { AnimatePresence, motion } from "framer-motion";
+import { TreePine, ArrowLeft, PanelLeftClose, PanelLeftOpen, PanelRightClose, PanelRightOpen, Maximize2, Minimize2 } from "lucide-react";
 import Link from "next/link";
 import CostTreeView from "@/components/CostTree/CostTreeView";
 import ParamPanel from "@/components/ParamPanel/ParamPanel";
 import FormulaInspector from "@/components/FormulaInspector/FormulaInspector";
-import SandboxCoach from "@/components/Coach/SandboxCoach";
-import { CASE_ORDER, getCase } from "@/lib/cases";
+import RoomBadge from "@/components/Room/RoomBadge";
 import { useStore } from "@/lib/store";
 
 export default function SandboxPage() {
-  const [caseId, setCaseId]   = useState<string>("01-loading");
-  const [dropOpen, setDropOpen] = useState(false);
-  const [leftOpen, setLeftOpen]   = useState(true);
+  const [leftOpen, setLeftOpen] = useState(true);
   const [rightOpen, setRightOpen] = useState(true);
-  const result    = useStore((s) => s.result);
-  const params    = useStore((s) => s.params);
+  const result = useStore((s) => s.result);
+  const params = useStore((s) => s.params);
   const lastDelta = useStore((s) => s.lastDelta);
 
-  const currentCase = getCase(caseId);
   const focusMode = !leftOpen && !rightOpen;
   const toggleFocus = () => {
     const next = !focusMode;
@@ -30,8 +26,6 @@ export default function SandboxPage() {
 
   return (
     <main className="flex h-screen flex-col overflow-hidden bg-[hsl(var(--bg))]">
-      {/* relative z-20: dropdown (inside backdrop-blur stacking context) must sit
-          above the z-5 click-outside overlay — removing this breaks the dropdown */}
       <header className="relative z-20 flex flex-shrink-0 items-center gap-3 border-b border-[hsl(var(--border))] bg-[hsl(var(--surface-100)/0.8)] px-4 py-3 backdrop-blur-md">
         <Link
           href="/"
@@ -51,6 +45,7 @@ export default function SandboxPage() {
         </p>
 
         <div className="ml-auto flex items-center gap-2">
+          <RoomBadge />
           <button
             onClick={() => setLeftOpen((o) => !o)}
             aria-label={leftOpen ? "파라미터 패널 접기" : "파라미터 패널 열기"}
@@ -72,54 +67,8 @@ export default function SandboxPage() {
           >
             {rightOpen ? <PanelRightClose className="h-4 w-4" /> : <PanelRightOpen className="h-4 w-4" />}
           </button>
-
-          <div className="mx-1 hidden h-6 w-px bg-[hsl(var(--border))] md:block" />
-
-          <div className="relative">
-          <button
-            onClick={() => setDropOpen((o) => !o)}
-            className="flex items-center gap-2 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--surface-200)/0.6)] px-3 py-2 text-sm font-medium text-[hsl(var(--fg))] transition-colors hover:bg-[hsl(var(--surface-200))]"
-          >
-            {currentCase?.title ?? caseId}
-            <ChevronDown className={`h-3.5 w-3.5 text-[hsl(var(--muted))] transition-transform duration-200 ${dropOpen ? "rotate-180" : ""}`} />
-          </button>
-
-          {dropOpen && (
-            <motion.div
-              initial={{ opacity: 0, y: -6, scale: 0.97 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.15 }}
-              className="absolute right-0 top-full z-10 mt-1.5 min-w-[220px] overflow-hidden rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--surface-100))] shadow-elevated"
-            >
-              {CASE_ORDER.map((id) => (
-                <button
-                  key={id}
-                  onClick={() => { setCaseId(id); setDropOpen(false); }}
-                  className={[
-                    "flex w-full items-center gap-2 px-4 py-2.5 text-sm transition-colors",
-                    id === caseId
-                      ? "bg-[hsl(var(--accent)/0.1)] text-[hsl(var(--accent))] font-semibold"
-                      : "text-[hsl(var(--fg)/0.8)] hover:bg-[hsl(var(--surface-200)/0.5)]"
-                  ].join(" ")}
-                >
-                  {id === caseId && <span className="h-1.5 w-1.5 rounded-full bg-[hsl(var(--accent))]" />}
-                  {getCase(id)?.title}
-                </button>
-              ))}
-            </motion.div>
-          )}
-          </div>
         </div>
       </header>
-
-      {dropOpen && (
-        <div
-          className="fixed inset-0 z-[5]"
-          onClick={() => setDropOpen(false)}
-          aria-hidden
-        />
-      )}
 
       <div className="flex flex-1 gap-3 overflow-hidden p-3">
         <AnimatePresence initial={false}>
@@ -133,7 +82,7 @@ export default function SandboxPage() {
               className="hidden flex-shrink-0 overflow-hidden md:block"
             >
               <div className="w-[264px] overflow-y-auto">
-                <ParamPanel key={caseId} caseId={caseId} />
+                <ParamPanel />
               </div>
             </motion.div>
           )}
@@ -144,7 +93,6 @@ export default function SandboxPage() {
             result={result}
             params={params}
             changedPaths={lastDelta}
-            treeInfo={currentCase?.tree_info}
           />
         </div>
 
@@ -166,20 +114,13 @@ export default function SandboxPage() {
         </AnimatePresence>
       </div>
 
-      <SandboxCoach
-        caseId={caseId}
-        params={params}
-        result={result}
-        lastDelta={lastDelta}
-      />
-
       <div className="flex border-t border-[hsl(var(--border))] bg-[hsl(var(--surface-100)/0.9)] pb-[env(safe-area-inset-bottom)] md:hidden">
         <details className="flex-1">
           <summary className="flex cursor-pointer items-center justify-center gap-1 py-3 text-xs font-semibold text-[hsl(var(--muted))] select-none">
             파라미터
           </summary>
           <div className="max-h-72 overflow-y-auto px-3 pb-3">
-            <ParamPanel key={caseId} caseId={caseId} />
+            <ParamPanel />
           </div>
         </details>
         <details className="flex-1 border-l border-[hsl(var(--border))]">

@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { CASES } from "@/lib/cases";
 import CaseClient from "./CaseClient";
 
@@ -8,5 +9,9 @@ export function generateStaticParams() {
 }
 
 export default function CasePage() {
-  return <CaseClient />;
+  return (
+    <Suspense fallback={null}>
+      <CaseClient />
+    </Suspense>
+  );
 }

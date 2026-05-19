@@ -46,3 +46,26 @@
 4. `templates/` 양식에 맞춰 결과물 작성
 5. `outputs/`에 최종본 저장
 6. `handoff.md` 갱신
+
+## gstack
+
+- 모든 웹 브라우징은 gstack의 `/browse` 스킬을 사용한다.
+- `mcp__claude-in-chrome__*` 도구는 절대 사용하지 않는다.
+
+### Available skills
+
+`/office-hours`, `/plan-ceo-review`, `/plan-eng-review`, `/plan-design-review`, `/design-consultation`, `/design-shotgun`, `/design-html`, `/review`, `/ship`, `/land-and-deploy`, `/canary`, `/benchmark`, `/browse`, `/connect-chrome`, `/qa`, `/qa-only`, `/design-review`, `/setup-browser-cookies`, `/setup-deploy`, `/setup-gbrain`, `/retro`, `/investigate`, `/document-release`, `/codex`, `/cso`, `/autoplan`, `/plan-devex-review`, `/devex-review`, `/careful`, `/freeze`, `/guard`, `/unfreeze`, `/gstack-upgrade`, `/learn`
+
+## Agent skills
+
+### Issue tracker
+
+GitHub Issues — `Koolsangon/CI-Course`. `gh` CLI 사용. 자세한 규칙은 `docs/agents/issue-tracker.md`.
+
+### Triage labels
+
+5 canonical labels 기본값 (`needs-triage`, `needs-info`, `ready-for-agent`, `ready-for-human`, `wontfix`). 매핑은 `docs/agents/triage-labels.md`.
+
+### Domain docs
+
+Single-context — 도메인 인덱스는 root `CONTEXT.md`, ADR 등가물은 `decision-log.md` (시간순 entries, Scope/결정/이유/영향/거부된 대안 4-필드). 자세한 규칙은 `docs/agents/domain.md`.

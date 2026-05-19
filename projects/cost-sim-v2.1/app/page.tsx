@@ -2,9 +2,11 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { TreePine, ClipboardList, ArrowRight, Zap, Play } from "lucide-react";
+import { TreePine, ClipboardList, ArrowRight, Zap, Play, Gamepad2, LogIn } from "lucide-react";
 import { IntroSequence, INTRO_SEEN_KEY } from "@/components/Intro/IntroSequence";
+import { saveRoomContext } from "@/lib/player";
 
 const cards = [
   {
@@ -46,8 +48,14 @@ const cards = [
 ];
 
 export default function HomePage() {
+  const router = useRouter();
   // null = still checking, true = show intro, false = show landing
   const [introOpen, setIntroOpen] = useState<boolean | null>(null);
+  const [code, setCode] = useState("");
+  const [name, setName] = useState("");
+  const [team, setTeam] = useState(1);
+  const [joining, setJoining] = useState(false);
+  const [joinError, setJoinError] = useState<string | null>(null);
 
   useEffect(() => {
     if (typeof window === "undefined") {
@@ -63,6 +71,41 @@ export default function HomePage() {
   }, []);
 
   const replayIntro = () => setIntroOpen(true);
+
+  async function handleJoin(e: React.FormEvent) {
+    e.preventDefault();
+    setJoinError(null);
+    const trimmedCode = code.trim().toUpperCase();
+    const trimmedName = name.trim();
+    if (!trimmedCode || !trimmedName) {
+      setJoinError("룸 코드와 이름을 입력해 주세요.");
+      return;
+    }
+    setJoining(true);
+    try {
+      const res = await fetch(`/api/rooms/${trimmedCode}/players`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: trimmedName, team })
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setJoinError(data.error ?? `HTTP ${res.status}`);
+        return;
+      }
+      saveRoomContext({
+        code: trimmedCode,
+        playerId: data.id,
+        name: data.name,
+        team: data.team
+      });
+      router.push("/menu");
+    } catch (e2) {
+      setJoinError(e2 instanceof Error ? e2.message : "네트워크 오류");
+    } finally {
+      setJoining(false);
+    }
+  }
 
   return (
     <main className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden mesh-bg">
@@ -168,6 +211,63 @@ export default function HomePage() {
             );
           })}
         </motion.div>
+
+        {/* 강사 룸 입장 — 게임 모드 흐름 진입점 (plan.md S12) */}
+        <motion.form
+          onSubmit={handleJoin}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.25, ease: [0.16, 1, 0.3, 1] }}
+          className="flex w-full flex-col gap-3 rounded-3xl border border-[hsl(var(--border))] bg-[hsl(var(--surface-100))] p-5 shadow-card"
+        >
+          <div className="flex items-center gap-2">
+            <Gamepad2 className="h-4 w-4 text-[hsl(var(--accent))]" />
+            <h2 className="text-sm font-bold text-[hsl(var(--fg))]">강사가 알려준 룸 코드 입력</h2>
+          </div>
+          <div className="grid grid-cols-1 gap-2 sm:grid-cols-[120px,1fr,80px,auto]">
+            <input
+              type="text"
+              value={code}
+              onChange={(e) => setCode(e.target.value.toUpperCase())}
+              placeholder="ABCD"
+              maxLength={4}
+              aria-label="룸 코드 (4자)"
+              className="rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--surface-200)/0.5)] px-3 py-2 text-center font-mono text-base font-bold tracking-widest text-[hsl(var(--fg))] outline-none focus:ring-1 focus:ring-[hsl(var(--accent)/0.5)]"
+            />
+            <input
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="이름"
+              maxLength={20}
+              aria-label="이름"
+              className="rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--surface-200)/0.5)] px-3 py-2 text-sm text-[hsl(var(--fg))] outline-none focus:ring-1 focus:ring-[hsl(var(--accent)/0.5)]"
+            />
+            <input
+              type="number"
+              min={1}
+              max={10}
+              value={team}
+              onChange={(e) => setTeam(parseInt(e.target.value, 10) || 1)}
+              aria-label="팀 번호"
+              className="rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--surface-200)/0.5)] px-3 py-2 text-center text-sm tabular-nums text-[hsl(var(--fg))] outline-none focus:ring-1 focus:ring-[hsl(var(--accent)/0.5)]"
+            />
+            <button
+              type="submit"
+              disabled={joining || !code.trim() || !name.trim()}
+              className="flex items-center justify-center gap-1.5 rounded-lg bg-[hsl(var(--accent))] px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-[hsl(var(--accent)/0.9)] disabled:opacity-40"
+            >
+              <LogIn className="h-3.5 w-3.5" />
+              입장
+            </button>
+          </div>
+          {joinError && (
+            <p className="text-xs text-[hsl(var(--danger))]">{joinError}</p>
+          )}
+          <p className="text-[11px] text-[hsl(var(--muted)/0.7)]">
+            룸 입장 후 자동으로 메뉴 화면으로 이동. 강사 신호를 기다립니다.
+          </p>
+        </motion.form>
 
         {/* Footer + intro replay */}
         <motion.div

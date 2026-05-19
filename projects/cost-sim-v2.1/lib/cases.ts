@@ -38,6 +38,13 @@ export interface TreeInfoEntry {
   format: "percent1" | "dollar1";
 }
 
+/** 3-단계 누적 힌트 — case 레벨 단일 세트. */
+export interface CaseHints {
+  l1: string;
+  l2: string;
+  l3: string;
+}
+
 export interface CaseDef {
   id: string;
   title: string;
@@ -56,18 +63,8 @@ export interface CaseDef {
       answer_key: number;
       tolerance: number;
       hint: string;
-      hints?: {
-        l1: string;
-        l2: string;
-        l3: string;
-      };
+      hints?: CaseHints;
     };
-    reflect: string;
-  };
-  coach: {
-    hook: string;
-    discover: string;
-    apply: string;
     reflect: string;
   };
 }

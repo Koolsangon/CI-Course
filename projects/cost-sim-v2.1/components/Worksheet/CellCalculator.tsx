@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Calculator, X, Delete } from "lucide-react";
 import Button from "@/components/ui/Button";
+import { parseFormula } from "@/lib/formula-parser";
 
 export interface FormulaToken {
   type: "value" | "op" | "paren";
@@ -123,10 +124,11 @@ export default function CellCalculator({
 }: CellCalculatorProps) {
   const preview = evaluateTokens(tokens);
   const [numInput, setNumInput] = useState("");
+  const previewParsed = numInput ? parseFormula(numInput) : null;
 
   function handleNumSubmit() {
-    const v = parseFloat(numInput);
-    if (!isNaN(v)) {
+    const v = parseFormula(numInput);
+    if (v !== null) {
       onAddNumber(v);
       setNumInput("");
     }
@@ -154,7 +156,7 @@ export default function CellCalculator({
           <p className="text-xs font-semibold text-[hsl(var(--fg)/0.8)]">사용 방법</p>
           <ol className="flex flex-col gap-1 text-[11px] text-[hsl(var(--muted))] list-decimal list-inside">
             <li><span className="font-medium text-[hsl(var(--fg)/0.7)]">위 테이블에서 참조할 셀을 클릭</span>하면 해당 값이 수식에 추가됩니다</li>
-            <li>또는 아래 입력란에 <span className="font-medium text-[hsl(var(--fg)/0.7)]">숫자를 직접 입력</span>하고 "추가"를 누르세요</li>
+            <li>또는 아래 입력란에 <span className="font-medium text-[hsl(var(--fg)/0.7)]">수식을 직접 입력</span>하세요 (예: <span className="font-mono">21.3*70%</span>, <span className="font-mono">5+3*2</span>)</li>
             <li><span className="font-medium text-[hsl(var(--fg)/0.7)]">연산 버튼(+, −, ×, ÷)</span>으로 사칙연산을 조합하세요</li>
             <li>수식이 완성되면 <span className="font-medium text-[hsl(var(--fg)/0.7)]">"계산하기"</span>를 눌러 결과를 셀에 입력합니다</li>
           </ol>
@@ -182,20 +184,26 @@ export default function CellCalculator({
 
       {/* Buttons */}
       <div className="flex flex-wrap items-center gap-2 px-4 py-3">
-        {/* Manual number input */}
+        {/* Manual formula input — supports %, 사칙연산, 괄호 */}
         <div className="flex items-center gap-1">
           <input
-            type="number"
-            step="any"
+            type="text"
+            inputMode="text"
             value={numInput}
             onChange={(e) => setNumInput(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && handleNumSubmit()}
-            placeholder="숫자"
-            className="w-20 rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--surface-200)/0.5)] px-2 py-1.5 text-right text-xs tabular-nums text-[hsl(var(--fg))] outline-none focus:ring-1 focus:ring-[hsl(var(--accent)/0.5)]"
+            placeholder="예: 21.3*70%"
+            className="w-32 rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--surface-200)/0.5)] px-2 py-1.5 text-right text-xs tabular-nums text-[hsl(var(--fg))] outline-none focus:ring-1 focus:ring-[hsl(var(--accent)/0.5)]"
           />
+          {previewParsed !== null && (
+            <span className="text-[10px] tabular-nums text-[hsl(var(--muted))]">
+              = {previewParsed.toFixed(2)}
+            </span>
+          )}
           <button
             onClick={handleNumSubmit}
-            className="flex h-8 items-center justify-center rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--surface-200)/0.5)] px-2 text-[10px] font-bold text-[hsl(var(--fg)/0.7)] transition-colors hover:bg-[hsl(var(--surface-300))]"
+            disabled={previewParsed === null}
+            className="flex h-8 items-center justify-center rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--surface-200)/0.5)] px-2 text-[10px] font-bold text-[hsl(var(--fg)/0.7)] transition-colors hover:bg-[hsl(var(--surface-300))] disabled:opacity-40 disabled:hover:bg-[hsl(var(--surface-200)/0.5)]"
           >
             추가
           </button>

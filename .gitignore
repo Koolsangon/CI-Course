@@ -22,3 +22,6 @@ aws-credentials*
 **/.omc/logs/
 **/.omc/prd.json
 **/.omc/progress.txt
+
+# /to-issues skill 임시 body 파일 (GitHub issue 발행 후 보관 — 향후 갱신 시 참고)
+.gh-issue-tmp/

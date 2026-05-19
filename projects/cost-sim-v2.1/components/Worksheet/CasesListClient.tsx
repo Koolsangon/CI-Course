@@ -4,6 +4,7 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { ArrowLeft, ArrowRight, ClipboardList } from "lucide-react";
 import { CASE_ORDER, getCase } from "@/lib/cases";
+import RoomBadge from "@/components/Room/RoomBadge";
 
 const PROBLEM_META: Record<string, { tag: string }> = {
   "01-loading": { tag: "1열 · 6셀" },
@@ -25,6 +26,9 @@ export default function CasesListClient() {
         </Link>
         <ClipboardList className="h-4 w-4 text-[hsl(var(--success))]" />
         <span className="text-sm font-bold text-[hsl(var(--fg))]">원가 계산 워크시트</span>
+        <div className="ml-auto">
+          <RoomBadge />
+        </div>
       </header>
 
       <div className="mx-auto w-full max-w-3xl px-4 py-8">

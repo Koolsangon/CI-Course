@@ -1,6 +1,6 @@
 "use client";
 
-import { notFound, useParams } from "next/navigation";
+import { notFound, useParams, useSearchParams } from "next/navigation";
 import { getCase } from "@/lib/cases";
 import ProblemPage from "@/components/Worksheet/ProblemPage";
 import type { ProblemDef } from "@/content/problems/types";
@@ -19,11 +19,28 @@ const PROBLEMS: Record<string, ProblemDef> = {
 
 export default function CaseClient() {
   const params = useParams<{ caseId: string }>();
+  const search = useSearchParams();
   const caseId = params?.caseId;
   const caseDef = caseId ? getCase(caseId) : undefined;
   const problem = caseId ? PROBLEMS[caseId] : undefined;
 
   if (!caseId || !caseDef || !problem) return notFound();
 
-  return <ProblemPage problem={problem} caseId={caseId} />;
+  // 게임 모드 컨텍스트 — 학습자가 룸 입장 후 강사 신호로 진입한 라운드.
+  // `?game=true` 또는 `?room=XXXX&round=N` 어느 쪽이든 게임 모드로 인식.
+  const gameParam = search?.get("game");
+  const roomCode = search?.get("room") ?? undefined;
+  const roundParam = search?.get("round");
+  const roundN = roundParam ? Number(roundParam) : undefined;
+  const gameMode = gameParam === "true" || !!roomCode;
+
+  return (
+    <ProblemPage
+      problem={problem}
+      caseId={caseId}
+      gameMode={gameMode}
+      roomCode={roomCode}
+      roundN={Number.isFinite(roundN) ? roundN : undefined}
+    />
+  );
 }

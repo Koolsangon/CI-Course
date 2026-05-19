@@ -10,6 +10,8 @@ interface CellHintModalProps {
   refValue?: number;
   hints: { l1: string; l2: string; l3: string };
   level: HintLevel;
+  /** 강사 설정 — 차감 OFF 시 모달의 배점 안내 문구가 변경된다. */
+  hintPenaltyEnabled?: boolean;
   onAdvance: () => void;
   onClose: () => void;
 }
@@ -30,6 +32,7 @@ export default function CellHintModal({
   refValue,
   hints,
   level,
+  hintPenaltyEnabled = true,
   onAdvance,
   onClose
 }: CellHintModalProps) {
@@ -92,15 +95,23 @@ export default function CellHintModal({
             <div className="mb-1 font-semibold text-[hsl(var(--accent))]">
               점수 안내
             </div>
-            힌트는 단계가 올라갈수록 더 구체적으로 알려주는 대신, 정답을 맞혔을 때 그 셀의 배점이 줄어듭니다 — {" "}
-            <span className="font-mono tabular-nums">
-              0단계 100% → 1단계 70% → 2단계 40% → 3단계 20%
-            </span>.
-            <span className="mt-1 block text-[hsl(var(--muted))]">
-              현재 이 셀의 배점: <span className="font-mono font-semibold text-[hsl(var(--fg))] tabular-nums">{pct(currentRate)}</span>
-              {" — "}
-              <span className="font-semibold">{LEVEL_LABELS[level]}</span>
-            </span>
+            {hintPenaltyEnabled ? (
+              <>
+                힌트는 단계가 올라갈수록 더 구체적으로 알려주는 대신, 정답을 맞혔을 때 *모든 정답 셀*의 배점이 같이 줄어듭니다 (이 문제 전체에 한 단계 적용) — {" "}
+                <span className="font-mono tabular-nums">
+                  0단계 100% → 1단계 70% → 2단계 40% → 3단계 20%
+                </span>.
+                <span className="mt-1 block text-[hsl(var(--muted))]">
+                  현재 이 문제의 배점: <span className="font-mono font-semibold text-[hsl(var(--fg))] tabular-nums">{pct(currentRate)}</span>
+                  {" — "}
+                  <span className="font-semibold">{LEVEL_LABELS[level]}</span>
+                </span>
+              </>
+            ) : (
+              <>
+                강사 설정: <span className="font-semibold">힌트 차감 OFF</span> — 단계 상관없이 모든 정답은 100% 배점입니다.
+              </>
+            )}
           </div>
 
           {refValue !== undefined && (
@@ -139,7 +150,9 @@ export default function CellHintModal({
         <footer className="flex items-center justify-between gap-3 border-t border-[hsl(var(--border))] px-5 py-3">
           <div className="text-[11px] text-[hsl(var(--muted))]">
             {canAdvance
-              ? `다음 단계로 가면 배점이 ${pct(currentRate)} → ${pct(nextRate)}로 줄어듭니다.`
+              ? hintPenaltyEnabled
+                ? `다음 단계로 가면 배점이 ${pct(currentRate)} → ${pct(nextRate)}로 줄어듭니다.`
+                : `다음 단계는 더 구체적인 힌트입니다 (차감 OFF — 배점 변동 없음).`
               : "모든 힌트를 사용했습니다."}
           </div>
           {canAdvance ? (

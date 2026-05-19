@@ -1,16 +1,17 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { ArrowLeft, Calculator, Lightbulb, Timer, Trophy } from "lucide-react";
 import type { ProblemDef } from "@/content/problems/types";
 import {
   gradeYellowCells,
   computeWeightedScore,
   resolveHints,
+  HINT_PENALTY,
   type GradeResult,
   type HintLevel,
-  type HintLevelMap,
   type WeightedScore
 } from "@/lib/worksheet-engine";
 import WorksheetTable from "./WorksheetTable";
@@ -18,21 +19,61 @@ import GradingPanel from "./GradingPanel";
 import CellCalculator, { evaluateTokens, type FormulaToken } from "./CellCalculator";
 import WorksheetGuide from "./WorksheetGuide";
 import { getYellowCount } from "@/lib/worksheet-engine";
-import FloatingCoach from "@/components/Coach/FloatingCoach";
 import CellHintModal from "./CellHintModal";
 import { getCase } from "@/lib/cases";
+import { useStore } from "@/lib/store";
+import { useRoomState } from "@/lib/hooks/useRoomState";
+import { loadRoomContext, type RoomContext } from "@/lib/player";
+import RoomBadge from "@/components/Room/RoomBadge";
 
 interface ProblemPageProps {
   problem: ProblemDef;
   caseId: string;
+  /** 게임 모드 — 룸 입장 + 강사 신호로 진입한 라운드. 타이머·미니 리더보드·자동 종료 활성화. */
+  gameMode?: boolean;
+  roomCode?: string;
+  roundN?: number;
 }
 
-export default function ProblemPage({ problem, caseId }: ProblemPageProps) {
+function formatElapsed(seconds: number): string {
+  const m = Math.floor(seconds / 60);
+  const s = seconds % 60;
+  return `${m.toString().padStart(2, "0")}:${s.toString().padStart(2, "0")}`;
+}
+
+export default function ProblemPage({
+  problem,
+  caseId,
+  gameMode = false,
+  roomCode,
+  roundN
+}: ProblemPageProps) {
+  const router = useRouter();
   const caseDef = getCase(caseId);
+  const hintPenaltyEnabled = useStore((s) => s.hintPenaltyEnabled);
+  const [elapsed, setElapsed] = useState(0);
+  const [submitted, setSubmitted] = useState(false);
+  const [roomCtx, setRoomCtx] = useState<RoomContext | null>(null);
+
+  // 룸 컨텍스트 로드 — 게임 모드일 때만 사용.
+  useEffect(() => {
+    if (gameMode) setRoomCtx(loadRoomContext());
+  }, [gameMode]);
+
+  // 게임 모드 폴링 — settings.timeCapSec + 미니 리더보드용 submissions.
+  const { snapshot } = useRoomState(gameMode ? roomCode ?? null : null);
+  const timeCapSec = snapshot?.meta.settings.timeCapSec ?? 600;
+
+  // 1초마다 타이머 카운트.
+  useEffect(() => {
+    if (!gameMode || submitted) return;
+    const id = setInterval(() => setElapsed((e) => e + 1), 1000);
+    return () => clearInterval(id);
+  }, [gameMode, submitted]);
   const [answers, setAnswers] = useState<Record<string, Record<string, number>>>({});
   const [grades, setGrades] = useState<GradeResult[] | null>(null);
   const [score, setScore] = useState<number | null>(null);
-  const [hintLevels, setHintLevels] = useState<HintLevelMap>({});
+  const [hintLevel, setHintLevel] = useState<HintLevel>(0);
   const [weighted, setWeighted] = useState<WeightedScore | null>(null);
 
   const [showGuide, setShowGuide] = useState(true);
@@ -40,7 +81,7 @@ export default function ProblemPage({ problem, caseId }: ProblemPageProps) {
   const [calculatorMode, setCalculatorMode] = useState(false);
   const [formulaTokens, setFormulaTokens] = useState<FormulaToken[]>([]);
   const [activeCellLabel, setActiveCellLabel] = useState("");
-  const [hintCell, setHintCell] = useState<{ colId: string; rowId: string } | null>(null);
+  const [hintOpen, setHintOpen] = useState(false);
 
   // Refs to avoid stale closures in callbacks
   const activeCellRef = useRef(activeCell);
@@ -58,34 +99,88 @@ export default function ProblemPage({ problem, caseId }: ProblemPageProps) {
     });
   }
 
+  // 게임 모드 자동 종료 검사 — 100% 정답 또는 cap 도달 시 submission.
+  const autoGrade = useMemo(() => {
+    if (!gameMode) return null;
+    return gradeYellowCells(problem, answers);
+  }, [gameMode, problem, answers]);
+
+  async function submitRound(completed: boolean) {
+    if (submitted || !gameMode || !roomCode || !roundN || !roomCtx) return;
+    setSubmitted(true);
+    try {
+      await fetch(`/api/rooms/${roomCode}/rounds/${roundN}/submissions`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          playerId: roomCtx.playerId,
+          completionTimeSec: completed ? elapsed : timeCapSec,
+          completed,
+          hintLevel
+        })
+      });
+    } catch {
+      /* 폴링 hook 이 ended 상태 감지하면 자동 navigate — 본 catch 는 silent */
+    }
+    router.push("/menu");
+  }
+
+  // 100% 정답 자동 감지.
+  useEffect(() => {
+    if (!gameMode || submitted || !autoGrade) return;
+    if (autoGrade.total > 0 && autoGrade.score === autoGrade.total) {
+      submitRound(true);
+    }
+    // 의도적으로 submitRound 를 deps 에서 제외 — autoGrade 변화로 trigger.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [autoGrade, gameMode, submitted]);
+
+  // 캡 도달 자동 종료.
+  useEffect(() => {
+    if (!gameMode || submitted) return;
+    if (elapsed >= timeCapSec) {
+      submitRound(false);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [elapsed, gameMode, submitted, timeCapSec]);
+
   function handleGrade() {
     const result = gradeYellowCells(problem, answers);
     setGrades(result.grades);
     setScore(result.score);
-    setWeighted(computeWeightedScore(result.grades, hintLevels));
+    setWeighted(computeWeightedScore(result.grades, hintLevel, hintPenaltyEnabled));
   }
 
   function handleReset() {
-    setAnswers({});
+    // 부분 초기화 — 틀린 셀만 비움. 정답 셀은 보존하여 학습자가 틀린 부분만 다시 풀게 한다.
+    if (grades) {
+      const next: Record<string, Record<string, number>> = {};
+      for (const colId of Object.keys(answers)) {
+        const colAnswers = { ...answers[colId] };
+        next[colId] = colAnswers;
+      }
+      for (const g of grades) {
+        if (!g.correct && next[g.colId]) {
+          const colNext = { ...next[g.colId] };
+          delete colNext[g.rowId];
+          next[g.colId] = colNext;
+        }
+      }
+      setAnswers(next);
+    } else {
+      setAnswers({});
+    }
     setGrades(null);
     setScore(null);
     setActiveCell(null);
     setCalculatorMode(false);
     setFormulaTokens([]);
-    setHintLevels({});
+    setHintLevel(0);
     setWeighted(null);
   }
 
-  function bumpHintLevel(colId: string, rowId: string) {
-    setHintLevels((prev) => {
-      const cur = prev[colId]?.[rowId] ?? 0;
-      if (cur >= 3) return prev;
-      const next = (cur + 1) as HintLevel;
-      return {
-        ...prev,
-        [colId]: { ...(prev[colId] ?? {}), [rowId]: next }
-      };
-    });
+  function bumpHintLevel() {
+    setHintLevel((prev) => (prev >= 3 ? prev : ((prev + 1) as HintLevel)));
   }
 
   function handleCellClick(
@@ -162,12 +257,48 @@ export default function ProblemPage({ problem, caseId }: ProblemPageProps) {
           <ArrowLeft className="h-4 w-4" />
         </Link>
         <div className="min-w-0 flex-1">
-          <h1 className="text-sm font-bold text-[hsl(var(--fg))]">{problem.title}</h1>
+          <h1 className="text-sm font-bold text-[hsl(var(--fg))]">
+            {problem.title}
+            {gameMode && roundN !== undefined && (
+              <span className="ml-2 rounded-md bg-[hsl(var(--accent)/0.15)] px-1.5 py-0.5 text-[10px] font-bold text-[hsl(var(--accent))] tabular-nums">
+                R{roundN}
+              </span>
+            )}
+          </h1>
           <p className="text-xs text-[hsl(var(--muted))] truncate">{problem.scenario}</p>
         </div>
+        {gameMode ? (
+          <div className="flex items-center gap-1.5 rounded-xl border border-[hsl(var(--accent)/0.4)] bg-[hsl(var(--accent)/0.08)] px-3 py-1.5 text-xs font-mono font-bold tabular-nums text-[hsl(var(--accent))]">
+            <Timer className="h-3.5 w-3.5" />
+            {formatElapsed(elapsed)}
+          </div>
+        ) : (
+          <RoomBadge />
+        )}
+        <button
+          type="button"
+          onClick={() => setHintOpen(true)}
+          aria-label="힌트 보기"
+          className="ml-2 flex items-center gap-1.5 rounded-xl border border-[hsl(var(--warn)/0.4)] bg-[hsl(var(--warn)/0.08)] px-3 py-1.5 text-xs font-semibold text-[hsl(var(--warn))] transition-colors hover:bg-[hsl(var(--warn)/0.15)]"
+        >
+          <Lightbulb className="h-3.5 w-3.5" />
+          <span>힌트</span>
+          {hintLevel > 0 && (
+            <span className="rounded-md bg-[hsl(var(--warn))] px-1 text-[10px] font-bold text-white tabular-nums">
+              {hintLevel}/3
+              {hintPenaltyEnabled && ` · ${Math.round(HINT_PENALTY[hintLevel] * 100)}%`}
+            </span>
+          )}
+        </button>
       </header>
 
-      <main className="mx-auto w-full max-w-5xl flex-1 px-4 py-6">
+      <main
+        className={
+          calculatorMode && activeCell
+            ? "mx-auto w-full max-w-5xl flex-1 px-4 pt-6 pb-80"
+            : "mx-auto w-full max-w-5xl flex-1 px-4 pt-6 pb-24"
+        }
+      >
         <div className="flex flex-col gap-6">
           <div className="rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--surface-100))] px-6 py-4">
             <p className="text-sm leading-relaxed text-[hsl(var(--fg)/0.9)]">
@@ -189,13 +320,6 @@ export default function ProblemPage({ problem, caseId }: ProblemPageProps) {
             </div>
           </div>
 
-          <div className="flex items-center gap-3 rounded-2xl border border-dashed border-[hsl(var(--accent)/0.4)] bg-[hsl(var(--accent)/0.04)] px-4 py-3">
-            <div className="text-lg" aria-hidden>💡</div>
-            <div className="min-w-0 flex-1 text-xs text-[hsl(var(--muted))]">
-              화면 오른쪽에서 마우스를 따라 움직이는 <span className="font-semibold text-[hsl(var(--accent))]">AI 코치</span> 버튼을 클릭하면, 답을 직접 주지 않고 한 단계 앞의 사고 단서로 도와드립니다.
-            </div>
-          </div>
-
           <div className="flex items-start gap-3 rounded-2xl border border-[hsl(var(--warn)/0.35)] bg-[hsl(var(--warn)/0.06)] px-4 py-3">
             <div className="text-lg" aria-hidden>🔆</div>
             <div className="min-w-0 flex-1 text-xs text-[hsl(var(--fg)/0.85)]">
@@ -205,31 +329,81 @@ export default function ProblemPage({ problem, caseId }: ProblemPageProps) {
             </div>
           </div>
 
+          {gameMode && (() => {
+            // 현재 라운드의 미니 리더보드 — submission 시간 오름차순.
+            const roundSubs = (snapshot?.submissions ?? [])
+              .filter((s) => s.roundN === roundN)
+              .sort((a, b) => a.completionTimeSec - b.completionTimeSec);
+            const myIdx = roundSubs.findIndex((s) => s.playerId === roomCtx?.playerId);
+            const playerLabel = (id: string) =>
+              snapshot?.players.find((p) => p.id === id)?.name ?? id.slice(0, 6);
+            // 자기 위 1명 + 자기 + 아래 1명 (자기가 미제출이면 top 3).
+            let visible: typeof roundSubs;
+            if (myIdx === -1) {
+              visible = roundSubs.slice(0, 3);
+            } else {
+              const from = Math.max(0, myIdx - 1);
+              visible = roundSubs.slice(from, from + 3);
+            }
+            return (
+              <div className="rounded-2xl border border-[hsl(var(--accent)/0.3)] bg-[hsl(var(--accent)/0.04)] px-4 py-3">
+                <div className="mb-2 flex items-center justify-between">
+                  <span className="flex items-center gap-1.5 text-xs font-semibold text-[hsl(var(--accent))]">
+                    <Trophy className="h-3.5 w-3.5" />
+                    실시간 순위 ({roundSubs.length}명 제출)
+                    {roomCode && (
+                      <span className="ml-1 font-mono text-[10px] text-[hsl(var(--muted))]">· 룸 {roomCode}</span>
+                    )}
+                  </span>
+                  <span className="text-[10px] text-[hsl(var(--muted))]">
+                    100% 정답 또는 {Math.floor(timeCapSec / 60)}분 캡 시 자동 종료
+                  </span>
+                </div>
+                {visible.length === 0 ? (
+                  <p className="text-[11px] text-[hsl(var(--muted))]">아직 제출자가 없습니다 — 가장 먼저 풀이를 완료해 보세요.</p>
+                ) : (
+                  <ul className="flex flex-col gap-0.5">
+                    {visible.map((s) => {
+                      const idx = roundSubs.indexOf(s);
+                      const isMe = s.playerId === roomCtx?.playerId;
+                      const mm = Math.floor(s.completionTimeSec / 60);
+                      const ss = s.completionTimeSec % 60;
+                      return (
+                        <li
+                          key={s.playerId}
+                          className={`flex items-center justify-between gap-2 rounded-lg px-2 py-1 text-xs ${
+                            isMe ? "bg-[hsl(var(--accent)/0.18)] font-semibold" : ""
+                          }`}
+                        >
+                          <span className="flex items-center gap-2">
+                            <span className="w-6 text-center font-mono tabular-nums text-[hsl(var(--muted))]">
+                              {idx + 1}
+                            </span>
+                            <span className="text-[hsl(var(--fg))]">{playerLabel(s.playerId)}</span>
+                            {isMe && <span className="text-[10px] text-[hsl(var(--accent))]">(나)</span>}
+                            {!s.completed && <span className="text-[10px] text-[hsl(var(--warn))]">(캡)</span>}
+                          </span>
+                          <span className="font-mono tabular-nums text-[hsl(var(--fg)/0.8)]">
+                            {mm.toString().padStart(2, "0")}:{ss.toString().padStart(2, "0")}
+                          </span>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                )}
+              </div>
+            );
+          })()}
+
           <WorksheetTable
             problem={problem}
             answers={answers}
             grades={grades}
             activeCell={activeCell}
             calculatorMode={calculatorMode}
-            hintLevels={hintLevels}
             onAnswer={handleAnswer}
             onCellClick={handleCellClick}
-            onHintClick={(colId, rowId) => setHintCell({ colId, rowId })}
           />
-
-          {calculatorMode && activeCell && (
-            <CellCalculator
-              targetLabel={activeCellLabel}
-              tokens={formulaTokens}
-              onAddOp={handleAddOp}
-              onAddParen={handleAddParen}
-              onAddNumber={handleAddNumber}
-              onDeleteLast={handleDeleteLast}
-              onClear={handleClearFormula}
-              onCalculate={handleCalculate}
-              onClose={handleCloseCalculator}
-            />
-          )}
 
           {showGuide && (
             <WorksheetGuide
@@ -249,31 +423,38 @@ export default function ProblemPage({ problem, caseId }: ProblemPageProps) {
         </div>
       </main>
 
-      <FloatingCoach
-        caseId={caseId}
-        problem={problem}
-        answers={answers}
-        grades={grades}
-        score={score}
-      />
+      <div className="fixed bottom-0 left-0 right-0 z-20 border-t border-[hsl(var(--border))] bg-[hsl(var(--surface-100)/0.92)] pb-[env(safe-area-inset-bottom)] backdrop-blur-md">
+        <div className="mx-auto w-full max-w-5xl px-4 py-3">
+          {calculatorMode && activeCell ? (
+            <CellCalculator
+              targetLabel={activeCellLabel}
+              tokens={formulaTokens}
+              onAddOp={handleAddOp}
+              onAddParen={handleAddParen}
+              onAddNumber={handleAddNumber}
+              onDeleteLast={handleDeleteLast}
+              onClear={handleClearFormula}
+              onCalculate={handleCalculate}
+              onClose={handleCloseCalculator}
+            />
+          ) : (
+            <div className="flex items-center gap-2 rounded-2xl border border-dashed border-[hsl(var(--border))] bg-[hsl(var(--surface-200)/0.4)] px-4 py-3 text-xs text-[hsl(var(--muted))]">
+              <Calculator className="h-3.5 w-3.5 flex-shrink-0 text-[hsl(var(--warn))]" />
+              <span>노란 셀을 클릭하면 이 계산기로 수식을 조립할 수 있어요.</span>
+            </div>
+          )}
+        </div>
+      </div>
 
-      {hintCell && (() => {
-        const row = problem.rows.find((r) => r.id === hintCell.rowId);
-        const refValue = row?.cells["ref"]?.value;
-        const hints = resolveHints(problem, caseDef, hintCell.colId, hintCell.rowId);
-        const level = hintLevels[hintCell.colId]?.[hintCell.rowId] ?? 0;
-        return (
-          <CellHintModal
-            open
-            title={row?.label ?? "셀"}
-            refValue={refValue}
-            hints={hints}
-            level={level}
-            onAdvance={() => bumpHintLevel(hintCell.colId, hintCell.rowId)}
-            onClose={() => setHintCell(null)}
-          />
-        );
-      })()}
+      <CellHintModal
+        open={hintOpen}
+        title={problem.title}
+        hints={resolveHints(caseDef)}
+        level={hintLevel}
+        hintPenaltyEnabled={hintPenaltyEnabled}
+        onAdvance={bumpHintLevel}
+        onClose={() => setHintOpen(false)}
+      />
     </div>
   );
 }

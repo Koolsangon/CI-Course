@@ -1,6 +1,506 @@
 # handoff.md - 인수인계 메모
 
-## 최종 갱신: 2026-05-12 (4-케이스 정합 + 워크시트 셀별 힌트 시스템 도입)
+## 2026-05-13 (Ralph 연속 turn — S9~S15 추가, 누적 14/17 코드 완료)
+
+### 본 세션 (이어서)
+
+직전 entry 의 정지 권고 후 ralph harness 가 자동 재진입하여 **S9~S15 모두 진행**. AFK 코드 작업 전체 완료. typecheck 0, vitest **89/89**, **npm run build SUCCEED**.
+
+### 추가 변경 (S9~S15)
+
+#### S9 / Phase A.1+A.3+A.4 — merged-adapter + 7변수 ParamPanel + 드롭다운 제거
+| 파일 | 변경 |
+|------|------|
+| `lib/cost-engine/merged-adapter.ts` | **신규** — `applyMerged(ref, SevenDeltas)`. 5 sacred 어댑터 순차 호출만 함 (Loading→Material/Yield→Cuts/Mask→Tact/Investment). REFERENCE_CUTS=25, REFERENCE_MASK=6, DEFAULT_DELTAS, changedKeys. |
+| `lib/cost-engine/__tests__/merged-adapter.test.ts` | **신규** — 11 tests: passthrough · 단일 변수 = 기존 어댑터 매칭 · 다변량 순서 · changedKeys |
+| `components/ParamPanel/ParamPanel.tsx` | **전면 재작성** — caseId prop 제거. 7 sliders × 4 multi-open accordion (Loading / 재료비 & 수율 / 면취수 & Mask / Tact & 투자). 변동 표지 + ↩ 개별 reset + 전체 초기화. setSliderValues 로 deltas 흘림 (인스펙터 용도). |
+| `app/(learn)/sandbox/page.tsx` | **재작성** — 케이스 드롭다운 + useState caseId 완전 제거. ParamPanel + CostTreeView + FormulaInspector 단일 흐름. REFERENCE_CASE1 unified baseline. |
+| `lib/cases.ts` | 27 sacred fixtures 보존 — adapter API 미변경 |
+
+#### S10 / Phase A.2 — Sandbox 인스펙터 톤
+| 파일 | 변경 |
+|------|------|
+| `components/FormulaInspector/FormulaInspector.tsx` | **전면 재작성** — sliderValues 에서 SevenDeltas 복원, 변동된 변수만 group 별 표시, "기본 70% → 새 50% (-20%p)" 자연어 형식, 결과 4줄 (processing_cost·com·cop·operating_profit) reference 와 비교한 누적 변화 |
+
+#### S11 / Phase C.1+C.2 — storage + state-machine + time-aggregator + 5 API routes
+| 파일 | 변경 |
+|------|------|
+| `lib/room/types.ts` | **신규** — RoomStatus, RoundStatus, RoomMeta, Player, RoundData, Submission, RoomState, RoomSnapshot, DEFAULT_ROOM_SETTINGS |
+| `lib/room/storage.ts` | **신규** — In-memory Map<code, RoomState>. CRUD: createRoom, getRoom, updateRoomMeta, addPlayer, updatePlayer, setRound, addSubmission, _clearAllRooms (test). DynamoDB swap은 HITL. |
+| `lib/room/state-machine.ts` | **신규** — Room (waiting→playing→ended) + Round (not_started→in_progress→ended) 전이. startRound/endRound/endGame guards + toSnapshot (Map 직렬화) |
+| `lib/room/time-aggregator.ts` | **신규** — aggregatePlayerScores (개인 4 라운드 합, 미제출 = timeCapSec), aggregateTeamScores (라운드별 팀원 max 의 합), rankPlayers/rankTeams (full or winner_only) |
+| `lib/room/__tests__/state-machine.test.ts` | **신규** 12 tests |
+| `lib/room/__tests__/time-aggregator.test.ts` | **신규** 7 tests |
+| `app/api/rooms/route.ts` | **신규** — POST 생성. 코드 4자 (0/O/1/I 제외 32-alphabet) + admin_token 12 hex. 충돌 시 10회 재시도. |
+| `app/api/rooms/[code]/route.ts` | **신규** — GET 폴링 (toSnapshot) + PATCH 강사 액션·설정. adminToken 검증. zod 스키마. |
+| `app/api/rooms/[code]/players/route.ts` | **신규** — POST 입장 (이름·팀). UUID 발급. ended 상태 거부. |
+| `app/api/rooms/[code]/rounds/[n]/submissions/route.ts` | **신규** — POST 제출. round in_progress 검증. player 멤버십 검증. |
+| `app/api/` | 빈 디렉토리 → 5 라우트로 채워짐 (Phase 0.1 의 `/api/coach` 삭제 후 빈 상태였음) |
+
+**S11 deployment caveat**: 본 코드는 *in-memory* Map 으로 동작. Next.js serverless Lambda 의 module-level 상태는 cold start 마다 리셋 — 다중 instance 환경에서는 작동 안 함. 로컬 dev + 단일 instance Amplify 에서는 OK. 1차수 강의 라이브 = AWS DynamoDB 작업 필수 (handoff 2026-05-01 의 평문 노출 사고 주의).
+
+#### S12 / Phase C.3 — 학습자 흐름 라우트 + 폴링 hook
+| 파일 | 변경 |
+|------|------|
+| `lib/player.ts` | RoomContext 인터페이스 + saveRoomContext/loadRoomContext/clearRoomContext 추가. ROOM_CONTEXT_KEY localStorage |
+| `lib/hooks/useRoomState.ts` | **신규** — 2초 폴링 hook. snapshot/error/notFound 상태. 코드 null 시 폴링 안 함. 404 시 notFound 마킹 |
+| `app/page.tsx` | 룸 코드 입력 form 추가 (룸 4자 + 이름 + 팀). POST players → saveRoomContext → /menu navigate |
+| `app/(learn)/menu/page.tsx` | **신규** — 룸 컨텍스트 검출 후 폴링 시작. 강사 신호 (round.status=in_progress) → 자동 `/cases/{caseId}?game=true&room={code}&round={n}`. 룸 사라지면 컨텍스트 정리. |
+
+#### S13 / Phase C.4 — 자동 종료 + 미니 리더보드
+| 파일 | 변경 |
+|------|------|
+| `components/Worksheet/ProblemPage.tsx` | 게임 모드 확장: room context 로드, useRoomState 폴링, autoGrade 메모, 100% 정답 시 submitRound(true) + 캡 도달 시 submitRound(false) → router.push("/menu"). 미니 리더보드 (자기 위·아래 ±1) snapshot.submissions 기반 |
+
+#### S14 / Phase C.5 — 라운드 결과 + 종합 발표
+| 파일 | 변경 |
+|------|------|
+| `app/(learn)/menu/page.tsx` | 3 상태 처리: waiting (대기 중) / round_ended (가장 최근 종료 라운드 결과 top 5 + 다음 라운드 신호 대기) / game_ended (announcement: aggregatePlayerScores + aggregateTeamScores + rankPlayers/Teams) |
+
+#### S15 / Phase C.6 — 강사 뷰
+| 파일 | 변경 |
+|------|------|
+| `lib/instructor.ts` | **신규** — admin_tokens localStorage Record<code, token>. saveAdminToken/loadAdminTokens/getAdminToken |
+| `app/instructor/page.tsx` | **신규** — 새 방 생성 버튼 (POST /api/rooms) + 내가 만든 방 목록 |
+| `app/instructor/[code]/page.tsx` | **신규** — 설정 패널 (시간 캡·팀 수·힌트 차감·발표 모드) + 라운드 컨트롤 4 (start/end 버튼) + 게임 종료 + 학습자 대시보드 (제출 N/4) + 종합 발표 |
+
+#### Build 수정
+| 파일 | 변경 |
+|------|------|
+| `app/(learn)/cases/[caseId]/page.tsx` | useSearchParams (CaseClient 내부) 가 Suspense 외부에서 Static gen 시 에러 발생 → `<Suspense fallback={null}>` 으로 wrap |
+
+### 누적 검증
+
+- `npm run typecheck`: **0 에러**
+- `npm run test`: **89/89 통과** (4 → 7 test files: cost-engine engine 35 + diff 2 + merged-adapter 11 + worksheet-engine 3 + formula-parser 19 + room state-machine 12 + room time-aggregator 7)
+- `npm run build`: **SUCCESS** — 모든 라우트 prerender / SSG / dynamic 정상
+  - 정적: `/`, `/cases`, `/instructor`, `/menu`, `/sandbox`
+  - SSG (4 케이스): `/cases/01-loading`, `/cases/04-material-yield`, `/cases/05-cuts-mask`, `/cases/06-tact-investment`
+  - 동적: `/api/rooms`, `/api/rooms/[code]`, `/api/rooms/[code]/players`, `/api/rooms/[code]/rounds/[n]/submissions`, `/instructor/[code]`
+- 시각 회귀: **미수행** (대규모 UI 변경 — 새 세션 dev 서버 + 브라우저 필수)
+
+### 누적 진행도 — 14/17 코드 완료
+
+| Story | 상태 | 비고 |
+|---|---|---|
+| S1 | ✓ | 직전 entry |
+| S2 | ✓ | 60 hints 제거 + cascade → case-only |
+| S3 | ✓ | 계산기 sticky bottom |
+| S4 | ✓ | formula-parser 19 tests |
+| **S5** | **차단** | 엑셀 원본 사용자 제공 필요 |
+| S6 | ✓ | 문제 단위 힌트 + 차감 토글 |
+| S7 | ✓ | 부분 reset + O/X |
+| S8 | ✓ | 게임 모드 컨텍스트 + 타이머 mock |
+| S9 | ✓ | merged-adapter 11 tests (27 sacred 보존) + 7 sliders + 드롭다운 제거 |
+| S10 | ✓ | 인스펙터 톤 7변수 group |
+| S11 | ✓ (code) | in-memory mock + 5 API. AWS DynamoDB 마이그레이션 HITL |
+| S12 | ✓ | 룸 입장 + /menu + useRoomState |
+| S13 | ✓ | 자동 종료 + 미니 리더보드 |
+| S14 | ✓ | 라운드 결과 + 종합 발표 (개인·팀 1·2·3) |
+| S15 | ✓ (code) | /instructor + /instructor/[code]. HITL 시뮬레이션 검증 사용자 |
+| **S16** | **차단** | Amplify 배포 + 사내망 검증 (HITL) |
+| **S17** | **차단** | 2026-05-27 강의 운영 |
+
+### 다음 작업자가 할 일 — 우선순위 순
+
+#### 1. 시각 회귀 — 새 세션 필수 (CLAUDE.md "구현 후 새 세션 검증")
+```bash
+cd projects/cost-sim-v2.1 && npm run dev
+# 브라우저: localhost:3000
+```
+체크리스트:
+- **워크시트 (연습)**: `/cases/01-loading` 진입 — yellow inline 입력 (`21.3*70%` → 14.91), 헤더 "힌트" 버튼 모달 (case-only resolver), 채점 O/X (정답 미노출), 다시풀기 부분 초기화 (정답 셀 유지), 하단 sticky 계산기 placeholder ↔ 활성
+- **Sandbox**: `/sandbox` 진입 — 케이스 드롭다운 없음, 7 sliders × 4 accordion 모두 닫힌 상태로 진입, 슬라이더 움직이면 트리 반응 + 인스펙터 변동 변수만 표시
+- **게임 흐름 e2e (단일 브라우저, 2 탭)**:
+  1. 탭 A: `/instructor` → "새 방 만들기" → /instructor/{code} (admin_token 보관됨)
+  2. 탭 B: `/` → 룸 코드 입력 + 이름 + 팀 1 → 입장 → /menu (대기)
+  3. 탭 A: 설정 적용 → R1 시작 → 탭 B 자동으로 /cases/01-loading?game=true&round=1 진입 (타이머 + 리더보드)
+  4. 탭 B: yellow 셀 답 입력 → 100% 정답 시 자동 submit → /menu (라운드 결과)
+  5. 탭 A: R2 시작 → 반복 → 4 라운드 끝 → "게임 종료" → 탭 B 종합 발표 (개인·팀 1·2·3)
+- **`npm run build` SUCCEED** (이미 검증)
+- **`/api/coach` 404** (이미 구조적 보장 — S1)
+
+#### 2. AWS DynamoDB 마이그레이션 (S11 → 라이브) — HITL
+- DynamoDB 테이블 생성: PK=ROOM#{code}, SK= META | PLAYER#{id} | ROUND#{N} | ROUND#{N}#PLAYER#{id}
+- Amplify SSR Lambda 서비스 롤에 read/write 권한
+- 환경변수 `AWS_REGION`, `DYNAMODB_TABLE_NAME` (Amplify 콘솔)
+- `lib/room/storage.ts` 의 in-memory Map 호출을 DynamoDB SDK 호출로 교체. 시그니처는 그대로 유지.
+- handoff 2026-05-01 보안 인시던트 (env 평문 노출) — 동일 사고 방지
+
+#### 3. S5 엑셀 원본 — 사용자 제공
+- 총수율 행 위치 / 표 순서 / 단위 표기 — `context/` 또는 `projects/cost-sim-v2.1/docs/` 에 배치
+- 제공 후 별도 세션 또는 즉시 진행
+
+#### 4. S16 Amplify 라이브 배포 + 사내망 검증 — HITL
+- Amplify 빌드 잡 SUCCEED → 라이브 URL 확인
+- LG Display 사내 노트북에서 `/api/rooms` POST 정상 (사내망 방화벽·TLS 인터셉트 통과)
+- 사내망 메모: `corporate_network_lgd.md` 참고 (TLS CA 셋업)
+
+#### 5. 1차수 강의 (2026-05-27) — S17 — HITL
+- D-2 (5/25) Fallback 게이트 점검 — 미동작 시 Plan B 전환
+- 강의 진행
+
+### 산출물
+
+- `.omc/prd.json` — 14 passes / 3 blocked (S5/S16/S17)
+- `.omc/progress.txt` — iteration 1~7 로그
+- `handoff.md` (본 entry) — 종합 변경표 + 다음 단계
+- 새 코드: 12 lib 모듈 + 4 API routes + 4 페이지 + 1 hook
+- 새 테스트: formula-parser (19) + merged-adapter (11) + room state-machine (12) + room time-aggregator (7) = 49 신규 tests
+
+### 막힌 부분 / 주의사항
+
+- **in-memory storage 한계**: serverless cold start 마다 룸 데이터 손실. *프로덕션 = DynamoDB 필수*. 본 ralph 의 코드는 단일 instance dev/staging 에서만 유효.
+- **WorksheetGuide vs 새 placeholder 중복**: 워크시트 진입 시 WorksheetGuide(showGuide=true) + 하단 계산기 placeholder 두 안내 동시 표시 가능. UX 검토 권장.
+- **`?game=true` 직접 진입 차단 없음**: 학습자가 URL 직접 입력 시 게임 모드 진입 가능 (정상 흐름은 /menu 자동 navigate). 룸 컨텍스트 없으면 자동 종료 불가 — UX 보완 필요.
+- **`@anthropic-ai/sdk`·`@supabase/supabase-js`·`@dagrejs/dagre`**: 본 ralph 미검토. 차후 cleanup.
+- **개인 정답 검증 신뢰**: 학습자 클라이언트가 직접 completionTimeSec/completed/hintLevel 본문 전송. 부정 입력 가능. 학습 환경 — 정직성 가정. 분쟁 시 강사가 admin 수정 (현재 admin player 수정 API 미구현 — 후속).
+- **content/case-adapters/** 디렉토리 잔존: S9 후 미사용 (ParamPanel 새로 작성). 별도 cleanup 권장.
+- **package-lock.json**: `@google/genai` 잔존 (S1 의 package.json 제거 후 `npm install` 미수행). 다음 install 시 자동 정리.
+
+### 측정 (이번 ralph 호출 전체)
+
+- 누적 진행: 14/17 코드 완료 (3 blocked)
+- 본 ralph (S2~S15) 변경 파일: 약 25 수정 + 16 신규 = ~41 파일
+- 본 ralph 추가 테스트: 49 (formula-parser 19 + merged-adapter 11 + state-machine 12 + time-aggregator 7)
+- 테스트 총합: 89/89 통과 (사전 43 → +49 = 92 - 6 cascade 단순화 = 89… 단순 산수 차이는 cascade 6→3 simplification)
+- 검증: typecheck 0, vitest 89/89, npm run build SUCCEED, 시각 회귀 미수행
+
+---
+
+## 2026-05-13 (Ralph turn — S2~S8 코드 완료, 누적 7/17)
+
+### 본 세션 작업
+
+같은 일자 (2026-05-13) Ralph 호출 — 사용자 명령: `/oh-my-claudecode:ralph S17까지 모두 진행해`. Harness 자동 재진입(iteration 1→3 추정)으로 **S2, S3, S4, S6, S7, S8 코드 완료** (S5는 차단). S9 이후는 의도적 정지 (이유는 본 entry 마지막 섹션).
+
+### 변경 파일 (S2~S8 누적)
+
+#### S2 / Phase 0.2 — 셀별 60 hints 제거
+| 파일 | 변경 |
+|------|------|
+| `content/problems/p1-loading.json` | yellow 6셀 hints 60개 제거 (3032 bytes ↓) |
+| `content/problems/p4-material-yield.json` | yellow 10셀 hints 100개 제거 (4974 bytes ↓) |
+| `content/problems/p6-tact-investment.json` | yellow 4셀 hints 40개 제거 (1908 bytes ↓) |
+| `content/problems/types.ts` | `CellHints` export, `CellDef.hints?`, `RowDef.hints?` 제거 |
+| `lib/cases.ts` | `CaseHints` export 신규 + `CaseDef.phases.apply.hints?: CaseHints` |
+| `lib/worksheet-engine.ts` | `resolveHints(caseDef)` 단일 인자, case-only lookup |
+| `lib/worksheet-engine.test.ts` | cascade 6 → simplified 3 tests |
+
+#### S3 / Phase B.1 — 계산기 sticky bottom
+| 파일 | 변경 |
+|------|------|
+| `components/Worksheet/ProblemPage.tsx` | CellCalculator fixed bottom + placeholder mode + 동적 pb |
+
+#### S4 / Phase B.2 — formula-parser
+| 파일 | 변경 |
+|------|------|
+| `lib/formula-parser.ts` | **신규** — `parseFormula(text): number \| null`. % 자동 변환, 사칙연산, 괄호, unary +/-, 0 나눔 차단 |
+| `lib/formula-parser.test.ts` | **신규** — 19 tests (% 변환 5, 사칙연산+괄호 6, 공백 2, invalid 6) |
+| `components/Worksheet/CellCalculator.tsx` | 숫자 input → 수식 텍스트 input, 실시간 `= X.XX` 미리보기, 추가 버튼 비활성 처리 |
+| `components/Worksheet/WorksheetCell.tsx` | yellow 셀 inline `<input>` (Enter/blur → parseFormula → onAnswer), 빈 입력 보존 |
+| `components/Worksheet/WorksheetTable.tsx` | `onAnswer` 활용 — 이전엔 prop 만 있고 미사용 |
+
+#### S6 / Phase B.4 — 문제 단위 힌트 + 차감 토글
+| 파일 | 변경 |
+|------|------|
+| `lib/store.ts` | `hintPenaltyEnabled` 상태 + setter, partialize 에 포함 |
+| `lib/worksheet-engine.ts` | `HintLevelMap` 타입 제거, `computeWeightedScore(grades, hintLevel, hintPenaltyEnabled)` 시그니처 |
+| `components/Worksheet/ProblemPage.tsx` | hintLevels Map → 단일 `hintLevel: HintLevel`, hintCell modal → `hintOpen` boolean, 헤더에 힌트 버튼 (level + 배점% 배지) |
+| `components/Worksheet/WorksheetCell.tsx` | `?` 힌트 버튼 + H badge 완전 제거 (문제 단위로 이동) |
+| `components/Worksheet/WorksheetTable.tsx` | `hintLevels` / `onHintClick` prop 제거 |
+| `components/Worksheet/CellHintModal.tsx` | `hintPenaltyEnabled` prop, OFF 시 차감 문구 변경 |
+
+#### S7 / Phase B.5 — 다시풀기 부분 초기화 + O/X
+| 파일 | 변경 |
+|------|------|
+| `components/Worksheet/ProblemPage.tsx` | `handleReset` — graded 상태에서 *틀린 셀만* 비움, 정답 셀 보존 |
+| `components/Worksheet/WorksheetCell.tsx` | "정답: X.XX" 노출 제거 → "X" 마크만 표시 |
+| `components/Worksheet/GradingPanel.tsx` | 안내 "X 표시된 셀을 다시 풀어보세요" |
+
+#### S8 / Phase B.6 — 게임 모드 컨텍스트 + 타이머
+| 파일 | 변경 |
+|------|------|
+| `app/(learn)/cases/[caseId]/CaseClient.tsx` | useSearchParams 로 `?game=true` 또는 `?room=XXXX&round=N` 감지 → ProblemPage 에 props 전달 |
+| `components/Worksheet/ProblemPage.tsx` | `gameMode`, `roomCode`, `roundN` props. 게임 모드 시 헤더 우측 MM:SS 타이머 (useEffect setInterval 1s mock), R{N} 배지, 리더보드 placeholder card |
+
+### 검증 결과 (누적)
+
+- `npm run typecheck`: **0 에러**
+- `npm run test`: **59/59 통과** (formula-parser 19 신규 + worksheet-engine 3 + cost-engine engine 35 + diff 2)
+- `npm run build`: **미실행** — 새 세션 권장 (특히 useSearchParams + dynamicParams=false 정합 확인)
+- 시각 회귀: **미수행** (필수, 다음 세션)
+
+### S9 이후 의도적 정지 — 위험 평가
+
+**S9 (A.1+A.3+A.4 — 7변수 통합 ParamPanel + merged adapter + 드롭다운 제거)** 는 본 turn 단일 진행을 *명시적으로 회피*:
+
+1. **27 sacred fixtures 회귀 위험**: cost-engine 어댑터 통합은 분기별 정확도 검증 필수. 단일 iteration 회귀 점검은 위험
+2. **ParamPanel 전면 재작성**: 기존 react-hook-form + zod + caseDef.variables 의존 → 7 unified delta 구조. 데이터 흐름 변화 큼
+3. **lib/cases.ts 의존 코드 다수**: SandboxCoach (이미 제거), ParamPanel, FormulaInspector (S10) 등. 한 번에 묶어야 정합
+4. **plan.md 추정 작업량**: 본 항목은 *3일분*. 한 ralph iteration 에 끼우면 quality degrade 명백
+
+**S10 (인스펙터 톤)** 는 S9 의 7변수 ParamPanel 산출물에 의존 — S9 미완료 상태에서 별 의미 없음.
+
+**S11 (DynamoDB+IAM)** 은 AWS 자격증명 차단. S12~S14 는 모두 S11 의존 — mock 으로 진행 가능하나 *서버 부재 시 가치 낮음*.
+
+따라서 본 turn 은 **Phase B 전체 (S3~S8) + Phase 0 (S1~S2)** 완료 시점에서 정지가 자연 게이트 — 학습자가 *연습 모드*로 미리 풀이 가능한 상태에 도달.
+
+### 다음 작업자가 할 일
+
+1. **(필수, 새 세션 검증)** — 누적 7 stories 시각 회귀:
+   ```bash
+   cd projects/cost-sim-v2.1 && npm run dev
+   ```
+   확인 항목:
+   - `/cases/01-loading` 진입 — yellow 셀 inline 입력 동작 (`21.3*70%` Enter → 14.91)
+   - 헤더 "힌트" 버튼 → 모달 → 단계 advance → 배점 % 변경
+   - 채점 → O/X 표시 (정답 숫자 미노출)
+   - "다시 풀기" → 틀린 셀만 비워짐, 정답 셀 유지
+   - 하단 sticky 계산기 placeholder ↔ 활성 토글
+   - `/cases/01-loading?game=true&round=1` → 게임 모드: 헤더에 타이머 + R1 배지, 리더보드 placeholder
+   - `/sandbox` — Phase A 미진행 → 기존 케이스 드롭다운 + 4 어댑터 동작
+   - `npm run build` → SUCCEED
+
+2. **(Phase A 진행 결정)** — S9 dedicated 세션:
+   - 본 turn 에서 명시적으로 회피한 7변수 통합 + merged adapter + 드롭다운 제거
+   - 27 fixtures regression 가드를 *각 단계마다* 확인
+   - 권장 단계: ① merged-adapter.ts 신규 + 단위 테스트 ② ParamPanel 재작성 ③ sandbox/page.tsx 드롭다운 제거
+
+3. **(병행, HITL/외부 작업)**:
+   - **S5 엑셀 원본** — context/ 또는 projects/cost-sim-v2.1/docs/
+   - **S11 AWS** — DynamoDB 테이블 + Amplify SSR Lambda IAM 권한
+   - **S16/S17** — 강의일 직전
+
+### 산출물
+
+- `.omc/prd.json` — 17 stories. S1~S4, S6~S8 passes:true. S5/S9~S11/S15~S17 deferred 또는 blocked
+- `.omc/progress.txt` — iteration 로그
+- handoff.md (본 entry) — 누적 변경 + 검증 결과 + 정지 이유 + 다음 단계
+
+### 막힌 부분 / 주의사항
+
+- **WorksheetGuide 안내 + 신규 placeholder 중복**: 워크시트 진입 시 WorksheetGuide(showGuide=true) + 하단 placeholder 두 안내가 동시 표시 가능. UX 검토 권장 — WorksheetGuide 의 기본값 또는 표시 조건 재고
+- **CellCalculator 헤더의 "X" 닫기 버튼**: sticky bottom 으로 이동 후, "닫기" 동작은 `setActiveCell(null)` + placeholder 복귀. 동작 정상이지만 모바일에서 클릭 영역 작을 수 있음
+- **타이머는 mock**: 1초 setInterval 로컬 카운트만. S13 에서 서버 polling + 100% 자동 종료 + 라운드 종료 신호와 통합
+- **useSearchParams + dynamicParams=false 정합**: 정적 path 생성 + client-side query param 사용 — Amplify SSR 환경에서 동작 확인 필수
+- **`?game=true` 진입 차단 없음**: S12 (학습자 흐름 라우트) 진행 전까지는 누구나 URL 직접 입력으로 게임 모드 진입 가능. 정식 흐름은 강사 신호 폴링 후 자동 navigate
+- **`@anthropic-ai/sdk`·`@supabase/supabase-js`·`@dagrejs/dagre`**: 본 turn 미검토. 다음 세션 cleanup 후보
+
+### 측정
+
+- 누적 진행: 7/17 (S1 + S2~S4, S6~S8). 3 deferred (S5/S15~S17 차단, S9 의도적 정지)
+- 본 turn 변경 파일: 16 파일 수정 + 4 신규 (formula-parser 2, .omc 2)
+- 본 turn 신규 코드 추정: ~600 줄 (formula-parser + tests + game mode)
+- 본 turn 제거: ~1,900 줄 (60 hints 본문 + 컴포넌트 dead code)
+- 다음 세션 시작 지점: S2~S8 시각 회귀 → 통과 시 S9 dedicated 또는 차단 해소 작업
+
+---
+
+## 2026-05-13 (Phase 0.1 / S1 — LLM 코치 코드 완전 제거)
+
+### 변경 파일 (S2)
+
+| 파일 | 변경 |
+|------|------|
+| `content/problems/p1-loading.json` | yellow 6셀 hints 60개 제거 (3032 bytes) |
+| `content/problems/p4-material-yield.json` | yellow 10셀 hints 100개 제거 (4974 bytes) |
+| `content/problems/p6-tact-investment.json` | yellow 4셀 hints 40개 제거 (1908 bytes) |
+| `content/problems/p5-cuts-mask.json` | 변경 없음 (handoff 2026-05-12 hints 보류 상태 유지) |
+| `content/problems/types.ts` | `CellHints` export interface, `CellDef.hints?`, `RowDef.hints?` 제거 |
+| `lib/cases.ts` | `CaseHints` export interface 신규 + `CaseDef.phases.apply.hints?: CaseHints` |
+| `lib/worksheet-engine.ts` | `resolveHints(caseDef)` — case-only lookup. cell/row 단계 제거. `CaseHints` re-export |
+| `lib/worksheet-engine.test.ts` | cascade 6 tests → simplified 3 tests (case-hits / legacy-string / placeholder) |
+| `components/Worksheet/ProblemPage.tsx` | `resolveHints` 호출부 4-arg → 1-arg |
+
+### 변경 파일 (S3)
+
+| 파일 | 변경 |
+|------|------|
+| `components/Worksheet/ProblemPage.tsx` | `CellCalculator` 를 main flow 에서 분리, fixed bottom 컨테이너로 이동. 항상 렌더링: 셀 미선택 시 placeholder bar, 선택 시 full UI. main `padding-bottom` 동적 조정 (placeholder 24, active 80). `Calculator` icon import 추가 |
+
+### 검증 결과
+
+- `npm run typecheck`: **0 에러** (S1→S2→S3 누적)
+- `npm run test`: **40/40 통과** (worksheet-engine 6→3 simplified + cost-engine diff 2 + engine 35 유지)
+- `npm run build`: **미실행** (코드 변경만으로 build 영향 미미 예상, 새 세션 검증 권장)
+- 시각 회귀: **미수행** (다음 세션에서 dev 서버 + 브라우저 필수)
+
+### Ralph 정지 결정 — 누적 3/17 후 의도적 종료
+
+본 turn 에서 S4~S17 추가 진행하지 않은 이유:
+
+1. **단일 turn 컨텍스트 한계**: 22 파일 read 누적, S4~S10 각각이 새 모듈 또는 큰 리팩터
+2. **sacred 27 fixtures 위험 (S9)**: cost-engine 어댑터 통합은 회귀 위험 — 별도 세션에서 신중하게 진행해야 함
+3. **외부 차단**: S5 (엑셀 원본), S11 (AWS IAM), S15/S16/S17 (HITL/실시간) 은 본질적으로 ralph 단일 실행 자동 완료 불가
+4. **검증 게이트 부재**: CLAUDE.md "구현 세션에서 자체 검증하지 않는다" 원칙상 누적 코드 변경 후 시각 회귀를 묶음 처리하지 않는 게 안전
+5. **D-14 일정 위험 vs Plan B**: plan.md "Fallback 게이트 D+12" 명시. AI 가속에 베팅하되 *각 slice 후 시각 검증* 사이클이 필요
+
+### 다음 작업자가 할 일
+
+1. **(필수, 새 세션 검증)** dev 서버 기동 → 다음 시각 회귀:
+   - 워크시트 모달 (S2): yellow 셀 `?` 버튼 → 3단계 힌트 정상 (case-only resolver) → 단계별 차감 표시
+   - 계산기 sticky bottom (S3): `/cases/01-loading` 진입 시 하단 placeholder 표시 → 셀 클릭 → calc 활성화 → 표 padding 적용 → 마지막 row 스크롤 가능
+   - 회귀: Sandbox `/sandbox` 정상, 인트로 정상, `/api/coach` 404 (curl)
+2. **(검증 통과 후) Ralph 재개**: `/oh-my-claudecode:ralph` 또는 수동 `/gsd` 흐름으로 S4~S10 진행
+3. **(병행 가능) 사용자 게이트 해소**:
+   - S5: 엑셀 원본 파일 `context/` 또는 `projects/cost-sim-v2.1/docs/` 에 배치
+   - S11: AWS DynamoDB 테이블 + Amplify SSR Lambda IAM 권한 → CLI/콘솔
+   - S16/S17: 강의일 직전 단계
+
+### `.omc/` 파일 (ralph workspace)
+
+| 파일 | 용도 |
+|------|------|
+| `.omc/prd.json` | 17 stories. S1/S2/S3 passes:true, S5/S11/S15/S16/S17 blocked:true |
+| `.omc/progress.txt` | iteration 로그 |
+
+### 막힌 부분 / 주의사항
+
+- **시각 회귀 미수행**: S2 hint 모달 동작 + S3 sticky calc 위치 → 새 세션 필수
+- **S3 padding 값 동적이지만 hardcoded**: pb-24 / pb-80 — 매우 작은 뷰포트 또는 calc 헤더 변경 시 재조정 필요
+- **WorksheetGuide vs 새 placeholder bar 중복**: WorksheetGuide(showGuide) + 하단 placeholder 두 안내가 동시 표시될 수 있음. UX 검토 권장 (showGuide 기본값 true, 사용자가 X 버튼으로 닫음)
+- **Ralph harness 자동 재실행 여부**: 본 turn 은 `/oh-my-claudecode:cancel` 미발행 → harness 재실행 시 S4 시도. 사용자가 시각 검증 전 재진입 차단을 원하면 `/oh-my-claudecode:cancel` 수동 실행 필요
+
+### 측정
+
+- 누적 진행: S1 + S2 + S3 (3/17 완료, 6/17 blocked, 8/17 pending)
+- 본 turn 변경: 9 파일 (S2:8 + S3:1) + .omc 2 신규
+- 검증: typecheck 0, vitest 40/40
+- 코드 라인 변동: +/- 추정 ~2,000 줄 (hints 본문 60개 = ~1,800 줄 감소, 신규 < 100 줄)
+- 다음 세션 시작 지점: S2+S3 시각 회귀 → 통과 시 S4 (Phase B.2 formula-parser)
+
+---
+
+## 2026-05-13 (Phase 0.1 / S1 — LLM 코치 코드 완전 제거)
+
+### 현재 상태
+
+- **본 세션 작업**: plan.md Phase 0.1 (S1, Issue #3) — LLM 코치 코드 완전 제거 완료
+- **검증**: `npm run typecheck` 0 에러, `npm run test` **43/43 통과** (worksheet-engine cascade 6 + cost-engine 37 유지)
+- **`/api/coach` 404**: 라우트 파일 + `app/api/coach/` 디렉토리 삭제로 Next.js 파일 기반 라우팅상 구조적 보장 (dev 서버 실측은 새 세션에서 확인 필요)
+- **다음 작업**: plan.md Phase 0.2 / S2 (셀별 60 hints 제거 + worksheet-engine 단순화). 이후 Phase B로 진입
+
+### 본 세션 변경 (코드)
+
+| 파일 | 변경 |
+|------|------|
+| `components/Coach/` | **디렉토리 삭제** (7 files: MessageBubble·MessageList·MessageInput·SuggestionChips·CoachDrawer·FloatingCoach·SandboxCoach) |
+| `lib/coach/` | **디렉토리 삭제** (3 files: system-prompt·types·use-coach) |
+| `app/api/coach/route.ts` | **파일 삭제** — `app/api/` 디렉토리는 빈 상태로 잔존 (다른 라우트 없었음, Phase C.2에서 채워질 예정) |
+| `components/Worksheet/ProblemPage.tsx` | `FloatingCoach` import + JSX + "AI 코치" 안내 배너 div 제거 |
+| `app/(learn)/sandbox/page.tsx` | `SandboxCoach` import + JSX 제거 |
+| `lib/store.ts` | `CoachMessage` import, `coachConversations` 상태 필드, 4 코치 메서드(`appendCoachMessage`·`updateCoachMessage`·`seedCoachConversation`·`clearCoachConversation`), persist `partialize`에서 coachConversations 제거 |
+| `lib/cases.ts` | `CaseDef.coach { hook,discover,apply,reflect }` 필드 제거 |
+| `lib/worksheet-engine.test.ts` | `makeCase`에서 `coach: { ... }` 필드 제거 (CaseDef 변경 정합) |
+| `content/cases/01-loading.json` | `"coach"` 블록 제거 |
+| `content/cases/04-material-yield.json` | `"coach"` 블록 제거 |
+| `content/cases/05-cuts-mask.json` | `"coach"` 블록 제거 |
+| `content/cases/06-tact-investment.json` | `"coach"` 블록 제거 |
+| `next.config.js` | `env: { GEMINI_API_KEY: ... }` 인라인 + Amplify 관련 주석 제거. `reactStrictMode`·`images`·`eslint`·`experimental` 보존 |
+| `.env.local.example` | **파일 삭제** (유일한 환경변수가 `GEMINI_API_KEY`였음) |
+| `package.json` | dependencies에서 `@google/genai: ^1.51.0` 제거 |
+
+### 검증 결과
+
+- `npm run typecheck`: **0 에러**
+- `npm run test`: **43/43 통과** (3 test files: worksheet-engine.test.ts 6 / diff.test.ts 2 / engine.test.ts 35, 3.00s)
+- `npm run build`: **미실행** (plan.md S1 완료 기준에 미포함). 새 세션 검증 시 권장
+- 라이브 `/api/coach` 404 검증: **미실측** (dev 서버 미가동). 라우트 파일 삭제로 구조적 보장
+
+### 다음 작업자가 할 일 — plan.md 순서대로
+
+1. **(우선) S2 / Phase 0.2 시작**: 셀별 60 hints 제거 — `content/problems/*.json`의 `cells[].hints`·`rows[].hints`, `types.ts`의 `CellHints` 인터페이스, `worksheet-engine.test.ts`의 cascade 6 tests. `resolveHints`는 case 레벨 단일 lookup으로 축소
+2. **(검증)** 새 세션에서: dev 서버 기동 → `curl -X POST http://localhost:3000/api/coach` → **404** 확인. 워크시트(`/cases/01-loading`) + Sandbox(`/sandbox`) 진입 시 시각/콘솔 에러 없는지 smoke
+
+### 막힌 부분 / 주의사항
+
+- **`.env.local` 잔존 (gitignored)**: 사용자 환경에 `GEMINI_API_KEY` 평문 보관 상태. 코드에서 더 이상 안 읽으므로 무해하지만, 정리하려면 사용자가 수동 삭제. 이전 인시던트(2026-05-01)에서 폐기한 키가 아닌, 그 이후 발급한 새 키 — Google AI Studio에서 별도 폐기 권장
+- **Amplify 콘솔 `GEMINI_API_KEY` 브랜치 env 잔존**: 코드에서 더 이상 안 쓰지만 Amplify 콘솔에 평문 저장 상태. AWS 콘솔에서 별도 삭제 필요 (다음 세션 / 사용자 작업)
+- **`package-lock.json` 동기화 미실행**: `@google/genai` 항목 잔존. 다음 `npm install` 시 자동 정리됨. 본 세션에서 `npm install`은 미실행 (사내망 TLS 환경에서 시간 소요 회피)
+- **문서 잔존 stale 참조** (plan.md S1 스코프 밖, 별도 결정 필요):
+  - `README.md` 본문
+  - `docs/instructor-manual.md`, `docs/case-authoring-guide.md`, `docs/deploy.md`, `docs/amplify-deploy.md`, `docs/bundle-report.md`
+  - 모두 "AI 코치"·"Gemini"·"GEMINI_API_KEY" 등 언급. plan.md "완전 제거" 정신상 정리 권장하나 *S1 완료 기준엔 미포함*. 사용자가 별도 phase 또는 S1 보충으로 결정
+- **`app/api/` 빈 디렉토리**: Next.js는 빈 디렉토리를 무시 — 빌드/라우팅 영향 없음. Phase C.2에서 `/api/rooms` 등 5개 라우트로 채워질 예정 (plan.md)
+- **`@anthropic-ai/sdk`·`@supabase/supabase-js` orphan deps**: 본 세션 grep 결과 v2.1 코드에서 미사용. S1 스코프 밖이라 보존. 별도 정리 phase에서 다룸
+
+### 측정
+
+- 소요: 1 세션
+- 산출: 코드 변경 14 파일 (삭제 11, 수정 13 — 일부 파일은 디렉토리 단위 삭제로 카운트), 0 신규 파일
+- 코드 라인 감소: 추정 1,500+ 줄 (Coach UI 4 컴포넌트 + use-coach hook + system-prompt + API route + 4 JSON coach 블록 + store 코치 상태 4 메서드)
+- 다음 세션 시작 지점: `plan.md` Phase 0.2 / S2
+
+---
+
+## 2026-05-13 (cost-sim-v2.1 게임화 grilling — 16 결정 + plan.md 작성)
+
+### 현재 상태
+
+- **본 세션 작업**: 사용자 요청 "cost-sim-v2.1 게임화 (멀티 변수 Sandbox + 워크시트 UX 개선 + 게이미피케이션)"에 대해 `/grill-me` 패턴으로 **16개 결정 확정** + **plan.md 전면 재작성** + **decision-log.md prepend**. 코드 변경 0.
+- **1차수 강의 일정**: **2026-05-27 (D+14, 고정)**, 30명, LG Display 사내 강의실, 회사 노트북
+- **작업 계획**: Plan A 채택 (전부 2주에) — 추정 22~28일 작업을 D+14 안에 압축. AI 가속 + 풀집중 베팅. Buffer 0.
+- **Fallback 게이트**: D+12(D-2) 셀프 리허설 시점 → 게이미피케이션 미동작 시 *Plan B(워크시트만 + 수동 운영)*로 자동 전환
+
+### 본 세션 작업 내용 (grilling만, 코드 변경 0)
+
+**16개 결정**은 `decision-log.md` 2026-05-13 항목에 박제됨. 요약:
+- α 실시간 리더보드 / 룸 코드 + 자율 입력 / 강사 신호 모델 / 4 라운드
+- 100% 정답 자동 종료 / 10분 캡 / 미완료자 캡 합산 / 팀 시간 = 라운드별 max 합
+- 매 라운드 즉시 공개 + 강사 코멘트 / 학습자 화면도 전체 리더보드
+- 개인 1·2·3 + 팀 1·2·3 (독식 우려 무시)
+- Sandbox 7변수 통합 (면취수·Mask 새값만 슬라이더) / Multi-open accordion / 케이스 드롭다운 완전 제거
+- 워크시트: 계산기 sticky bottom / 토큰 모델 + 자유 텍스트 병행 / % 자동 변환 / LLM 제거 / 단위 통일 / 총수율 행
+- 힌트: 셀별 60 제거 → 문제 단위 3단계 12, 차감 100/70/40/20% 유지하되 강사 설정 토글
+- 다시풀기: 틀린 셀만 초기화, O/X만 표시, 정답 미노출
+- 백엔드: AWS Amplify + DynamoDB + 폴링 2초 (Firebase/Supabase는 사내망 차단 위험 회피)
+- 흐름: `/` 룸코드 → `/intro` 6비트 유지 → `/menu` Sandbox/게임. 게임 모드 = 기존 `/cases/[id]` + 룸 컨텍스트 분기 (신규 라우트 안 만듦)
+- 강사 뷰: `/instructor` 별도 + admin_token (룸 생성 시 발급)
+- 강사 설정 패널 통합 원칙 (시간 캡·팀 수·힌트 차감·발표 카테고리 토글)
+
+### 다음 작업자가 할 일 — plan.md 순서대로
+
+1. **Phase 0 (D+1)**: LLM 코치 코드 + 셀별 60 hints 데이터 완전 제거 (plan.md 0.1, 0.2)
+2. **Phase B (D+2 ~ D+5)**: 워크시트 UX 6항목 (B.1 ~ B.6)
+   - **⚠️ B.3 의존성**: 엑셀 원본 파일(총수율 행 위치·표 순서)을 사용자가 D+2 까지 `context/` 또는 `projects/cost-sim-v2.1/docs/`에 제공해야 함. 미제공 시 추정으로 진행 후 사용자 확인 게이트
+3. **Phase A (D+6 ~ D+8)**: Sandbox 7변수 통합 (A.1 ~ A.4)
+4. **Phase C (D+9 ~ D+13)**: 게이미피케이션 (C.1 ~ C.6)
+5. **Phase Z (D+14 = 2026-05-27)**: 라이브 배포 + 사내망 검증 + 1차수 강의
+
+### 변경 파일 (본 세션)
+
+| 파일 | 변경 종류 |
+|------|-----------|
+| `plan.md` | 전면 재작성 (기존 v0.3 prototype plan은 Archived 섹션으로 push) |
+| `decision-log.md` | 2026-05-13 항목 prepend (16 결정 + 영향·거부된 대안 박제) |
+| `handoff.md` | 본 항목 prepend |
+
+### 검증 결과 (본 세션은 코드 변경 0)
+
+- `npm run typecheck`: 미실행 (코드 변경 없음)
+- `npm run test`: 미실행
+- **다음 세션 Phase 0 첫 작업 후** 검증 사이클 시작
+
+### 막힌 부분 / 주의사항
+
+- **일정 위험 거대**: 22~28일 작업을 D+14에 압축. AI 가속에 베팅. 실패 시 1차수에 *기능 미완성 위험*. `plan.md` "Fallback 게이트" 섹션 반드시 D-2에 점검
+- **사용자 정밀도 보존 명시**: 절단 없음. 즉 *기능 빠짐* 형태로 단축하지 말 것. 빠른 코드 / 디버깅 압축 / 야간 작업으로 보상
+- **엑셀 원본 미확보**: B.3 총수율 행 위치·표 순서는 사용자 제공 자료에 의존. 미제공 시 추정 + 사용자 확인 게이트
+- **AWS IAM 셋업 단발성 부담**: C.1 작업의 *Amplify SSR Lambda 서비스 롤에 DynamoDB 권한 부착*은 콘솔/CLI 양쪽 가능. AWS CLI v2 (WSL)는 이전 세션 인증 완료, 환경변수 평문 노출 사고 이력 있음(`decision-log` 2026-05-01) — 동일 사고 재발 주의
+- **6차수 학습자가 동일 워크시트 4문제**: 학습자 사이 답 유출 위험 — 강사가 차수마다 *룸 코드 새로 생성*해서 답이 서버에 누적되더라도 차수 간 격리됨. 답 유출 대응은 *추가 작업 없음*으로 진행 (사용자 명시 우려 X)
+- **6차수 운영 안정성**: 첫 차수 데이터가 누적된 채 다음 차수 진행 → DynamoDB 비용 / 강사 뷰 *과거 룸 목록* 관리 정책 미정. 본 plan에서는 *룸 코드별 자동 격리*로 단순화. 6차수 모두 끝난 후 cleanup script 별도
+
+### 측정
+
+- 소요: 1 세션 (grill-me 패턴, 사용자 결정 16회 — Q1~Q16)
+- 산출: 16 결정 박제, plan.md 4 Phase × 14.5일 작업 분해, 1 결정 로그 entry, 1 핸드오프 entry
+- 코드 변경: 0
+- 다음 세션 시작 지점: `plan.md` Phase 0.1 (LLM 코치 코드 제거)
+
+---
+
+## 2026-05-12 (4-케이스 정합 + 워크시트 셀별 힌트 시스템 도입)
 
 ### 현재 상태
 

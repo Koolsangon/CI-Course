@@ -57,7 +57,7 @@ export default function GradingPanel({
                   ? weighted && weighted.hintPenalty === 0
                     ? "완벽합니다! 힌트 없이 풀었어요."
                     : "전부 정답입니다."
-                  : "틀린 셀을 확인하세요"}
+                  : "X 표시된 셀을 다시 풀어보세요 (정답 셀은 유지됩니다)"}
               </span>
             </div>
           </div>

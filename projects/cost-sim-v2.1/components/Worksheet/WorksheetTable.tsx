@@ -111,6 +111,7 @@ export default function WorksheetTable({
                     isActive={isActive}
                     isSelectable={isSelectable}
                     isRefColumn={isRef}
+                    format={row.format}
                     onCellClick={() => onCellClick(col.id, row.id, displayValue, row.label, cell.type)}
                     onAnswer={
                       cell.type === "yellow"

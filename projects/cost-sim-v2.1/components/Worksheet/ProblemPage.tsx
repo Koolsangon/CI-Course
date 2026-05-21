@@ -265,7 +265,6 @@ export default function ProblemPage({
               </span>
             )}
           </h1>
-          <p className="text-xs text-[hsl(var(--muted))] truncate">{problem.scenario}</p>
         </div>
         {gameMode ? (
           <div className="flex items-center gap-1.5 rounded-xl border border-[hsl(var(--accent)/0.4)] bg-[hsl(var(--accent)/0.08)] px-3 py-1.5 text-xs font-mono font-bold tabular-nums text-[hsl(var(--accent))]">
@@ -300,6 +299,19 @@ export default function ProblemPage({
         }
       >
         <div className="flex flex-col gap-6">
+          {/* 문항별 질문 카드 — 시트 맨 위 중앙에 강조 표시. */}
+          <div className="mx-auto w-full max-w-3xl rounded-2xl border-2 border-[hsl(var(--accent)/0.35)] bg-[hsl(var(--accent)/0.06)] px-6 py-5 shadow-card">
+            <div className="mb-2 flex items-center gap-2">
+              <span className="rounded-md bg-[hsl(var(--accent)/0.15)] px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-[hsl(var(--accent))]">
+                문제
+              </span>
+              <h2 className="text-sm font-bold text-[hsl(var(--fg))]">{problem.title}</h2>
+            </div>
+            <p className="text-sm leading-relaxed text-[hsl(var(--fg)/0.9)] whitespace-pre-line">
+              {problem.scenario}
+            </p>
+          </div>
+
           <div className="flex flex-wrap gap-4 text-xs text-[hsl(var(--muted))]">
             <span className="flex items-center gap-1.5">
               <span className="inline-block h-3 w-3 rounded border border-[hsl(var(--warn)/0.35)] bg-[hsl(var(--warn)/0.10)]" />

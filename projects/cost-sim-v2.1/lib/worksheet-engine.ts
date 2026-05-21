@@ -1,4 +1,4 @@
-import type { ProblemDef, RowDef } from "@/content/problems/types";
+import type { ProblemDef, RowDef, CellFormat } from "@/content/problems/types";
 import type { CaseDef, CaseHints } from "./cases";
 
 export type { CaseHints };
@@ -88,9 +88,18 @@ export function computeBlue(
       if (mat === undefined || proc === undefined) return undefined;
       return mat + proc;
     }
+    case "sga": {
+      const dd = get("sga_direct_dev");
+      const tr = get("sga_transport");
+      const bu = get("sga_business_unit");
+      const op = get("sga_operation");
+      const co = get("sga_corporate_oh");
+      if ([dd, tr, bu, op, co].some((v) => v === undefined)) return undefined;
+      return dd! + tr! + bu! + op! + co!;
+    }
     case "cop": {
       const com = resolve("com");
-      const sga = get("sga");
+      const sga = resolve("sga");
       if (com === undefined || sga === undefined) return undefined;
       return com + sga;
     }
@@ -100,12 +109,23 @@ export function computeBlue(
       if (price === undefined || cop === undefined) return undefined;
       return price - cop;
     }
+    case "operating_profit_rate": {
+      const profit = resolve("operating_profit");
+      const price = get("price");
+      if (profit === undefined || price === undefined || price === 0) return undefined;
+      return profit / price;
+    }
     default:
       return undefined;
   }
 }
 
-function round1(n: number): number {
+// 표기 단위에 맞춘 채점 정밀도.
+//   percent (수율 / 이익률): 1 decimal of % = 3 decimals of decimal (e.g., 0.932 → 93.2%)
+//   dollar  (비용): 1 decimal of $ (e.g., 29.82 → $29.8)
+//   number  (기타): 1 decimal
+function roundForGrade(n: number, format?: CellFormat): number {
+  if (format === "percent") return Math.round(n * 1000) / 1000;
   return Math.round(n * 10) / 10;
 }
 
@@ -140,8 +160,8 @@ export function gradeYellowCells(
         });
         continue;
       }
-      const rounded = round1(userVal);
-      const expected = round1(cell.answer);
+      const rounded = roundForGrade(userVal, row.format);
+      const expected = roundForGrade(cell.answer, row.format);
       const correct = rounded === expected;
       grades.push({
         cellId: cell.id,

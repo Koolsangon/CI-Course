@@ -44,7 +44,7 @@ const PROBLEM_HINTS: Record<string, { title: string; hint: string }> = {
   },
   "p6-tact-investment": {
     title: "Tact 지연 vs 개조투자 문제",
-    hint: "①열 (개조투자): Module 감상비 = 7.5 + 13억 ÷ 300K ÷ 1,480 (환율)\n②열 (개조 안 함): Module 가공비 × Tact 배수 1.2"
+    hint: "①열 (Tact 1.2배): Module 가공비(노무비·경비·감상비) × 1.2\n②열 (+ 투자 13억): Module 감상비 = 7.5 + 13억 ÷ 300K ÷ 1,480 (환율). 노무비·경비는 base 로 복귀"
   }
 };
 

@@ -4,8 +4,8 @@
   "scenario": "모듈개조투자 (13억)를 통해 Tact time 지연 없이 생산이 가능할 것 같은데, 개조투자를 안 하면 Tact Time이 1.2배 증가할것 같단 말이지. 해야할까? 말아야 할까? * 전용투자, PLC 물동 300K, 양산기간 5년, OLED PJT 가정, 환율 1,480가정.",
   "columns": [
     { "id": "ref", "header": "Reference", "subheader": "현재 (Tact 1.0x)" },
-    { "id": "sim1", "header": "① 개조투자 (13억)", "subheader": "Tact 1.0x 유지" },
-    { "id": "sim2", "header": "② 개조 안 함", "subheader": "Tact 1.2배 증가" }
+    { "id": "sim1", "header": "① Tact 지연 1.2배", "subheader": "개조 안 함" },
+    { "id": "sim2", "header": "① + 투자 13억 증가", "subheader": "개조투자로 Tact 회복" }
   ],
   "rows": [
     {
@@ -148,24 +148,24 @@
       "id": "module_labor", "label": "Module 노무비", "indent": 2, "format": "dollar",
       "cells": {
         "ref":  { "id": "ml_ref", "type": "purple", "value": 8.70 },
-        "sim1": { "id": "ml_s1",  "type": "purple", "value": 8.70 },
-        "sim2": {
-          "id": "ml_s2",
+        "sim1": {
+          "id": "ml_s1",
           "type": "yellow",
           "answer": 10.44
-        }
+        },
+        "sim2": { "id": "ml_s2",  "type": "purple", "value": 8.70 }
       }
     },
     {
       "id": "module_expense", "label": "Module 경비", "indent": 2, "format": "dollar",
       "cells": {
         "ref":  { "id": "me_ref", "type": "purple", "value": 5.30 },
-        "sim1": { "id": "me_s1",  "type": "purple", "value": 5.30 },
-        "sim2": {
-          "id": "me_s2",
+        "sim1": {
+          "id": "me_s1",
           "type": "yellow",
           "answer": 6.36
-        }
+        },
+        "sim2": { "id": "me_s2",  "type": "purple", "value": 5.30 }
       }
     },
     {
@@ -175,12 +175,12 @@
         "sim1": {
           "id": "md_s1",
           "type": "yellow",
-          "answer": 10.422
+          "answer": 9.00
         },
         "sim2": {
           "id": "md_s2",
           "type": "yellow",
-          "answer": 9.00
+          "answer": 10.422
         }
       }
     },

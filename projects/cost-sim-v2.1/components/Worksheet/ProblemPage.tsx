@@ -300,33 +300,19 @@ export default function ProblemPage({
         }
       >
         <div className="flex flex-col gap-6">
-          <div className="rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--surface-100))] px-6 py-4">
-            <p className="text-sm leading-relaxed text-[hsl(var(--fg)/0.9)]">
-              {problem.scenario}
-            </p>
-            <div className="mt-2 flex gap-4 text-xs text-[hsl(var(--muted))]">
-              <span className="flex items-center gap-1.5">
-                <span className="inline-block h-3 w-3 rounded border border-[hsl(var(--warn)/0.35)] bg-[hsl(var(--warn)/0.10)]" />
-                입력 ({yellowCount}셀)
-              </span>
-              <span className="flex items-center gap-1.5">
-                <span className="inline-block h-3 w-3 rounded border border-[hsl(123_46%_34%/0.25)] bg-[hsl(123_46%_34%/0.07)]" />
-                자동 계산
-              </span>
-              <span className="flex items-center gap-1.5">
-                <span className="inline-block h-3 w-3 rounded border border-[hsl(var(--accent)/0.18)] bg-[hsl(var(--accent)/0.06)]" />
-                고정값
-              </span>
-            </div>
-          </div>
-
-          <div className="flex items-start gap-3 rounded-2xl border border-[hsl(var(--warn)/0.35)] bg-[hsl(var(--warn)/0.06)] px-4 py-3">
-            <div className="text-lg" aria-hidden>🔆</div>
-            <div className="min-w-0 flex-1 text-xs text-[hsl(var(--fg)/0.85)]">
-              <span className="font-semibold text-[hsl(var(--warn))]">셀 힌트는 3단계로 제공됩니다.</span>{" "}
-              노란 셀의 <span className="font-mono">?</span> 버튼을 누르면 단계별로 더 구체적인 단서를 볼 수 있어요. 단계가 올라갈수록 그 셀의 정답 배점이 줄어듭니다 — {" "}
-              <span className="font-mono tabular-nums">100% → 70% → 40% → 20%</span>. 먼저 직접 풀어보고 막힐 때 사용해 주세요.
-            </div>
+          <div className="flex flex-wrap gap-4 text-xs text-[hsl(var(--muted))]">
+            <span className="flex items-center gap-1.5">
+              <span className="inline-block h-3 w-3 rounded border border-[hsl(var(--warn)/0.35)] bg-[hsl(var(--warn)/0.10)]" />
+              입력 ({yellowCount}셀)
+            </span>
+            <span className="flex items-center gap-1.5">
+              <span className="inline-block h-3 w-3 rounded border border-[hsl(123_46%_34%/0.25)] bg-[hsl(123_46%_34%/0.07)]" />
+              자동 계산
+            </span>
+            <span className="flex items-center gap-1.5">
+              <span className="inline-block h-3 w-3 rounded border border-[hsl(var(--accent)/0.18)] bg-[hsl(var(--accent)/0.06)]" />
+              고정값
+            </span>
           </div>
 
           {gameMode && (() => {
@@ -420,6 +406,15 @@ export default function ProblemPage({
             graded={grades !== null}
             weighted={weighted}
           />
+
+          <div className="flex items-start gap-3 rounded-2xl border border-[hsl(var(--warn)/0.35)] bg-[hsl(var(--warn)/0.06)] px-4 py-3">
+            <div className="text-lg" aria-hidden>🔆</div>
+            <div className="min-w-0 flex-1 text-xs text-[hsl(var(--fg)/0.85)]">
+              <span className="font-semibold text-[hsl(var(--warn))]">셀 힌트는 3단계로 제공됩니다.</span>{" "}
+              노란 셀의 <span className="font-mono">?</span> 버튼을 누르면 단계별로 더 구체적인 단서를 볼 수 있어요. 단계가 올라갈수록 그 셀의 정답 배점이 줄어듭니다 — {" "}
+              <span className="font-mono tabular-nums">100% → 70% → 40% → 20%</span>. 먼저 직접 풀어보고 막힐 때 사용해 주세요.
+            </div>
+          </div>
         </div>
       </main>
 

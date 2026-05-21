@@ -43,8 +43,8 @@ const PROBLEM_HINTS: Record<string, { title: string; hint: string }> = {
     hint: "①열: BOM × (기준÷신규 면취수), Panel 가공비 × (기준÷신규 면취수)\n②열: ①에 Mask 비율(신규÷기준) 추가 적용 → Panel 가공비만 변동"
   },
   "p6-tact-investment": {
-    title: "Tact · 투자 문제",
-    hint: "①열: Module 가공비 × Tact 배수(1.2)\n②열: ①에서 Module 감상비에 투자 상각비($1.9) 덧셈"
+    title: "Tact 지연 vs 개조투자 문제",
+    hint: "①열 (개조투자): Module 감상비 = 7.5 + 13억 ÷ 300K ÷ 1,480 (환율)\n②열 (개조 안 함): Module 가공비 × Tact 배수 1.2"
   }
 };
 

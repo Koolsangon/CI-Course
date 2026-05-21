@@ -28,8 +28,50 @@ export function computeBlue(
   answers: CellValues
 ): number | undefined {
   const get = (rid: string) => getCellValue(problem.rows, colId, rid, answers);
+  // resolve: if cell is blue, compute recursively; otherwise read static/user value.
+  // Avoids re-computing yellow user inputs or overwriting purple static values.
+  const resolve = (rid: string): number | undefined => {
+    const row = problem.rows.find((r) => r.id === rid);
+    const cell = row?.cells[colId];
+    if (cell?.type === "blue") {
+      return computeBlue(problem, colId, rid, answers);
+    }
+    return get(rid);
+  };
 
   switch (rowId) {
+    case "yield_total": {
+      const yt = get("yield_tft");
+      const yc = get("yield_cf");
+      const ycl = get("yield_cell");
+      const ym = get("yield_module");
+      if ([yt, yc, ycl, ym].some((v) => v === undefined)) return undefined;
+      return yt! * yc! * ycl! * ym!;
+    }
+    case "bom_total": {
+      const bt = get("bom_tft");
+      const bc = get("bom_cf");
+      const bcl = get("bom_cell");
+      const bm = get("bom_module");
+      if ([bt, bc, bcl, bm].some((v) => v === undefined)) return undefined;
+      return bt! + bc! + bcl! + bm!;
+    }
+    case "material_cost": {
+      const bt = get("bom_tft");
+      const bc = get("bom_cf");
+      const bcl = get("bom_cell");
+      const bm = get("bom_module");
+      const yt = get("yield_tft");
+      const yc = get("yield_cf");
+      const ycl = get("yield_cell");
+      const ym = get("yield_module");
+      if ([bt, bc, bcl, bm, yt, yc, ycl, ym].some((v) => v === undefined)) return undefined;
+      const s1 = bt! / yt!;
+      const s2 = (s1 + bc!) / yc!;
+      const s3 = (s2 + bcl!) / ycl!;
+      const s4 = (s3 + bm!) / ym!;
+      return s4;
+    }
     case "processing_cost": {
       const pl = get("panel_labor");
       const pe = get("panel_expense");
@@ -41,20 +83,20 @@ export function computeBlue(
       return pl! + pe! + pd! + ml! + me! + md!;
     }
     case "com": {
-      const mat = get("material_cost");
-      const proc = computeBlue(problem, colId, "processing_cost", answers) ?? get("processing_cost");
+      const mat = resolve("material_cost");
+      const proc = resolve("processing_cost");
       if (mat === undefined || proc === undefined) return undefined;
       return mat + proc;
     }
     case "cop": {
-      const com = computeBlue(problem, colId, "com", answers) ?? get("com");
+      const com = resolve("com");
       const sga = get("sga");
       if (com === undefined || sga === undefined) return undefined;
       return com + sga;
     }
     case "operating_profit": {
       const price = get("price");
-      const cop = computeBlue(problem, colId, "cop", answers) ?? get("cop");
+      const cop = resolve("cop");
       if (price === undefined || cop === undefined) return undefined;
       return price - cop;
     }

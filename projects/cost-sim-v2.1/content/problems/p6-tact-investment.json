@@ -1,15 +1,15 @@
 {
   "id": "p6-tact-investment",
-  "title": "Tact 지연 + 투자비",
-  "scenario": "Module 공정의 Tact Time이 1.2배로 늘어나고, 생산능력 확보를 위해 추가 투자($1.9 상각비)가 필요합니다. 두 효과를 단계적으로 계산하세요.",
+  "title": "Tact 지연 vs 개조투자",
+  "scenario": "모듈개조투자 (13억)를 통해 Tact time 지연 없이 생산이 가능할 것 같은데, 개조투자를 안 하면 Tact Time이 1.2배 증가할것 같단 말이지. 해야할까? 말아야 할까? * 전용투자, PLC 물동 300K, 양산기간 5년, OLED PJT 가정, 환율 1,480가정.",
   "columns": [
-    { "id": "ref", "header": "Reference", "subheader": "Tact 1.0x" },
-    { "id": "sim1", "header": "① Tact 1.2배", "subheader": "투자 전" },
-    { "id": "sim2", "header": "① + 투자 $1.9", "subheader": "Tact 1.2x + 상각비" }
+    { "id": "ref", "header": "Reference", "subheader": "현재 (Tact 1.0x)" },
+    { "id": "sim1", "header": "① 개조투자 (13억)", "subheader": "Tact 1.0x 유지" },
+    { "id": "sim2", "header": "② 개조 안 함", "subheader": "Tact 1.2배 증가" }
   ],
   "rows": [
     {
-      "id": "price", "label": "Price", "isSummary": true,
+      "id": "price", "label": "판매 가격 (Price)", "isSummary": true,
       "cells": {
         "ref":  { "id": "price_ref", "type": "purple", "value": 200.00 },
         "sim1": { "id": "price_s1",  "type": "purple", "value": 200.00 },
@@ -17,35 +17,11 @@
       }
     },
     {
-      "id": "bom_tft", "label": "TFT BOM", "indent": 1,
+      "id": "yield_total", "label": "수율 (Yield)", "isSummary": true,
       "cells": {
-        "ref":  { "id": "bt_ref", "type": "purple", "value": 6.00 },
-        "sim1": { "id": "bt_s1",  "type": "purple", "value": 6.00 },
-        "sim2": { "id": "bt_s2",  "type": "purple", "value": 6.00 }
-      }
-    },
-    {
-      "id": "bom_cf", "label": "CF BOM", "indent": 1,
-      "cells": {
-        "ref":  { "id": "bc_ref", "type": "purple", "value": 5.00 },
-        "sim1": { "id": "bc_s1",  "type": "purple", "value": 5.00 },
-        "sim2": { "id": "bc_s2",  "type": "purple", "value": 5.00 }
-      }
-    },
-    {
-      "id": "bom_cell", "label": "Cell BOM", "indent": 1,
-      "cells": {
-        "ref":  { "id": "bcl_ref", "type": "purple", "value": 1.50 },
-        "sim1": { "id": "bcl_s1",  "type": "purple", "value": 1.50 },
-        "sim2": { "id": "bcl_s2",  "type": "purple", "value": 1.50 }
-      }
-    },
-    {
-      "id": "bom_module", "label": "Module BOM", "indent": 1,
-      "cells": {
-        "ref":  { "id": "bm_ref", "type": "purple", "value": 75.00 },
-        "sim1": { "id": "bm_s1",  "type": "purple", "value": 75.00 },
-        "sim2": { "id": "bm_s2",  "type": "purple", "value": 75.00 }
+        "ref":  { "id": "yield_total_ref", "type": "blue" },
+        "sim1": { "id": "yield_total_s1",  "type": "blue" },
+        "sim2": { "id": "yield_total_s2",  "type": "blue" }
       }
     },
     {
@@ -81,87 +57,47 @@
       }
     },
     {
-      "id": "material_cost", "label": "소요재료비", "isSummary": true,
+      "id": "bom_total", "label": "Net 재료비 (BOM 재료비)", "isSummary": true,
       "cells": {
-        "ref":  { "id": "mat_ref", "type": "purple", "value": 90.76 },
-        "sim1": { "id": "mat_s1",  "type": "purple", "value": 90.76 },
-        "sim2": { "id": "mat_s2",  "type": "purple", "value": 90.76 }
+        "ref":  { "id": "bom_total_ref", "type": "blue" },
+        "sim1": { "id": "bom_total_s1",  "type": "blue" },
+        "sim2": { "id": "bom_total_s2",  "type": "blue" }
       }
     },
     {
-      "id": "panel_labor", "label": "Panel 노무비", "indent": 1,
+      "id": "bom_tft", "label": "TFT BOM", "indent": 1,
       "cells": {
-        "ref":  { "id": "pl_ref", "type": "purple", "value": 21.30 },
-        "sim1": { "id": "pl_s1",  "type": "purple", "value": 21.30 },
-        "sim2": { "id": "pl_s2",  "type": "purple", "value": 21.30 }
+        "ref":  { "id": "bt_ref", "type": "purple", "value": 6.00 },
+        "sim1": { "id": "bt_s1",  "type": "purple", "value": 6.00 },
+        "sim2": { "id": "bt_s2",  "type": "purple", "value": 6.00 }
       }
     },
     {
-      "id": "panel_expense", "label": "Panel 경비", "indent": 1,
+      "id": "bom_cf", "label": "CF BOM", "indent": 1,
       "cells": {
-        "ref":  { "id": "pe_ref", "type": "purple", "value": 11.50 },
-        "sim1": { "id": "pe_s1",  "type": "purple", "value": 11.50 },
-        "sim2": { "id": "pe_s2",  "type": "purple", "value": 11.50 }
+        "ref":  { "id": "bc_ref", "type": "purple", "value": 5.00 },
+        "sim1": { "id": "bc_s1",  "type": "purple", "value": 5.00 },
+        "sim2": { "id": "bc_s2",  "type": "purple", "value": 5.00 }
       }
     },
     {
-      "id": "panel_depreciation", "label": "Panel 감상비", "indent": 1,
+      "id": "bom_cell", "label": "Cell BOM", "indent": 1,
       "cells": {
-        "ref":  { "id": "pd_ref", "type": "purple", "value": 16.20 },
-        "sim1": { "id": "pd_s1",  "type": "purple", "value": 16.20 },
-        "sim2": { "id": "pd_s2",  "type": "purple", "value": 16.20 }
+        "ref":  { "id": "bcl_ref", "type": "purple", "value": 1.50 },
+        "sim1": { "id": "bcl_s1",  "type": "purple", "value": 1.50 },
+        "sim2": { "id": "bcl_s2",  "type": "purple", "value": 1.50 }
       }
     },
     {
-      "id": "module_labor", "label": "Module 노무비", "indent": 1,
+      "id": "bom_module", "label": "Module BOM", "indent": 1,
       "cells": {
-        "ref":  { "id": "ml_ref", "type": "purple", "value": 8.70 },
-        "sim1": {
-          "id": "ml_s1",
-          "type": "yellow",
-          "answer": 10.44
-        },
-        "sim2": { "id": "ml_s2",  "type": "purple", "value": 10.44 }
+        "ref":  { "id": "bm_ref", "type": "purple", "value": 75.00 },
+        "sim1": { "id": "bm_s1",  "type": "purple", "value": 75.00 },
+        "sim2": { "id": "bm_s2",  "type": "purple", "value": 75.00 }
       }
     },
     {
-      "id": "module_expense", "label": "Module 경비", "indent": 1,
-      "cells": {
-        "ref":  { "id": "me_ref", "type": "purple", "value": 5.30 },
-        "sim1": {
-          "id": "me_s1",
-          "type": "yellow",
-          "answer": 6.36
-        },
-        "sim2": { "id": "me_s2",  "type": "purple", "value": 6.36 }
-      }
-    },
-    {
-      "id": "module_depreciation", "label": "Module 감상비", "indent": 1,
-      "cells": {
-        "ref":  { "id": "md_ref", "type": "purple", "value": 7.50 },
-        "sim1": {
-          "id": "md_s1",
-          "type": "yellow",
-          "answer": 9.00
-        },
-        "sim2": {
-          "id": "md_s2",
-          "type": "yellow",
-          "answer": 10.90
-        }
-      }
-    },
-    {
-      "id": "processing_cost", "label": "가공비 합계", "isSummary": true,
-      "cells": {
-        "ref":  { "id": "proc_ref", "type": "purple", "value": 70.50 },
-        "sim1": { "id": "proc_s1",  "type": "blue" },
-        "sim2": { "id": "proc_s2",  "type": "blue" }
-      }
-    },
-    {
-      "id": "com", "label": "COM (제조원가)", "isSummary": true,
+      "id": "com", "label": "제조원가 (COM)", "isSummary": true,
       "cells": {
         "ref":  { "id": "com_ref", "type": "purple", "value": 161.26 },
         "sim1": { "id": "com_s1",  "type": "blue" },
@@ -169,7 +105,87 @@
       }
     },
     {
-      "id": "sga", "label": "SGA (판관비)",
+      "id": "material_cost", "label": "소요 재료비", "indent": 1,
+      "cells": {
+        "ref":  { "id": "mat_ref", "type": "blue" },
+        "sim1": { "id": "mat_s1", "type": "blue" },
+        "sim2": { "id": "mat_s2", "type": "blue" }
+      }
+    },
+    {
+      "id": "processing_cost", "label": "가공비 합계", "indent": 1, "isSummary": true,
+      "cells": {
+        "ref":  { "id": "proc_ref", "type": "purple", "value": 70.50 },
+        "sim1": { "id": "proc_s1",  "type": "blue" },
+        "sim2": { "id": "proc_s2",  "type": "blue" }
+      }
+    },
+    {
+      "id": "panel_labor", "label": "Panel 노무비", "indent": 2,
+      "cells": {
+        "ref":  { "id": "pl_ref", "type": "purple", "value": 21.30 },
+        "sim1": { "id": "pl_s1",  "type": "purple", "value": 21.30 },
+        "sim2": { "id": "pl_s2",  "type": "purple", "value": 21.30 }
+      }
+    },
+    {
+      "id": "panel_expense", "label": "Panel 경비", "indent": 2,
+      "cells": {
+        "ref":  { "id": "pe_ref", "type": "purple", "value": 11.50 },
+        "sim1": { "id": "pe_s1",  "type": "purple", "value": 11.50 },
+        "sim2": { "id": "pe_s2",  "type": "purple", "value": 11.50 }
+      }
+    },
+    {
+      "id": "panel_depreciation", "label": "Panel 감상비", "indent": 2,
+      "cells": {
+        "ref":  { "id": "pd_ref", "type": "purple", "value": 16.20 },
+        "sim1": { "id": "pd_s1",  "type": "purple", "value": 16.20 },
+        "sim2": { "id": "pd_s2",  "type": "purple", "value": 16.20 }
+      }
+    },
+    {
+      "id": "module_labor", "label": "Module 노무비", "indent": 2,
+      "cells": {
+        "ref":  { "id": "ml_ref", "type": "purple", "value": 8.70 },
+        "sim1": { "id": "ml_s1",  "type": "purple", "value": 8.70 },
+        "sim2": {
+          "id": "ml_s2",
+          "type": "yellow",
+          "answer": 10.44
+        }
+      }
+    },
+    {
+      "id": "module_expense", "label": "Module 경비", "indent": 2,
+      "cells": {
+        "ref":  { "id": "me_ref", "type": "purple", "value": 5.30 },
+        "sim1": { "id": "me_s1",  "type": "purple", "value": 5.30 },
+        "sim2": {
+          "id": "me_s2",
+          "type": "yellow",
+          "answer": 6.36
+        }
+      }
+    },
+    {
+      "id": "module_depreciation", "label": "Module 감상비", "indent": 2,
+      "cells": {
+        "ref":  { "id": "md_ref", "type": "purple", "value": 7.50 },
+        "sim1": {
+          "id": "md_s1",
+          "type": "yellow",
+          "answer": 10.422
+        },
+        "sim2": {
+          "id": "md_s2",
+          "type": "yellow",
+          "answer": 9.00
+        }
+      }
+    },
+    {
+      "id": "sga", "label": "판매관리비 (SG&A)",
       "cells": {
         "ref":  { "id": "sga_ref", "type": "purple", "value": 28.40 },
         "sim1": { "id": "sga_s1",  "type": "purple", "value": 28.40 },
@@ -177,7 +193,7 @@
       }
     },
     {
-      "id": "cop", "label": "COP (총원가)", "isSummary": true,
+      "id": "cop", "label": "총원가 (COP)", "isSummary": true,
       "cells": {
         "ref":  { "id": "cop_ref", "type": "purple", "value": 189.66 },
         "sim1": { "id": "cop_s1",  "type": "blue" },

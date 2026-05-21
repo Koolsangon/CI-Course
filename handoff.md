@@ -1,5 +1,60 @@
 # handoff.md - 인수인계 메모
 
+## 2026-05-21 (cost-sim-v2.1 워크시트 엑셀 정합화 + 노란 셀 듀얼 입력)
+
+### 본 세션
+
+사용자 요청 3건 처리 후 commit `ce73ac5`.
+
+#### 1. 워크시트 셀 계층을 엑셀과 통일 (문제 1~4 공통)
+| 변경 | 파일 |
+|------|------|
+| 수율 (Yield) 소계 + Net 재료비 (BOM 재료비) 소계 + 소요 재료비 행 추가 (중간 hierarchy, 블루 셀 자동 계산) | `content/problems/p1-loading.json`, `p4-material-yield.json`, `p5-cuts-mask.json`, `p6-tact-investment.json` |
+| 셀 순서를 엑셀과 일치 (Price → 수율 → BOM → COM[소요재료비/가공비] → SGA → COP → 영업이익) | 동일 |
+| `yield_total`, `bom_total`, `material_cost` cascading 공식 추가 (`material_cost = ((((BOM_TFT/Y_TFT + BOM_CF)/Y_CF + BOM_Cell)/Y_Cell + BOM_Module)/Y_Module`). `resolve()` 헬퍼로 yellow/purple/blue 셀 타입에 따라 정확한 값 사용 | `lib/worksheet-engine.ts` |
+
+#### 2. 문제 4 (Tact 지연 vs 개조투자) 재구성
+| 변경 | 파일 |
+|------|------|
+| 시나리오 신규 wording: "모듈개조투자 (13억)를 통해 Tact time 지연 없이… * 전용투자, PLC 물동 300K, 양산기간 5년, OLED PJT 가정, 환율 1,480가정" | `content/problems/p6-tact-investment.json`, `content/cases/06-tact-investment.json` |
+| 컬럼 재정의: ref / ① 개조투자 13억 (Tact 1.0x) / ② 개조 안 함 (Tact 1.2배) | 동일 |
+| Module 감상비 sim1 정답 = **10.422** (= 7.5 + 13억 ÷ 300K ÷ 1,480 ≈ 10.428, round1 채점이라 OK) | 동일 |
+| sim2 정답: 노무비 10.44, 경비 6.36, 감상비 9.00 (기존값 ×1.2 유지) | 동일 |
+| 케이스 힌트 3단계 + WorksheetGuide 의 p6 hint 갱신 | `lib/cases.ts`(JSON), `components/Worksheet/WorksheetGuide.tsx` |
+
+#### 3. UI 정리 — `ProblemPage.tsx`
+- 본문 시나리오 중복 카드 제거 (헤더 부제만 유지). 셀 색상 범례는 작은 strip 으로 보존.
+- "셀 힌트는 3단계로 제공됩니다…" 안내 카드를 GradingPanel 아래 페이지 맨 아래로 이동.
+
+#### 4. 노란 셀 듀얼 입력 — `WorksheetCell.tsx`
+- 노란 셀 클릭 시 ① 굵은 노란 ring-4 + offset 으로 선택 강조 ② 하단 계산기 자동 오픈 ③ input 자동 포커스 + 전체 선택 → 키보드 직접 입력 가능. 두 입력 방식이 같은 `handleAnswer` 로 커밋.
+- 핵심: input의 `onClick stopPropagation` 제거 → 클릭이 td 로 버블되어 계산기도 함께 열림.
+- Enter 키로 즉시 커밋. parseFormula 로 수식 (예: `21.3*70%`) 평가.
+
+### 누적 검증
+
+- `npm run typecheck`: **0 에러**
+- `npm run test`: **92/92 통과** (기존과 동일)
+- 시각 회귀: dev 서버 `localhost:3001` 으로 4개 케이스 페이지 fetch — 새 행 (`수율 (Yield)`, `Net 재료비`, `소요 재료비`), 새 시나리오 (`모듈개조투자`, `환율 1,480`), 힌트 카드 1회 출현 확인. yellow 셀 input 요소 p1=6개, p4=10개 정상 렌더.
+- 수식 검증 (Python): 모든 소요재료비/Yield/BOM 소계 값이 엑셀과 일치. Module 감상비 sim1 = 10.428 (사용자 명시 10.422 와 0.006 차이, round1 grading 으로 동일하게 채점됨).
+
+### 미해결 / 다음 세션 후보
+
+- **사용자 직접 시각 확인 필요** — Tact 지연 vs 개조투자 문제의 새 컬럼 헤더, 노란 셀 클릭 시 굵은 테두리 + 계산기 + 키인 3 가지가 동시에 작동하는지 사용자 환경에서 검증.
+- 10.422 vs 10.428 정확한 공식 — 사용자가 의도한 정확한 산식 (5년 amortize 여부, 환율 적용 시점 등) 확인되면 답 보정 가능.
+- 미커밋 (의도적 제외): `.claude/settings.local.json` (환경 로컬), `latest`, `outputs/cost-sim-v2.1-executive-briefing.md` (untracked).
+
+### 검증 명령어
+
+```powershell
+cd "D:\02. Projects\CI-Course\projects\cost-sim-v2.1"
+npm run typecheck       # 0 에러
+npm test                # 92/92 PASSED
+npm run dev             # localhost:3001 — 4 케이스 페이지 직접 확인
+```
+
+---
+
 ## 2026-05-13 (Ralph 연속 turn — S9~S15 추가, 누적 14/17 코드 완료)
 
 ### 본 세션 (이어서)

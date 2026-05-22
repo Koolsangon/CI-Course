@@ -1,5 +1,86 @@
 # handoff.md - 인수인계 메모
 
+## 2026-05-22 (cost-sim-v2.1 워크시트 UX 고도화 — 스크리닝 4단계)
+
+### 본 세션
+
+사용자의 4건 연속 요청을 처리. 모두 commit 완료 (4 commit 누적).
+
+#### 1. p6 컬럼 좌우 swap (commit `7a4e7a1`)
+엑셀 R7 컬럼 순서 (`①=Tact 지연 1.2X | ①+투자 13억 증가`) 와 일치하도록 sim1/sim2 의 의미·값 재정의.
+- sim1 (좌): ① Tact 지연 1.2배 (개조 안 함) — Module 노무비 10.44 / 경비 6.36 / 감상비 9.00 (모두 yellow)
+- sim2 (우): ① + 투자 13억 증가 (개조투자로 Tact 회복) — 노무비 8.70 / 경비 5.30 purple, 감상비 10.422 yellow
+
+#### 2. 워크시트 5건 일괄 개선 (commit `8c09cda`)
+| 항목 | 변경 |
+|------|------|
+| A) 시나리오 카드 | 헤더 부제 제거, 본문 최상단 max-w-3xl 강조 카드 |
+| B) 영업이익률 행 | operating_profit_rate = profit / price (블루 자동 계산, 모든 문항 맨 아래) |
+| C) SGA 5개 breakdown | 직접개발비/운반비/사업부/Operation/Corporate OH, sga 는 블루 합계 (자동 sum = 28.4) |
+| D) 표기 단위 분리 | RowDef.format 추가 — `percent` 행 ×100+"%", `dollar` 행 "$" prefix |
+| E) 1소수 정밀도 | toFixed(1) + format-aware roundForGrade (percent ×1000 round, dollar ×10 round) |
+
+타입 변경: `RowDef.format?: "percent" \| "dollar" \| "number"`. WorksheetCell 이 prop 으로 받아 fmt + 입력 처리. percent 행 input 은 prefix/suffix 표시 + ÷100 자동 변환.
+
+#### 3. p6 컬럼 swap 후속 (위 #1 참고)
+
+#### 4. Playwright 기반 시나리오 카드 가독성 리뷰 (commit `94a68ef`)
+- **Playwright 설정**: 사내망 TLS 인터셉트로 `npx playwright install` 실패 → 시스템 Chrome (`C:\Program Files\Google\Chrome\Application\chrome.exe`) 직접 사용. `executablePath` 옵션 + `waitUntil: domcontentloaded` 으로 dev server HMR networkidle 무한 대기 회피.
+- **스크린샷 진단** (`tests/e2e/scenario-card-review.spec.ts`): 4개 카드 모두 단일 텍스트 블록으로 상황·과제·공식·가정이 한 문장에 뭉쳐 있어 스캔이 어려움 — 특히 p6 (가정 5개 한 줄).
+- **구조화 fix**:
+  - 새 타입 `ScenarioSections { situation; task?; formula?; assumptions? }`
+  - ProblemDef 에 `scenarioSections?` 필드 추가 (string `scenario` 는 fallback 유지)
+  - 카드 UI 섹션별 시각 분리:
+    - [문제] 배지 + 제목 (text-base bold + 하단 divider)
+    - [상황] 배경 (text-sm regular)
+    - [과제] 흰 텍스트 배지 + accent box + text-base semibold ← 가장 눈에 띄게
+    - [공식] warn 색 monospace 박스 (선택)
+    - [가정] chip pill 목록 (선택)
+- 4개 문항 모두 scenarioSections 추가 (p1 = situation/task/formula, p4·p5 = + assumptions, p6 = 4 fields all)
+
+### 누적 검증
+
+- `npm run typecheck`: 0 에러 (4 commit 모두)
+- `npm test` (vitest): **92/92 통과** (변경 없음 — 기존 vitest suite 영향 안 받음)
+- Playwright `scenario-card-review` 4 tests pass — 카드 스크린샷 `test-results/scenario-card/*.png` 4개 저장
+- 시각 회귀: dev server hot reload 로 즉시 반영, p1·p4·p5·p6 카드 모두 섹션 분리 정상
+
+### 주의사항 / 알아둘 것
+
+- **사내망 Playwright**: chromium 다운로드 차단 환경 — 시스템 Chrome `executablePath` 사용이 정답. 다른 PC 에서도 같은 패턴 적용 가능.
+- **Next dev server HMR**: 컴파일 오류 후 재컴파일 누적되면 `Cannot read properties of undefined (reading 'clientModules')` 발생 → `.next` 캐시 삭제 후 재시작이 가장 빠른 복구. 본 세션에서 1회 수행.
+- **dev server 의 `networkidle` 금기**: HMR WebSocket 이 항상 살아있어 `waitUntil: "networkidle"` 가 무한 대기. Playwright 에서 `domcontentloaded` + 명시적 selector wait 권장.
+- **사용자 명시 답 10.422 vs 계산식 10.428**: 0.006 차이 — round1 (×10) 채점이라 student input 어느 쪽이든 10.4 로 grade. 정확한 산식 (양산기간 amortize 여부, 환율 적용 시점) 확정되면 보정 가능.
+- **미커밋 (의도적)**: `.claude/settings.local.json`, `latest`, `outputs/cost-sim-v2.1-executive-briefing.md`, `.claude/scheduled_tasks.lock`.
+
+### 검증 명령어
+
+```powershell
+cd "D:\02. Projects\CI-Course\projects\cost-sim-v2.1"
+npm run typecheck     # 0 에러
+npm test              # 92/92 PASSED
+npm run dev           # localhost:3001 (port 3000 사용 중이면 자동 3001)
+
+# Playwright 스크린샷 회귀 (시스템 Chrome 사용)
+# 사전: dev server 가 모든 4개 페이지를 한 번 컴파일해 둬야 timeout 없음
+# curl -s http://localhost:3001/cases/01-loading -o /dev/null
+# curl -s http://localhost:3001/cases/04-material-yield -o /dev/null
+# curl -s http://localhost:3001/cases/05-cuts-mask -o /dev/null
+# curl -s http://localhost:3001/cases/06-tact-investment -o /dev/null
+npx playwright test scenario-card-review --project=chromium --timeout=60000
+# 출력: test-results/scenario-card/{01-loading,04-material-yield,05-cuts-mask,06-tact-investment}.png
+```
+
+### 커밋 그래프 (이 세션)
+
+```
+94a68ef  feat(cost-sim-v2.1/scenario-card): structured sections for readability
+7a4e7a1  fix(cost-sim-v2.1/p6): swap sim columns to match Excel order
+8c09cda  feat(cost-sim-v2.1/worksheet): scenario card + SGA breakdown + format units + 1-decimal
+```
+
+---
+
 ## 2026-05-21 (cost-sim-v2.1 워크시트 엑셀 정합화 + 노란 셀 듀얼 입력)
 
 ### 본 세션

@@ -2,6 +2,18 @@
   "id": "p6-tact-investment",
   "title": "Tact 지연 vs 개조투자",
   "scenario": "모듈개조투자 (13억)를 통해 Tact time 지연 없이 생산이 가능할 것 같은데, 개조투자를 안 하면 Tact Time이 1.2배 증가할것 같단 말이지. 해야할까? 말아야 할까? * 전용투자, PLC 물동 300K, 양산기간 5년, OLED PJT 가정, 환율 1,480가정.",
+  "scenarioSections": {
+    "situation": "모듈개조투자 13억을 집행하면 Tact Time 지연 없이 생산 가능. 개조투자를 안 하면 Tact Time이 1.2배 증가할 것으로 예상됩니다.",
+    "task": "개조투자, 해야할까? 말아야 할까?",
+    "formula": "단위당 투자 감상비 = 13억 won ÷ PLC 물동 ÷ 환율",
+    "assumptions": [
+      "전용투자",
+      "PLC 물동 300K",
+      "양산기간 5년",
+      "OLED PJT",
+      "환율 1,480 won/$"
+    ]
+  },
   "columns": [
     { "id": "ref", "header": "Reference", "subheader": "현재 (Tact 1.0x)" },
     { "id": "sim1", "header": "① Tact 지연 1.2배", "subheader": "개조 안 함" },

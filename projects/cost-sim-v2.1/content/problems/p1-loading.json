@@ -2,6 +2,11 @@
   "id": "p1-loading",
   "title": "Loading 변화",
   "scenario": "고객사 주문 급감으로 설비 Loading(가동률)이 70%에서 50%로 떨어졌습니다. 가공비 각 항목이 어떻게 변하는지 계산하세요. (가공비 = 기준값 × 기준Loading ÷ 새Loading)",
+  "scenarioSections": {
+    "situation": "고객사 주문 급감으로 설비 Loading(가동률)이 70%에서 50%로 떨어졌습니다.",
+    "task": "가공비 각 항목이 어떻게 변하는지 계산하세요.",
+    "formula": "가공비 = 기준값 × (기준 Loading ÷ 새 Loading)"
+  },
   "columns": [
     { "id": "ref", "header": "Reference", "subheader": "Loading 70%" },
     { "id": "sim1", "header": "Simulation", "subheader": "Loading 50%" }

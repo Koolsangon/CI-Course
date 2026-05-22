@@ -299,17 +299,75 @@ export default function ProblemPage({
         }
       >
         <div className="flex flex-col gap-6">
-          {/* 문항별 질문 카드 — 시트 맨 위 중앙에 강조 표시. */}
+          {/* 문항별 질문 카드 — 섹션별 시각 분리로 가독성 강조. */}
           <div className="mx-auto w-full max-w-3xl rounded-2xl border-2 border-[hsl(var(--accent)/0.35)] bg-[hsl(var(--accent)/0.06)] px-6 py-5 shadow-card">
-            <div className="mb-2 flex items-center gap-2">
-              <span className="rounded-md bg-[hsl(var(--accent)/0.15)] px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-[hsl(var(--accent))]">
+            {/* 헤더: 문제 배지 + 제목 (큼) */}
+            <div className="mb-4 flex items-center gap-2 border-b border-[hsl(var(--accent)/0.2)] pb-3">
+              <span className="rounded-md bg-[hsl(var(--accent)/0.18)] px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-[hsl(var(--accent))]">
                 문제
               </span>
-              <h2 className="text-sm font-bold text-[hsl(var(--fg))]">{problem.title}</h2>
+              <h2 className="text-base font-bold text-[hsl(var(--fg))]">{problem.title}</h2>
             </div>
-            <p className="text-sm leading-relaxed text-[hsl(var(--fg)/0.9)] whitespace-pre-line">
-              {problem.scenario}
-            </p>
+
+            {problem.scenarioSections ? (
+              <div className="flex flex-col gap-4">
+                {/* 상황 — 본문 텍스트 */}
+                <div className="flex gap-3">
+                  <span className="mt-0.5 flex-shrink-0 rounded-md bg-[hsl(var(--surface-200))] px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-[hsl(var(--muted))]">
+                    상황
+                  </span>
+                  <p className="flex-1 text-sm leading-relaxed text-[hsl(var(--fg)/0.85)]">
+                    {problem.scenarioSections.situation}
+                  </p>
+                </div>
+
+                {/* 과제 — 가장 눈에 띄게 강조 */}
+                {problem.scenarioSections.task && (
+                  <div className="flex gap-3 rounded-xl border border-[hsl(var(--accent)/0.45)] bg-[hsl(var(--accent)/0.10)] px-4 py-3">
+                    <span className="mt-1 flex-shrink-0 rounded-md bg-[hsl(var(--accent))] px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white">
+                      과제
+                    </span>
+                    <p className="flex-1 text-base font-semibold leading-relaxed text-[hsl(var(--fg))]">
+                      {problem.scenarioSections.task}
+                    </p>
+                  </div>
+                )}
+
+                {/* 공식 — monospace 박스 */}
+                {problem.scenarioSections.formula && (
+                  <div className="flex gap-3 rounded-lg border border-[hsl(var(--warn)/0.3)] bg-[hsl(var(--warn)/0.06)] px-3 py-2">
+                    <span className="mt-0.5 flex-shrink-0 rounded-md bg-[hsl(var(--warn)/0.2)] px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-[hsl(var(--warn))]">
+                      공식
+                    </span>
+                    <code className="flex-1 text-xs font-mono leading-relaxed text-[hsl(var(--fg)/0.9)]">
+                      {problem.scenarioSections.formula}
+                    </code>
+                  </div>
+                )}
+
+                {/* 가정 — chip pills */}
+                {problem.scenarioSections.assumptions && problem.scenarioSections.assumptions.length > 0 && (
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span className="flex-shrink-0 rounded-md bg-[hsl(var(--surface-200))] px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-[hsl(var(--muted))]">
+                      가정
+                    </span>
+                    {problem.scenarioSections.assumptions.map((a, i) => (
+                      <span
+                        key={i}
+                        className="inline-flex items-center rounded-full border border-[hsl(var(--border))] bg-[hsl(var(--surface-100))] px-2.5 py-0.5 text-xs text-[hsl(var(--fg)/0.8)]"
+                      >
+                        {a}
+                      </span>
+                    ))}
+                  </div>
+                )}
+              </div>
+            ) : (
+              /* Fallback — 단일 문자열 시나리오 */
+              <p className="text-sm leading-relaxed text-[hsl(var(--fg)/0.9)] whitespace-pre-line">
+                {problem.scenario}
+              </p>
+            )}
           </div>
 
           <div className="flex flex-wrap gap-4 text-xs text-[hsl(var(--muted))]">

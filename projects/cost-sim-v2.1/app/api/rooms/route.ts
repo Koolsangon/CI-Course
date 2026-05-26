@@ -31,10 +31,10 @@ function genToken(): string {
 export async function POST() {
   // 코드 충돌 회피 — 최대 10회 재시도.
   let code = genCode();
-  for (let i = 0; i < 10 && getRoom(code); i++) {
+  for (let i = 0; i < 10 && (await getRoom(code)); i++) {
     code = genCode();
   }
-  if (getRoom(code)) {
+  if ((await getRoom(code)) !== undefined) {
     return NextResponse.json({ error: "code collision after 10 tries" }, { status: 503 });
   }
 
@@ -46,7 +46,7 @@ export async function POST() {
     settings: DEFAULT_ROOM_SETTINGS,
     enabled: true
   };
-  createRoom(meta);
+  await createRoom(meta);
 
   return NextResponse.json({ code, adminToken: meta.adminToken });
 }

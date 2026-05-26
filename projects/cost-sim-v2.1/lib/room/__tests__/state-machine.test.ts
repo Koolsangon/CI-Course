@@ -23,7 +23,7 @@ function makeMeta(code: string): RoomMeta {
 }
 
 describe("Room state transitions", () => {
-  beforeEach(() => _clearAllRooms());
+  beforeEach(async () => { await _clearAllRooms(); });
 
   it("waiting → playing 허용, ended 거부", () => {
     expect(canTransitionRoom("waiting", "playing")).toBe(true);
@@ -53,10 +53,10 @@ describe("Round state transitions", () => {
 });
 
 describe("startRound + endRound + endGame 흐름", () => {
-  beforeEach(() => _clearAllRooms());
+  beforeEach(async () => { await _clearAllRooms(); });
 
-  it("startRound — round 1 시작 → room.status=playing, currentRound=1", () => {
-    const room = createRoom(makeMeta("ABCD"));
+  it("startRound — round 1 시작 → room.status=playing, currentRound=1", async () => {
+    const room = await createRoom(makeMeta("ABCD"));
     const r = startRound(room, 1, "01-loading", 2000);
     expect(r.ok).toBe(true);
     expect(room.meta.status).toBe("playing");
@@ -64,16 +64,16 @@ describe("startRound + endRound + endGame 흐름", () => {
     expect(room.rounds.get(1)?.status).toBe("in_progress");
   });
 
-  it("startRound — 이전 라운드 in_progress 상태에서 다음 라운드 거부", () => {
-    const room = createRoom(makeMeta("ABCD"));
+  it("startRound — 이전 라운드 in_progress 상태에서 다음 라운드 거부", async () => {
+    const room = await createRoom(makeMeta("ABCD"));
     startRound(room, 1, "01-loading", 2000);
     const r = startRound(room, 2, "04-material-yield", 3000);
     expect(r.ok).toBe(false);
     if (!r.ok) expect(r.reason).toContain("in_progress");
   });
 
-  it("endRound → 다음 라운드 시작 가능", () => {
-    const room = createRoom(makeMeta("ABCD"));
+  it("endRound → 다음 라운드 시작 가능", async () => {
+    const room = await createRoom(makeMeta("ABCD"));
     startRound(room, 1, "01-loading", 2000);
     endRound(room, 1, 3000);
     const r2 = startRound(room, 2, "04-material-yield", 4000);
@@ -81,8 +81,8 @@ describe("startRound + endRound + endGame 흐름", () => {
     expect(room.meta.currentRound).toBe(2);
   });
 
-  it("endGame — 모든 라운드 종료 후 ended", () => {
-    const room = createRoom(makeMeta("ABCD"));
+  it("endGame — 모든 라운드 종료 후 ended", async () => {
+    const room = await createRoom(makeMeta("ABCD"));
     for (let n = 1; n <= 4; n++) {
       startRound(room, n, "01-loading", 2000 + n * 1000);
       endRound(room, n, 2500 + n * 1000);
@@ -93,8 +93,8 @@ describe("startRound + endRound + endGame 흐름", () => {
     expect(room.meta.currentRound).toBeUndefined();
   });
 
-  it("endGame — 미완료 라운드 있으면 거부", () => {
-    const room = createRoom(makeMeta("ABCD"));
+  it("endGame — 미완료 라운드 있으면 거부", async () => {
+    const room = await createRoom(makeMeta("ABCD"));
     startRound(room, 1, "01-loading", 2000);
     // round 1 미종료
     const r = endGame(room);
@@ -103,12 +103,12 @@ describe("startRound + endRound + endGame 흐름", () => {
 });
 
 describe("resetRound — 라운드 결과 초기화", () => {
-  beforeEach(() => _clearAllRooms());
+  beforeEach(async () => { await _clearAllRooms(); });
 
-  it("ended 라운드 reset — round + 그 라운드 submissions 제거", () => {
-    const room = createRoom(makeMeta("ABCD"));
+  it("ended 라운드 reset — round + 그 라운드 submissions 제거", async () => {
+    const room = await createRoom(makeMeta("ABCD"));
     startRound(room, 1, "01-loading", 2000);
-    addSubmission("ABCD", {
+    await addSubmission("ABCD", {
       playerId: "p1",
       roundN: 1,
       completionTimeSec: 120,
@@ -126,10 +126,10 @@ describe("resetRound — 라운드 결과 초기화", () => {
     expect(room.meta.status).toBe("waiting");
   });
 
-  it("다른 라운드 submissions 는 보존", () => {
-    const room = createRoom(makeMeta("ABCD"));
+  it("다른 라운드 submissions 는 보존", async () => {
+    const room = await createRoom(makeMeta("ABCD"));
     startRound(room, 1, "01-loading", 2000);
-    addSubmission("ABCD", {
+    await addSubmission("ABCD", {
       playerId: "p1",
       roundN: 1,
       completionTimeSec: 120,
@@ -139,7 +139,7 @@ describe("resetRound — 라운드 결과 초기화", () => {
     });
     endRound(room, 1, 3000);
     startRound(room, 2, "04-material-yield", 4000);
-    addSubmission("ABCD", {
+    await addSubmission("ABCD", {
       playerId: "p1",
       roundN: 2,
       completionTimeSec: 90,
@@ -153,18 +153,18 @@ describe("resetRound — 라운드 결과 초기화", () => {
     expect(room.rounds.get(2)?.status).toBe("in_progress");
   });
 
-  it("존재하지 않는 라운드 — 거부", () => {
-    const room = createRoom(makeMeta("ABCD"));
+  it("존재하지 않는 라운드 — 거부", async () => {
+    const room = await createRoom(makeMeta("ABCD"));
     const r = resetRound(room, 3);
     expect(r.ok).toBe(false);
   });
 });
 
 describe("toSnapshot — Map 직렬화", () => {
-  beforeEach(() => _clearAllRooms());
+  beforeEach(async () => { await _clearAllRooms(); });
 
-  it("빈 룸 — 빈 배열들 반환", () => {
-    const room = createRoom(makeMeta("ABCD"));
+  it("빈 룸 — 빈 배열들 반환", async () => {
+    const room = await createRoom(makeMeta("ABCD"));
     const snap = toSnapshot(room);
     expect(snap.meta.code).toBe("ABCD");
     expect(snap.players).toEqual([]);
@@ -172,8 +172,8 @@ describe("toSnapshot — Map 직렬화", () => {
     expect(snap.submissions).toEqual([]);
   });
 
-  it("라운드 순서 정렬 (n 오름차순)", () => {
-    const room = createRoom(makeMeta("ABCD"));
+  it("라운드 순서 정렬 (n 오름차순)", async () => {
+    const room = await createRoom(makeMeta("ABCD"));
     startRound(room, 1, "01-loading", 2000);
     endRound(room, 1, 3000);
     startRound(room, 2, "04-material-yield", 4000);

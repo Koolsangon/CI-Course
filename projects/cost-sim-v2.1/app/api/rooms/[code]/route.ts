@@ -15,7 +15,7 @@ export async function GET(
   _req: NextRequest,
   { params }: { params: { code: string } }
 ) {
-  const room = getRoom(params.code);
+  const room = await getRoom(params.code);
   if (!room) {
     return NextResponse.json({ error: "room not found" }, { status: 404 });
   }
@@ -60,7 +60,7 @@ export async function PATCH(
   req: NextRequest,
   { params }: { params: { code: string } }
 ) {
-  const room = getRoom(params.code);
+  const room = await getRoom(params.code);
   if (!room) {
     return NextResponse.json({ error: "room not found" }, { status: 404 });
   }
@@ -80,7 +80,7 @@ export async function PATCH(
   }
 
   if (body.settings) {
-    updateRoomMeta(params.code, {
+    await updateRoomMeta(params.code, {
       settings: { ...room.meta.settings, ...body.settings }
     });
   }
@@ -96,7 +96,7 @@ export async function PATCH(
     } else if (a.type === "reset_round") {
       r = resetRound(room, a.round);
     } else if (a.type === "set_enabled") {
-      updateRoomMeta(params.code, { enabled: a.enabled });
+      await updateRoomMeta(params.code, { enabled: a.enabled });
       r = { ok: true };
     } else {
       r = endGame(room);
@@ -115,7 +115,7 @@ export async function DELETE(
   req: NextRequest,
   { params }: { params: { code: string } }
 ) {
-  const room = getRoom(params.code);
+  const room = await getRoom(params.code);
   if (!room) {
     return NextResponse.json({ error: "room not found" }, { status: 404 });
   }
@@ -134,6 +134,6 @@ export async function DELETE(
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   }
 
-  deleteRoom(params.code);
+  await deleteRoom(params.code);
   return NextResponse.json({ ok: true });
 }

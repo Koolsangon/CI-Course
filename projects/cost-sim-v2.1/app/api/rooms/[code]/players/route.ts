@@ -1,8 +1,5 @@
 /**
  * POST /api/rooms/{code}/players — 학습자 입장 (이름 + 팀 번호). UUID 발급.
- *
- * 학습자는 입장 시점 이후 localStorage 에 자신의 playerId 보관. 모든 후속 submission 에서
- * 그 ID 를 본문에 동봉.
  */
 
 import { NextRequest, NextResponse } from "next/server";
@@ -20,7 +17,7 @@ export async function POST(
   req: NextRequest,
   { params }: { params: { code: string } }
 ) {
-  const room = getRoom(params.code);
+  const room = await getRoom(params.code);
   if (!room) {
     return NextResponse.json({ error: "room not found" }, { status: 404 });
   }
@@ -57,7 +54,7 @@ export async function POST(
   }
 
   const id = crypto.randomUUID();
-  addPlayer(params.code, {
+  await addPlayer(params.code, {
     id,
     name: body.name,
     team: body.team,

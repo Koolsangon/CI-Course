@@ -1,12 +1,5 @@
 /**
  * POST /api/rooms/{code}/rounds/{n}/submissions — 학습자가 라운드 결과 기록.
- *
- *   - completionTimeSec: 학습자 클라이언트에서 라운드 시작 ~ 100% 정답 (또는 캡 도달) 시점 측정
- *   - completed: 100% 정답이면 true, 캡 도달이면 false
- *   - hintLevel: 0~3
- *
- * 서버는 추가 검증 없이 본문 값을 그대로 기록 (학습 환경 — 정직성 가정). 분쟁 시 강사가 admin
- * 권한으로 수정. (현재 admin 수정 API 미구현 — 후속 작업)
  */
 
 import { NextRequest, NextResponse } from "next/server";
@@ -26,7 +19,7 @@ export async function POST(
   req: NextRequest,
   { params }: { params: { code: string; n: string } }
 ) {
-  const room = getRoom(params.code);
+  const room = await getRoom(params.code);
   if (!room) {
     return NextResponse.json({ error: "room not found" }, { status: 404 });
   }
@@ -61,7 +54,7 @@ export async function POST(
     return NextResponse.json({ error: "player not in room" }, { status: 404 });
   }
 
-  addSubmission(params.code, {
+  await addSubmission(params.code, {
     playerId: body.playerId,
     roundN,
     completionTimeSec: body.completionTimeSec,

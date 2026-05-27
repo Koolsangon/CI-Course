@@ -89,13 +89,13 @@ export default function WorksheetGuide({ problemId, onClose }: WorksheetGuidePro
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: -10 }}
           transition={{ type: "spring", stiffness: 300, damping: 30 }}
-          className="relative w-full max-w-lg overflow-hidden rounded-3xl bg-[hsl(220_15%_14%)] shadow-2xl border border-white/10"
+          className="relative w-full max-w-lg overflow-hidden rounded-3xl border border-[hsl(var(--border))] bg-[hsl(var(--surface-100))] shadow-lg"
           onClick={(e) => e.stopPropagation()}
         >
           {/* Close button */}
           <button
             onClick={onClose}
-            className="absolute right-4 top-4 flex h-8 w-8 items-center justify-center rounded-xl text-white/40 transition-colors hover:bg-white/10 hover:text-white"
+            className="absolute right-4 top-4 flex h-8 w-8 items-center justify-center rounded-xl text-[hsl(var(--muted))] transition-colors hover:bg-[hsl(var(--surface-200))] hover:text-[hsl(var(--fg))]"
           >
             <X className="h-4 w-4" />
           </button>
@@ -107,7 +107,7 @@ export default function WorksheetGuide({ problemId, onClose }: WorksheetGuidePro
                 key={i}
                 className={[
                   "h-1 flex-1 rounded-full transition-colors duration-300",
-                  i <= step ? "bg-red-500" : "bg-white/20"
+                  i <= step ? "bg-[hsl(var(--accent))]" : "bg-[hsl(var(--surface-300))]"
                 ].join(" ")}
               />
             ))}
@@ -128,7 +128,7 @@ export default function WorksheetGuide({ problemId, onClose }: WorksheetGuidePro
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
                 transition={{ type: "spring", stiffness: 400, damping: 20, delay: 0.1 }}
-                className="flex h-16 w-16 items-center justify-center rounded-2xl bg-red-500/20 text-red-400"
+                className="flex h-16 w-16 items-center justify-center rounded-2xl bg-[hsl(var(--accent)/0.1)] text-[hsl(var(--accent))]"
               >
                 {currentStep.icon}
               </motion.div>
@@ -138,7 +138,7 @@ export default function WorksheetGuide({ problemId, onClose }: WorksheetGuidePro
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.15 }}
-                className="text-2xl font-extrabold text-white"
+                className="text-2xl font-extrabold text-[hsl(var(--fg))]"
               >
                 {currentStep.title}
               </motion.h2>
@@ -148,7 +148,7 @@ export default function WorksheetGuide({ problemId, onClose }: WorksheetGuidePro
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2 }}
-                className="max-w-sm text-sm leading-relaxed text-white/60 whitespace-pre-line"
+                className="max-w-sm text-sm leading-relaxed text-[hsl(var(--muted))] whitespace-pre-line"
               >
                 {currentStep.description}
               </motion.p>
@@ -156,14 +156,14 @@ export default function WorksheetGuide({ problemId, onClose }: WorksheetGuidePro
           </AnimatePresence>
 
           {/* Footer */}
-          <div className="flex items-center justify-between border-t border-white/10 px-8 py-4">
+          <div className="flex items-center justify-between border-t border-[hsl(var(--border))] px-8 py-4">
             <button
               onClick={onClose}
-              className="text-xs text-white/30 hover:text-white/60 transition-colors"
+              className="text-xs text-[hsl(var(--muted))] hover:text-[hsl(var(--fg))] transition-colors"
             >
               건너뛰기
             </button>
-            <Button variant="accent" size="md" onClick={next} className="bg-red-600 hover:bg-red-500 border-0">
+            <Button variant="accent" size="md" onClick={next}>
               {isLastStep ? (
                 "시작하기"
               ) : (

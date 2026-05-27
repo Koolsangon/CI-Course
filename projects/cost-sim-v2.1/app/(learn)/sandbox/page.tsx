@@ -81,7 +81,7 @@ export default function SandboxPage() {
               transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
               className="hidden flex-shrink-0 overflow-hidden md:block"
             >
-              <div className="w-[264px] overflow-y-auto pb-4">
+              <div className="h-full w-[264px] overflow-y-auto pb-4">
                 <ParamPanel />
               </div>
             </motion.div>
@@ -106,7 +106,7 @@ export default function SandboxPage() {
               transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
               className="hidden flex-shrink-0 overflow-hidden md:block"
             >
-              <div className="w-[256px] overflow-y-auto">
+              <div className="h-full w-[256px] overflow-y-auto">
                 <FormulaInspector />
               </div>
             </motion.div>

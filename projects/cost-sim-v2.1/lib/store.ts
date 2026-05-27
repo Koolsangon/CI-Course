@@ -42,6 +42,8 @@ export interface StoreState {
   setParams: (next: CostParams | ((prev: CostParams) => CostParams)) => void;
   setSliderValues: (values: Record<string, number>) => void;
   resetCase: () => void;
+  /** lastDelta 만 비움 — params/result 는 유지. 변수 기본값 복귀 시 CostTree 강조 제거용. */
+  clearDelta: () => void;
 
   setWorksheetAnswer: (problemId: string, columnId: string, cellId: string, value: number) => void;
   gradeWorksheet: (problemId: string, grades: WorksheetResult) => void;
@@ -127,6 +129,8 @@ export const useStore = create<StoreState>()(
     const p = cloneParams(preset);
     set({ params: p, result: calculate(p), lastDelta: [] });
   },
+
+  clearDelta: () => set({ lastDelta: [] }),
 
   setWorksheetAnswer: (problemId, columnId, cellId, value) => {
     const { worksheetAnswers } = get();

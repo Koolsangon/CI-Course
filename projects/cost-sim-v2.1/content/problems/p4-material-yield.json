@@ -5,6 +5,7 @@
   "scenarioSections": {
     "situation": "원재료 업체를 바꿔 Module BOM을 5% 절감했지만, 그 대가로 Module 수율이 4%p 떨어졌습니다.",
     "task": "두 효과를 단계적으로 계산하여 영업이익이 어떻게 변하는지 확인하세요.",
+    "formula": "소요재료비 = Module BOM ÷ 누적수율 (① BOM ×0.95 절감 → ② 수율 하락 시 누적수율 ↓ → 소요재료비 ↑)",
     "assumptions": [
       "① 단계: Module BOM ×0.95 (5% 절감)",
       "② 단계: Module 수율 97.2% → 93.2% (4%p 하락)"

@@ -144,6 +144,7 @@ export default function ParamPanel() {
   const setParams = useStore((s) => s.setParams);
   const setSliderValues = useStore((s) => s.setSliderValues);
   const resetCaseDelta = useStore((s) => s.resetCase);
+  const clearDelta = useStore((s) => s.clearDelta);
 
   const changed = useMemo(() => new Set(changedKeys(deltas)), [deltas]);
 
@@ -151,7 +152,13 @@ export default function ParamPanel() {
     setParams(applyMerged(REFERENCE_CASE1, deltas));
     // FormulaInspector 가 변동된 변수만 표시하려면 deltas 가 store 에서 읽혀야 함.
     setSliderValues(deltas as unknown as Record<string, number>);
-  }, [deltas, setParams, setSliderValues]);
+    // 모든 변수가 기본값으로 복귀하면 CostTree 강조(빨간 박스·점선)를 완전히 제거.
+    // setParams 는 직전 상태 대비 diff 를 lastDelta 에 남기므로, 개별 리셋·슬라이더 복귀로
+    // baseline 에 도달한 경우에도 명시적으로 비워 강조가 잔류하지 않게 한다.
+    if (changedKeys(deltas).length === 0) {
+      clearDelta();
+    }
+  }, [deltas, setParams, setSliderValues, clearDelta]);
 
   function update<K extends keyof SevenDeltas>(key: K, value: SevenDeltas[K]) {
     // investmentDelta는 억원 단위로 입력받아 달러로 변환하여 store에 저장

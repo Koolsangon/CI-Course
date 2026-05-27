@@ -5,6 +5,7 @@
   "scenarioSections": {
     "situation": "원판 설계 변경으로 면취수가 25 → 29로 늘었습니다. 그런데 정밀도 요구가 올라가 Mask 수가 6 → 7로 늘어납니다.",
     "task": "두 효과를 단계적으로 계산해 BOM·Panel 가공비가 어떻게 변하는지 확인하세요.",
+    "formula": "BOM·Panel 가공비 = 기준값 × (기준 면취수 ÷ 신규 면취수); Panel 가공비는 추가로 × (신규 Mask ÷ 기준 Mask)",
     "assumptions": [
       "① 단계: 면취수 25 → 29 (Mask 변경 없음)",
       "② 단계: ① + Mask 6 → 7 (Panel 가공비만 추가 변동)"

@@ -37,7 +37,7 @@ export default function SandboxPage() {
 
         <div className="flex items-center gap-2">
           <TreePine className="h-4 w-4 text-[hsl(var(--accent))]" />
-          <span className="text-sm font-bold text-[hsl(var(--fg))]">Sandbox</span>
+          <span className="text-sm font-bold text-[hsl(var(--fg))]">자유실험실</span>
         </div>
 
         <p className="hidden text-xs text-[hsl(var(--muted))] sm:block">

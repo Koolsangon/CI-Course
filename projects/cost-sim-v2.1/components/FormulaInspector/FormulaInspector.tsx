@@ -49,50 +49,50 @@ function dollar(v: number): string {
 const VAR_DISPLAYS: VarDisplay[] = [
   {
     key: "loading",
-    group: "Loading",
+    group: "Loading율 변경",
     ko: "Loading율",
     fmt: pct0,
     describe: (b, n) => `기존 ${pct0(b)} → 변경 ${pct0(n)} (증감 ${pct1pSigned(n - b)})`
   },
   {
     key: "materialDelta",
-    group: "재료비 & 수율",
+    group: "재료비& 수율 변경",
     ko: "Module 재료비",
     fmt: pct1Signed,
     describe: (_b, n) => `기존 0% → 변경 ${pct1Signed(n)} (증감 ${pct1Signed(n)})`
   },
   {
     key: "yieldDelta",
-    group: "재료비 & 수율",
+    group: "재료비& 수율 변경",
     ko: "Module 수율",
     fmt: pct1pSigned,
     describe: (_b, n) => `기존 0%p → 변경 ${pct1pSigned(n)} (증감 ${pct1pSigned(n)})`
   },
   {
     key: "newCuts",
-    group: "면취수 & Mask",
+    group: "면취수&Mask 수 변경",
     ko: "면취수",
     fmt: intStr,
     describe: (b, n) => `기존 ${intStr(b)}개 → 변경 ${intStr(n)}개 (증감 ${n > b ? "+" : ""}${n - b}개)`
   },
   {
     key: "newMask",
-    group: "면취수 & Mask",
-    ko: "Mask 장수",
+    group: "면취수&Mask 수 변경",
+    ko: "Mask 수",
     fmt: intStr,
     describe: (b, n) => `기존 ${intStr(b)}장 → 변경 ${intStr(n)}장 (증감 ${n > b ? "+" : ""}${n - b}장)`
   },
   {
     key: "tactMult",
-    group: "Tact & 투자",
-    ko: "Tact 배수",
+    group: "Tact time&투자 변경",
+    ko: "Tact time 배수",
     fmt: multX,
     describe: (b, n) => `기존 ${multX(b)} → 변경 ${multX(n)} (증감 ${n > b ? "+" : ""}${((n - b) * 100).toFixed(0)}%)`
   },
   {
     key: "investmentDelta",
-    group: "Tact & 투자",
-    ko: "투자 금액",
+    group: "Tact time&투자 변경",
+    ko: "투자비",
     fmt: dollar,
     describe: (_b, n) => {
       // 달러 → 억원 역변환 (1억원 = 300K대 × 1480원/$ 기준)

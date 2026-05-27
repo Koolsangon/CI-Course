@@ -486,9 +486,8 @@ export default function ProblemPage({
               onClose={handleCloseCalculator}
             />
           ) : (
-            <div className="flex items-center gap-2 rounded-2xl border border-dashed border-[hsl(var(--border))] bg-[hsl(var(--surface-200)/0.4)] px-4 py-3 text-xs text-[hsl(var(--muted))]">
-              <Calculator className="h-3.5 w-3.5 flex-shrink-0 text-[hsl(var(--warn))]" />
-              <span>노란 셀을 클릭하면 이 계산기로 수식을 조립할 수 있어요.</span>
+            <div className="flex items-center justify-center rounded-2xl border border-dashed border-[hsl(var(--border))] bg-[hsl(var(--surface-200)/0.4)] px-4 py-3">
+              <Calculator className="h-3.5 w-3.5 text-[hsl(var(--muted))]" />
             </div>
           )}
         </div>

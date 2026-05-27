@@ -47,7 +47,7 @@ const VARS: VarDef[] = [
   },
   {
     key: "materialDelta",
-    ko: "Module 재료비 변동률",
+    ko: "Module 재료비",
     description: "Module BOM 절감/증가. 분자에 작용.",
     min: -0.20,
     max: 0.20,
@@ -57,7 +57,7 @@ const VARS: VarDef[] = [
   },
   {
     key: "yieldDelta",
-    ko: "Module 수율 변동률",
+    ko: "Module 수율",
     description: "Module 수율 변화 (%p). 분모 (누적수율) 에 작용.",
     min: -0.10,
     max: 0.05,
@@ -67,7 +67,7 @@ const VARS: VarDef[] = [
   },
   {
     key: "newCuts",
-    ko: "새 면취수",
+    ko: "면취수",
     description: `기준 ${REFERENCE_CUTS}개. 면취수 ↑ = 단위당 BOM·노무비 분담 ↓.`,
     min: 10,
     max: 40,
@@ -77,7 +77,7 @@ const VARS: VarDef[] = [
   },
   {
     key: "newMask",
-    ko: "새 Mask 장수",
+    ko: "Mask 수",
     description: `기준 ${REFERENCE_MASK}장. Mask ↑ = 공정 부담 ↑ → 노무비 ↑.`,
     min: 3,
     max: 10,
@@ -87,7 +87,7 @@ const VARS: VarDef[] = [
   },
   {
     key: "tactMult",
-    ko: "Tact 배수",
+    ko: "Tact time 배수",
     description: "Tact Time 배수. Module 가공비 6항목에 곱셈으로 작용.",
     min: 0.80,
     max: 1.50,
@@ -97,7 +97,7 @@ const VARS: VarDef[] = [
   },
   {
     key: "investmentDelta",
-    ko: "투자 금액",
+    ko: "투자비",
     description: "Module 라인 투자 총액. 감가상각 자동 계산 (300K대·1,480원/$·5년 기준).",
     min: 0,
     max: 30,
@@ -108,10 +108,10 @@ const VARS: VarDef[] = [
 ];
 
 const GROUPS: { title: string; keys: (keyof SevenDeltas)[] }[] = [
-  { title: "Loading", keys: ["loading"] },
-  { title: "재료비 & 수율", keys: ["materialDelta", "yieldDelta"] },
-  { title: "면취수 & Mask", keys: ["newCuts", "newMask"] },
-  { title: "Tact & 투자", keys: ["tactMult", "investmentDelta"] }
+  { title: "Loading율 변경", keys: ["loading"] },
+  { title: "재료비& 수율 변경", keys: ["materialDelta", "yieldDelta"] },
+  { title: "면취수&Mask 수 변경", keys: ["newCuts", "newMask"] },
+  { title: "Tact time&투자 변경", keys: ["tactMult", "investmentDelta"] }
 ];
 
 function fmt(v: VarDef, value: number): string {

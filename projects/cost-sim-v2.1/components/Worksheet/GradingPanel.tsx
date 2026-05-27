@@ -72,7 +72,7 @@ export default function GradingPanel({
           <p className="text-sm text-[hsl(var(--muted))]">
             Yellow 셀에 답을 입력한 후 채점 버튼을 누르세요 (소수점 첫째 자리까지).
             <span className="ml-1 text-[hsl(var(--warn))]">
-              힌트를 본 셀은 배점이 줄어듭니다.
+              힌트를 본 셀은 배점이 줄어듭니다. 100% → 70% → 40% → 20%
             </span>
           </p>
           <div className="md:ml-auto">

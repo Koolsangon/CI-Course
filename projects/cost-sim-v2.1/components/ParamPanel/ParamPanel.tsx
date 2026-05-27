@@ -20,7 +20,8 @@ type VarFormat =
   | "percent_point"
   | "int"
   | "multiplier"
-  | "dollar";
+  | "dollar"
+  | "billion_krw";
 
 interface VarDef {
   key: keyof SevenDeltas;
@@ -96,13 +97,13 @@ const VARS: VarDef[] = [
   },
   {
     key: "investmentDelta",
-    ko: "투자 상각비 증가분",
-    description: "Module 감상비에 절대값 덧셈.",
+    ko: "투자 금액",
+    description: "Module 라인 투자 총액. 감가상각 자동 계산 (300K대·1,480원/$·5년 기준).",
     min: 0,
-    max: 5,
-    step: 0.1,
+    max: 30,
+    step: 0.5,
     default: 0,
-    format: "dollar"
+    format: "billion_krw"
   }
 ];
 
@@ -127,7 +128,14 @@ function fmt(v: VarDef, value: number): string {
       return `${Math.round(value)}`;
     case "dollar":
       return `$${value.toFixed(2)}`;
+    case "billion_krw":
+      return `${value.toFixed(1)}억원`;
   }
+}
+
+/** 억원 → $달러 증가분 변환: 1억원 ÷ 300,000대 ÷ 1,480원/$ */
+function billionKrwToDollar(billions: number): number {
+  return (billions * 1e8) / 300000 / 1480;
 }
 
 export default function ParamPanel() {
@@ -135,6 +143,7 @@ export default function ParamPanel() {
   const [openGroups, setOpenGroups] = useState<Set<string>>(new Set());
   const setParams = useStore((s) => s.setParams);
   const setSliderValues = useStore((s) => s.setSliderValues);
+  const resetCaseDelta = useStore((s) => s.resetCase);
 
   const changed = useMemo(() => new Set(changedKeys(deltas)), [deltas]);
 
@@ -145,7 +154,12 @@ export default function ParamPanel() {
   }, [deltas, setParams, setSliderValues]);
 
   function update<K extends keyof SevenDeltas>(key: K, value: SevenDeltas[K]) {
-    setDeltas((prev) => ({ ...prev, [key]: value }));
+    // investmentDelta는 억원 단위로 입력받아 달러로 변환하여 store에 저장
+    if (key === "investmentDelta") {
+      setDeltas((prev) => ({ ...prev, [key]: billionKrwToDollar(value as number) }));
+    } else {
+      setDeltas((prev) => ({ ...prev, [key]: value }));
+    }
   }
 
   function resetVar(key: keyof SevenDeltas) {
@@ -154,6 +168,8 @@ export default function ParamPanel() {
 
   function resetAll() {
     setDeltas(DEFAULT_DELTAS);
+    // store의 lastDelta를 초기화 → CostTree 빨간 박스·점선 즉시 제거
+    resetCaseDelta();
   }
 
   function toggleGroup(title: string) {
@@ -169,7 +185,7 @@ export default function ParamPanel() {
     <section className="flex flex-col gap-0 rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--surface-100))] overflow-hidden shadow-card">
       <header className="flex items-center justify-between border-b border-[hsl(var(--border))] bg-[hsl(var(--surface-200)/0.5)] px-4 py-3">
         <div>
-          <h2 className="text-sm font-bold text-[hsl(var(--fg))] leading-tight">파라미터</h2>
+          <h2 className="text-sm font-bold text-[hsl(var(--fg))] leading-tight">파라미터(변수)</h2>
           <p className="mt-0.5 text-[11px] text-[hsl(var(--muted))] leading-snug">
             변동 변수 {changed.size}개
           </p>
@@ -213,6 +229,10 @@ export default function ParamPanel() {
                   {group.keys.map((key) => {
                     const v = VARS.find((x) => x.key === key)!;
                     const value = deltas[key];
+                    // investmentDelta는 store에 달러 단위 저장 → 표시는 억원으로 역변환
+                    const displayValue = key === "investmentDelta"
+                      ? value / billionKrwToDollar(1)
+                      : value;
                     const isChanged = changed.has(key);
                     return (
                       <div key={key} className="flex flex-col gap-1">
@@ -239,13 +259,13 @@ export default function ParamPanel() {
                           )}
                         </div>
                         <Slider
-                          valueLabel={fmt(v, value)}
+                          valueLabel={fmt(v, displayValue)}
                           minLabel={fmt(v, v.min)}
                           maxLabel={fmt(v, v.max)}
                           min={v.min}
                           max={v.max}
                           step={v.step}
-                          value={value}
+                          value={displayValue}
                           onChange={(e) => update(key, parseFloat(e.target.value))}
                         />
                         {v.description && (

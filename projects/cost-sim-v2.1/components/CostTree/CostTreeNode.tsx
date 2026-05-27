@@ -66,7 +66,7 @@ function CostTreeNodeComponent({ data }: NodeProps<CostTreeNodeData>) {
         "shadow-[0_1px_2px_rgba(10,10,10,0.04),0_4px_12px_rgba(10,10,10,0.04)]",
         style.tint,
         data.changed
-          ? "ring-2 ring-[hsl(var(--accent))] shadow-[0_0_0_1px_hsl(var(--accent)/0.25),0_4px_16px_hsl(var(--accent)/0.18)]"
+          ? "ring-2 ring-[hsl(var(--danger))] shadow-[0_0_0_1px_hsl(var(--danger)/0.25),0_4px_16px_hsl(var(--danger)/0.18)]"
           : ""
       ].join(" ")}
     >

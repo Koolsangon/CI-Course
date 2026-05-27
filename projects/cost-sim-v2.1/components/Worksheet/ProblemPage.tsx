@@ -51,6 +51,9 @@ export default function ProblemPage({
   const router = useRouter();
   const caseDef = getCase(caseId);
   const hintPenaltyEnabled = useStore((s) => s.hintPenaltyEnabled);
+  const storeHintLevel = useStore((s) => s.getHintLevel(problem.id));
+  const storeSetHintLevel = useStore((s) => s.setHintLevel);
+  const storeResetHintLevel = useStore((s) => s.resetHintLevel);
   const [elapsed, setElapsed] = useState(0);
   const [submitted, setSubmitted] = useState(false);
   const [roomCtx, setRoomCtx] = useState<RoomContext | null>(null);
@@ -73,8 +76,15 @@ export default function ProblemPage({
   const [answers, setAnswers] = useState<Record<string, Record<string, number>>>({});
   const [grades, setGrades] = useState<GradeResult[] | null>(null);
   const [score, setScore] = useState<number | null>(null);
-  const [hintLevel, setHintLevel] = useState<HintLevel>(0);
+  // hintLevel은 store에서 복원 → 뒤로갔다 재진입해도 차감 유지
+  const [hintLevel, setHintLevelLocal] = useState<HintLevel>(storeHintLevel);
   const [weighted, setWeighted] = useState<WeightedScore | null>(null);
+
+  // storeHintLevel이 외부에서 바뀌면 동기화 (마운트 시 복원)
+  useEffect(() => {
+    setHintLevelLocal(storeHintLevel);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const [showGuide, setShowGuide] = useState(true);
   const [activeCell, setActiveCell] = useState<{ colId: string; rowId: string } | null>(null);
@@ -175,12 +185,15 @@ export default function ProblemPage({
     setActiveCell(null);
     setCalculatorMode(false);
     setFormulaTokens([]);
-    setHintLevel(0);
+    setHintLevelLocal(0);
+    storeResetHintLevel(problem.id);
     setWeighted(null);
   }
 
   function bumpHintLevel() {
-    setHintLevel((prev) => (prev >= 3 ? prev : ((prev + 1) as HintLevel)));
+    const next = hintLevel >= 3 ? hintLevel : ((hintLevel + 1) as HintLevel);
+    setHintLevelLocal(next);
+    storeSetHintLevel(problem.id, next);
   }
 
   function handleCellClick(
@@ -321,29 +334,19 @@ export default function ProblemPage({
                   </p>
                 </div>
 
-                {/* 과제 — 가장 눈에 띄게 강조 */}
+                {/* 과제 — 상황과 동일한 스타일 */}
                 {problem.scenarioSections.task && (
-                  <div className="flex gap-3 rounded-xl border border-[hsl(var(--accent)/0.45)] bg-[hsl(var(--accent)/0.10)] px-4 py-3">
-                    <span className="mt-1 flex-shrink-0 rounded-md bg-[hsl(var(--accent))] px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-white">
+                  <div className="flex gap-3">
+                    <span className="mt-0.5 flex-shrink-0 rounded-md bg-[hsl(var(--surface-200))] px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-[hsl(var(--muted))]">
                       과제
                     </span>
-                    <p className="flex-1 text-base font-semibold leading-relaxed text-[hsl(var(--fg))]">
+                    <p className="flex-1 text-sm leading-relaxed text-[hsl(var(--fg)/0.85)]">
                       {problem.scenarioSections.task}
                     </p>
                   </div>
                 )}
 
-                {/* 공식 — monospace 박스 */}
-                {problem.scenarioSections.formula && (
-                  <div className="flex gap-3 rounded-lg border border-[hsl(var(--warn)/0.3)] bg-[hsl(var(--warn)/0.06)] px-3 py-2">
-                    <span className="mt-0.5 flex-shrink-0 rounded-md bg-[hsl(var(--warn)/0.2)] px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-[hsl(var(--warn))]">
-                      공식
-                    </span>
-                    <code className="flex-1 text-xs font-mono leading-relaxed text-[hsl(var(--fg)/0.9)]">
-                      {problem.scenarioSections.formula}
-                    </code>
-                  </div>
-                )}
+                {/* 공식은 힌트 3단계에서 제공 — 여기서는 표시 안 함 */}
 
                 {/* 가정 — chip pills */}
                 {problem.scenarioSections.assumptions && problem.scenarioSections.assumptions.length > 0 && (
@@ -370,20 +373,7 @@ export default function ProblemPage({
             )}
           </div>
 
-          <div className="flex flex-wrap gap-4 text-xs text-[hsl(var(--muted))]">
-            <span className="flex items-center gap-1.5">
-              <span className="inline-block h-3 w-3 rounded border border-[hsl(var(--warn)/0.35)] bg-[hsl(var(--warn)/0.10)]" />
-              입력 ({yellowCount}셀)
-            </span>
-            <span className="flex items-center gap-1.5">
-              <span className="inline-block h-3 w-3 rounded border border-[hsl(123_46%_34%/0.25)] bg-[hsl(123_46%_34%/0.07)]" />
-              자동 계산
-            </span>
-            <span className="flex items-center gap-1.5">
-              <span className="inline-block h-3 w-3 rounded border border-[hsl(var(--accent)/0.18)] bg-[hsl(var(--accent)/0.06)]" />
-              고정값
-            </span>
-          </div>
+          {/* 셀 색상 범례 삭제됨 — 피드백 반영 */}
 
           {gameMode && (() => {
             // 현재 라운드의 미니 리더보드 — submission 시간 오름차순.
@@ -477,14 +467,7 @@ export default function ProblemPage({
             weighted={weighted}
           />
 
-          <div className="flex items-start gap-3 rounded-2xl border border-[hsl(var(--warn)/0.35)] bg-[hsl(var(--warn)/0.06)] px-4 py-3">
-            <div className="text-lg" aria-hidden>🔆</div>
-            <div className="min-w-0 flex-1 text-xs text-[hsl(var(--fg)/0.85)]">
-              <span className="font-semibold text-[hsl(var(--warn))]">셀 힌트는 3단계로 제공됩니다.</span>{" "}
-              노란 셀의 <span className="font-mono">?</span> 버튼을 누르면 단계별로 더 구체적인 단서를 볼 수 있어요. 단계가 올라갈수록 그 셀의 정답 배점이 줄어듭니다 — {" "}
-              <span className="font-mono tabular-nums">100% → 70% → 40% → 20%</span>. 먼저 직접 풀어보고 막힐 때 사용해 주세요.
-            </div>
-          </div>
+          {/* 하단 힌트 안내 박스 삭제됨 — 피드백 반영 */}
         </div>
       </main>
 

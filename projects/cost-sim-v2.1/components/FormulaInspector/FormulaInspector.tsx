@@ -52,49 +52,53 @@ const VAR_DISPLAYS: VarDisplay[] = [
     group: "Loading",
     ko: "Loading율",
     fmt: pct0,
-    describe: (b, n) => `기본 ${pct0(b)} → 새 ${pct0(n)} (${pct1pSigned(n - b)})`
+    describe: (b, n) => `기존 ${pct0(b)} → 변경 ${pct0(n)} (증감 ${pct1pSigned(n - b)})`
   },
   {
     key: "materialDelta",
     group: "재료비 & 수율",
     ko: "Module 재료비",
     fmt: pct1Signed,
-    describe: (_b, n) => `${pct1Signed(n)} 변동 (기준 0%)`
+    describe: (_b, n) => `기존 0% → 변경 ${pct1Signed(n)} (증감 ${pct1Signed(n)})`
   },
   {
     key: "yieldDelta",
     group: "재료비 & 수율",
     ko: "Module 수율",
     fmt: pct1pSigned,
-    describe: (_b, n) => `${pct1pSigned(n)} 변동 (기준 0%p)`
+    describe: (_b, n) => `기존 0%p → 변경 ${pct1pSigned(n)} (증감 ${pct1pSigned(n)})`
   },
   {
     key: "newCuts",
     group: "면취수 & Mask",
     ko: "면취수",
     fmt: intStr,
-    describe: (b, n) => `기준 ${intStr(b)}개 → 새 ${intStr(n)}개 (${n > b ? "+" : ""}${n - b}개)`
+    describe: (b, n) => `기존 ${intStr(b)}개 → 변경 ${intStr(n)}개 (증감 ${n > b ? "+" : ""}${n - b}개)`
   },
   {
     key: "newMask",
     group: "면취수 & Mask",
     ko: "Mask 장수",
     fmt: intStr,
-    describe: (b, n) => `기준 ${intStr(b)}장 → 새 ${intStr(n)}장 (${n > b ? "+" : ""}${n - b}장)`
+    describe: (b, n) => `기존 ${intStr(b)}장 → 변경 ${intStr(n)}장 (증감 ${n > b ? "+" : ""}${n - b}장)`
   },
   {
     key: "tactMult",
     group: "Tact & 투자",
-    ko: "Tact",
+    ko: "Tact 배수",
     fmt: multX,
-    describe: (b, n) => `기준 ${multX(b)} → 새 ${multX(n)} (${n > b ? "+" : ""}${((n - b) * 100).toFixed(0)}%)`
+    describe: (b, n) => `기존 ${multX(b)} → 변경 ${multX(n)} (증감 ${n > b ? "+" : ""}${((n - b) * 100).toFixed(0)}%)`
   },
   {
     key: "investmentDelta",
     group: "Tact & 투자",
-    ko: "투자 상각비",
+    ko: "투자 금액",
     fmt: dollar,
-    describe: (_b, n) => `${dollar(n)} 증가 (기준 $0)`
+    describe: (_b, n) => {
+      // 달러 → 억원 역변환 (1억원 = 300K대 × 1480원/$ 기준)
+      const billions = (n * 300000 * 1480) / 1e8;
+      return `기존 0억원 → 변경 ${billions.toFixed(1)}억원 (증감 +${billions.toFixed(1)}억원)`;
+    }
   }
 ];
 

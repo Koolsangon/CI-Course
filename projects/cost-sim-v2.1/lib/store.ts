@@ -50,6 +50,12 @@ export interface StoreState {
   /** 강사 설정 — 힌트 차감 (false 시 모든 정답 100% 배점). */
   hintPenaltyEnabled: boolean;
   setHintPenaltyEnabled: (enabled: boolean) => void;
+
+  /** 문제별 힌트 레벨 저장 — 뒤로갔다 재진입해도 차감 유지. */
+  hintLevels: Record<string, 0 | 1 | 2 | 3>;
+  setHintLevel: (problemId: string, level: 0 | 1 | 2 | 3) => void;
+  getHintLevel: (problemId: string) => 0 | 1 | 2 | 3;
+  resetHintLevel: (problemId: string) => void;
 }
 
 const DEFAULT_PARAMS = cloneParams(ALL_REFERENCES[1]);
@@ -67,9 +73,26 @@ export const useStore = create<StoreState>()(
   worksheetAnswers: {},
   worksheetGrades: {},
   hintPenaltyEnabled: true,
+  hintLevels: {} as Record<string, 0 | 1 | 2 | 3>,
 
   setMode: (mode) => set({ mode }),
   setHintPenaltyEnabled: (enabled) => set({ hintPenaltyEnabled: enabled }),
+
+  setHintLevel: (problemId, level) => {
+    const { hintLevels } = get();
+    set({ hintLevels: { ...hintLevels, [problemId]: level } });
+  },
+
+  getHintLevel: (problemId) => {
+    return get().hintLevels[problemId] ?? 0;
+  },
+
+  resetHintLevel: (problemId) => {
+    const { hintLevels } = get();
+    const next = { ...hintLevels };
+    delete next[problemId];
+    set({ hintLevels: next });
+  },
 
   loadCase: (caseId, params) => {
     const current = get().caseId;
@@ -135,7 +158,8 @@ export const useStore = create<StoreState>()(
       partialize: (state) => ({
         worksheetAnswers: state.worksheetAnswers,
         worksheetGrades: state.worksheetGrades,
-        hintPenaltyEnabled: state.hintPenaltyEnabled
+        hintPenaltyEnabled: state.hintPenaltyEnabled,
+        hintLevels: state.hintLevels
       })
     }
   )

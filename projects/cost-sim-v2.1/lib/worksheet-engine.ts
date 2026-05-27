@@ -191,11 +191,11 @@ export function getYellowCount(problem: ProblemDef): number {
 
 // Hint penalty — index = highest hint level revealed for the cell.
 //   level 0: no hint used → full credit (1.0)
-//   level 1: 1단계 힌트 사용 → 90%
-//   level 2: 2단계 힌트 사용 → 80%
-//   level 3: 3단계 힌트 사용 → 60%
+//   level 1: 1단계 힌트 사용 → 70%
+//   level 2: 2단계 힌트 사용 → 40%
+//   level 3: 3단계 힌트 사용 → 20%
 // Wrong answers always score 0 regardless of hints used.
-export const HINT_PENALTY = [1.0, 0.9, 0.8, 0.6] as const;
+export const HINT_PENALTY = [1.0, 0.7, 0.4, 0.2] as const;
 export type HintLevel = 0 | 1 | 2 | 3;
 
 export interface WeightedScore {

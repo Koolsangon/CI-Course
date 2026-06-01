@@ -271,7 +271,7 @@ export default function ProblemPage({
         </Link>
         <div className="min-w-0 flex-1">
           <h1 className="text-sm font-bold text-[hsl(var(--fg))]">
-            {problem.title}
+            🗒 원가 계산 워크시트
             {gameMode && roundN !== undefined && (
               <span className="ml-2 rounded-md bg-[hsl(var(--accent)/0.15)] px-1.5 py-0.5 text-[10px] font-bold text-[hsl(var(--accent))] tabular-nums">
                 R{roundN}

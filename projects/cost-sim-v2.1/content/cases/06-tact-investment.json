@@ -1,25 +1,49 @@
 {
   "id": "06-tact-investment",
-  "title": "Tact 지연 vs 개조투자",
-  "scenario": "모듈개조투자 (13억)를 통해 Tact time 지연 없이 생산이 가능할 것 같은데, 개조투자를 안 하면 Tact Time이 1.2배 증가할것 같단 말이지. 해야할까? 말아야 할까? * 전용투자, PLC 물동 300K, 양산기간 5년, OLED PJT 가정, 환율 1,480가정.",
+  "title": "Tact time 증가 & 개조 투자",
+  "scenario": "Module 개조 투자(13억)를 통해 Tact Time 지연 없이 생산이 가능할 것 같은데, 개조투자를 하지 않으면 Tact Time이 1.2배 증가할 것 같단 말이지... 개조투자를 해야할까 말아야할까?",
   "adapter": "tact-investment",
   "reference": {
     "price": 200,
-    "yields": { "tft": 0.99, "cf": 1.0, "cell": 0.95, "module": 0.972 },
-    "bom": { "tft": 6.0, "cf": 5.0, "cell": 1.5, "module": 75.0 },
-    "processing": {
-      "panel": { "labor": 21.3, "expense": 11.5, "depreciation": 16.2 },
-      "module": { "labor": 8.7, "expense": 5.3, "depreciation": 7.5 }
+    "yields": {
+      "tft": 0.99,
+      "cf": 1.0,
+      "cell": 0.95,
+      "module": 0.972
     },
-    "sga": { "direct_dev": 4.7, "transport": 0.3, "business_unit": 16.0, "operation": 1.2, "corporate_oh": 6.2 },
-    "loading": 0.70
+    "bom": {
+      "tft": 6.0,
+      "cf": 5.0,
+      "cell": 1.5,
+      "module": 75.0
+    },
+    "processing": {
+      "panel": {
+        "labor": 21.3,
+        "expense": 11.5,
+        "depreciation": 16.2
+      },
+      "module": {
+        "labor": 8.7,
+        "expense": 5.3,
+        "depreciation": 7.5
+      }
+    },
+    "sga": {
+      "direct_dev": 4.7,
+      "transport": 0.3,
+      "business_unit": 16.0,
+      "operation": 1.2,
+      "corporate_oh": 6.2
+    },
+    "loading": 0.7
   },
   "variables": [
     {
       "key": "tact_multiplier",
       "ko": "Tact 배수",
-      "min": 0.80,
-      "max": 1.50,
+      "min": 0.8,
+      "max": 1.5,
       "step": 0.05,
       "default": 1.2,
       "unit": "x",
@@ -53,9 +77,9 @@
       "tolerance": 0.05,
       "hint": "7.5 + 13억 ÷ 300K ÷ 1,480 = ?",
       "hints": {
-        "l1": "② + 투자 열은 '기존 감상비 + 신규 투자 감상비'로 구성됩니다. 신규 투자비는 환율과 PLC 물동을 거쳐 단위당($/unit)으로 환산해야 합니다.",
-        "l2": "13억 won은 KRW이므로 먼저 환율(1,480)로 USD 환산해야 합니다. 그 다음 PLC 물동(300K)으로 나누면 단위당 추가 감상비($/unit)가 나옵니다. 이 값을 기존 Module 감상비 7.5에 더하세요.",
-        "l3": "공식 — 새 Module 감상비 = 기존 감상비 + (투자금액 ÷ PLC 물동 ÷ 환율). 즉 7.5 + (1,300,000,000 ÷ 300,000 ÷ 1,480). 계산기로 직접 풀어보세요."
+        "l1": "Tact Time 증가는 Module 가공비를 증가시키고, Module 개조 투자는 Module 감상비를 증가시킵니다.",
+        "l2": "Tact Time이 증가하면 생산 수량이 줄어들게 되므로 가공비를 더 작은 단위에 분담시켜 비용이 증가합니다. Module 감가상각비가 증가하면, 단위당 분담 금액이 늘어나게 됩니다.",
+        "l3": "변경 Module 가공비 = 기존 Module 가공비 × Tact Time 증가 배수\n변경 Module 감상비 = 기존 Module 감상비 + (총 투자 금액 ÷ 환율 ÷ 총 물동)"
       }
     },
     "reflect": "① Tact 지연 옵션과 ② + 투자 옵션의 영업이익을 직접 비교해보세요. 어느 쪽이 더 유리한가요?"

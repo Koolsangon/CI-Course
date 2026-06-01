@@ -1,27 +1,51 @@
 {
   "id": "01-loading",
   "title": "Loading율 변동",
-  "scenario": "고객사 주문 급감으로 설비 Loading(가동률)이 70%에서 50%로 떨어졌습니다.",
+  "scenario": "원가 산출 시 70% Loading율 기준으로 적용했는데, 실제 예상 Loading율은 50% 수준이래... 그래도 적자는 아니겠지?",
   "adapter": "loading",
   "reference": {
     "price": 200,
-    "yields": { "tft": 0.99, "cf": 1.0, "cell": 0.95, "module": 0.972 },
-    "bom": { "tft": 6.0, "cf": 5.0, "cell": 1.5, "module": 75.0 },
-    "processing": {
-      "panel": { "labor": 21.3, "expense": 11.5, "depreciation": 16.2 },
-      "module": { "labor": 8.7, "expense": 5.3, "depreciation": 7.5 }
+    "yields": {
+      "tft": 0.99,
+      "cf": 1.0,
+      "cell": 0.95,
+      "module": 0.972
     },
-    "sga": { "direct_dev": 4.7, "transport": 0.3, "business_unit": 16.0, "operation": 1.2, "corporate_oh": 6.2 },
-    "loading": 0.70
+    "bom": {
+      "tft": 6.0,
+      "cf": 5.0,
+      "cell": 1.5,
+      "module": 75.0
+    },
+    "processing": {
+      "panel": {
+        "labor": 21.3,
+        "expense": 11.5,
+        "depreciation": 16.2
+      },
+      "module": {
+        "labor": 8.7,
+        "expense": 5.3,
+        "depreciation": 7.5
+      }
+    },
+    "sga": {
+      "direct_dev": 4.7,
+      "transport": 0.3,
+      "business_unit": 16.0,
+      "operation": 1.2,
+      "corporate_oh": 6.2
+    },
+    "loading": 0.7
   },
   "variables": [
     {
       "key": "new_loading",
       "ko": "Loading율",
-      "min": 0.30,
-      "max": 1.00,
+      "min": 0.3,
+      "max": 1.0,
       "step": 0.01,
-      "default": 0.70,
+      "default": 0.7,
       "unit": "%",
       "format": "percent",
       "description": "Loading 변경 → Panel·Module 가공비(노무비, 경비, 감상비) 6개 항목 → 가공비 합계 → COM → COP → 영업이익 연쇄 변동"
@@ -29,22 +53,45 @@
   ],
   "inspector": {
     "delta_lines": [
-      { "label": "Panel 노무비",  "expr_template": "21.3 × 70 ÷ {slider:new_loading_pct}" },
-      { "label": "Panel 경비",    "expr_template": "11.5 × 70 ÷ {slider:new_loading_pct}" },
-      { "label": "Panel 감상비",  "expr_template": "16.2 × 70 ÷ {slider:new_loading_pct}" },
-      { "label": "Module 노무비", "expr_template": "8.7 × 70 ÷ {slider:new_loading_pct}" },
-      { "label": "Module 경비",   "expr_template": "5.3 × 70 ÷ {slider:new_loading_pct}" },
-      { "label": "Module 감상비", "expr_template": "7.5 × 70 ÷ {slider:new_loading_pct}" }
+      {
+        "label": "Panel 노무비",
+        "expr_template": "21.3 × 70 ÷ {slider:new_loading_pct}"
+      },
+      {
+        "label": "Panel 경비",
+        "expr_template": "11.5 × 70 ÷ {slider:new_loading_pct}"
+      },
+      {
+        "label": "Panel 감상비",
+        "expr_template": "16.2 × 70 ÷ {slider:new_loading_pct}"
+      },
+      {
+        "label": "Module 노무비",
+        "expr_template": "8.7 × 70 ÷ {slider:new_loading_pct}"
+      },
+      {
+        "label": "Module 경비",
+        "expr_template": "5.3 × 70 ÷ {slider:new_loading_pct}"
+      },
+      {
+        "label": "Module 감상비",
+        "expr_template": "7.5 × 70 ÷ {slider:new_loading_pct}"
+      }
     ],
-    "result_fields": ["processing_cost", "com", "cop", "operating_profit"]
+    "result_fields": [
+      "processing_cost",
+      "com",
+      "cop",
+      "operating_profit"
+    ]
   },
   "expected": {
     "panel_labor": 29.82,
-    "panel_expense": 16.10,
+    "panel_expense": 16.1,
     "panel_depreciation": 22.68,
     "module_labor": 12.18,
     "module_expense": 7.42,
-    "module_depreciation": 10.50
+    "module_depreciation": 10.5
   },
   "phases": {
     "hook": "Loading이 70% → 50%로 떨어지면 원가에 어떤 일이 일어날까요?",
@@ -55,9 +102,9 @@
       "tolerance": 0.1,
       "hint": "가공비 = 기준값 × (기준Loading / 새Loading).",
       "hints": {
-        "l1": "이 셀은 Loading(가동률)에 따라 달라지는 값입니다. Loading이 줄면 같은 비용을 더 적은 단위에 분담시켜야 한다는 점을 떠올려 보세요.",
-        "l2": "가공비(노무비·경비·상각비)는 고정비 성격이라, 단위당 분담액은 Loading에 반비례합니다. 분자(전체 비용)는 그대로지만 분모(생산량)만 변하는 구조예요.",
-        "l3": "공식은 다음과 같습니다 — 새 값 = 기준값 × (기준 Loading ÷ 새 Loading). Reference 컬럼에서 기준값을 확인한 뒤, 두 Loading의 비율을 곱해보세요. (정답 숫자는 직접 계산해 주세요.)"
+        "l1": "Loading율이 줄면 같은 비용을 더 적은 단위에 분담시켜야 합니다.",
+        "l2": "비용(분자)은 그대로지만 생산량(분모)만 변하는 구조예요.",
+        "l3": "변경 가공비 = 기존 가공비 × (기존 Loading율 ÷ 변경 Loading율)"
       }
     },
     "reflect": "이 케이스의 핵심 메커니즘을 한 문장으로 정리해보세요."

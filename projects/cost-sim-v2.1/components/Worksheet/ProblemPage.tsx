@@ -334,26 +334,14 @@ export default function ProblemPage({
                   </p>
                 </div>
 
-                {/* 과제 — 강조 스타일 */}
+                {/* 과제 — 상황과 동일한 plain 양식 (v0.2: 강조박스 제거). 공식 박스는 삭제 — 공식은 힌트 3단계에서 제공 */}
                 {problem.scenarioSections.task && (
-                  <div className="flex gap-3 rounded-xl bg-[hsl(var(--accent)/0.08)] border border-[hsl(var(--accent)/0.2)] px-4 py-3">
-                    <span className="mt-0.5 flex-shrink-0 rounded-md bg-[hsl(var(--accent)/0.18)] px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-[hsl(var(--accent))]">
+                  <div className="flex gap-3">
+                    <span className="mt-0.5 flex-shrink-0 rounded-md bg-[hsl(var(--surface-200))] px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-[hsl(var(--muted))]">
                       과제
                     </span>
-                    <p className="flex-1 text-sm font-semibold leading-relaxed text-[hsl(var(--fg))]">
+                    <p className="flex-1 text-sm leading-relaxed text-[hsl(var(--fg)/0.85)]">
                       {problem.scenarioSections.task}
-                    </p>
-                  </div>
-                )}
-
-                {/* 공식 — 힌트 박스 스타일 */}
-                {problem.scenarioSections.formula && (
-                  <div className="flex gap-3 rounded-xl bg-[hsl(var(--warn)/0.06)] border border-[hsl(var(--warn)/0.25)] px-4 py-3">
-                    <span className="mt-0.5 flex-shrink-0 rounded-md bg-[hsl(var(--warn)/0.15)] px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-[hsl(var(--warn))]">
-                      공식
-                    </span>
-                    <p className="flex-1 font-mono text-sm leading-relaxed text-[hsl(var(--fg)/0.85)]">
-                      {problem.scenarioSections.formula}
                     </p>
                   </div>
                 )}
@@ -463,7 +451,6 @@ export default function ProblemPage({
 
           {showGuide && (
             <WorksheetGuide
-              problemId={problem.id}
               onClose={() => setShowGuide(false)}
             />
           )}

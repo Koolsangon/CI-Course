@@ -19,9 +19,34 @@ import {
   applyTactInvestmentChange
 } from "../engine";
 import { REFERENCE_CASE1 } from "../presets";
+import type { CostParams } from "../types";
 
 function withDelta(partial: Partial<SevenDeltas>): SevenDeltas {
   return { ...DEFAULT_DELTAS, ...partial };
+}
+
+// v0.2: applyMerged 는 Module 수율 변동 시 가공비를 (기준수율 ÷ 새수율) 로 추가 스케일한다.
+// sacred 어댑터(engine.ts) 자체는 불변 — 결합은 merged 경로에서만. 기대값에도 동일 반영.
+function yieldRatio(yieldDelta: number): number {
+  const base = REFERENCE_CASE1.yields.module;
+  return base / (base + yieldDelta);
+}
+function scaleProc(p: CostParams, ratio: number): CostParams {
+  return {
+    ...p,
+    processing: {
+      panel: {
+        labor: p.processing.panel.labor * ratio,
+        expense: p.processing.panel.expense * ratio,
+        depreciation: p.processing.panel.depreciation * ratio
+      },
+      module: {
+        labor: p.processing.module.labor * ratio,
+        expense: p.processing.module.expense * ratio,
+        depreciation: p.processing.module.depreciation * ratio
+      }
+    }
+  };
 }
 
 describe("applyMerged — 기본값 = passthrough", () => {
@@ -38,8 +63,8 @@ describe("applyMerged — 단일 변수 = 기존 어댑터 매칭", () => {
     expect(actual).toEqual(expected);
   });
 
-  it("materialDelta + yieldDelta → applyMaterialYieldChange 와 동일", () => {
-    const expected = applyMaterialYieldChange(REFERENCE_CASE1, -0.05, -0.04);
+  it("materialDelta + yieldDelta → applyMaterialYieldChange + 수율→가공비 결합", () => {
+    const expected = scaleProc(applyMaterialYieldChange(REFERENCE_CASE1, -0.05, -0.04), yieldRatio(-0.04));
     const actual = applyMerged(REFERENCE_CASE1, withDelta({ materialDelta: -0.05, yieldDelta: -0.04 }));
     expect(actual).toEqual(expected);
   });
@@ -67,6 +92,7 @@ describe("applyMerged — 다변량 순서 검증", () => {
   it("Loading + 재료비/수율 변동: 순서 Loading → Material 적용", () => {
     let expected = applyLoadingChange(REFERENCE_CASE1, 0.5);
     expected = applyMaterialYieldChange(expected, -0.05, -0.04);
+    expected = scaleProc(expected, yieldRatio(-0.04));
     const actual = applyMerged(REFERENCE_CASE1, withDelta({
       loading: 0.5,
       materialDelta: -0.05,
@@ -78,6 +104,7 @@ describe("applyMerged — 다변량 순서 검증", () => {
   it("7 변수 모두 변동: 순서 Loading→Material→Cuts→Tact 적용", () => {
     let expected = applyLoadingChange(REFERENCE_CASE1, 0.6);
     expected = applyMaterialYieldChange(expected, -0.05, -0.02);
+    expected = scaleProc(expected, yieldRatio(-0.02));
     expected = applyCutsMaskChange(expected, REFERENCE_CUTS, 29, REFERENCE_MASK, 7);
     expected = applyTactInvestmentChange(expected, 1.2, 1.9);
     const actual = applyMerged(REFERENCE_CASE1, {

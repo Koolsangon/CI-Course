@@ -75,8 +75,7 @@ export default function CellHintModal({
               <Lightbulb className="h-4 w-4" />
             </div>
             <div>
-              <h3 className="text-sm font-bold text-[hsl(var(--fg))]">단계별 힌트</h3>
-              <p className="text-xs text-[hsl(var(--muted))]">{title}</p>
+              <h3 className="text-sm font-bold text-[hsl(var(--fg))]">힌트</h3>
             </div>
           </div>
           <button
@@ -99,7 +98,7 @@ export default function CellHintModal({
               <>
                 힌트는 단계가 올라갈수록 더 구체적으로 알려주는 대신, 정답을 맞혔을 때 *모든 정답 셀*의 배점이 같이 줄어듭니다 (이 문제 전체에 한 단계 적용) — {" "}
                 <span className="font-mono tabular-nums">
-                  0단계 100% → 1단계 70% → 2단계 40% → 3단계 20%
+                  0단계 100% → 1단계 90% → 2단계 80% → 3단계 60%
                 </span>.
                 <span className="mt-1 block text-[hsl(var(--muted))]">
                   현재 이 문제의 배점: <span className="font-mono font-semibold text-[hsl(var(--fg))] tabular-nums">{pct(currentRate)}</span>

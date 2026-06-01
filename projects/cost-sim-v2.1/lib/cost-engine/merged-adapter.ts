@@ -18,6 +18,7 @@ import {
   applyCutsMaskChange,
   applyTactInvestmentChange
 } from "./engine";
+import { cloneParams } from "./presets";
 
 /** 면취수 기준값 — sandbox 의 baseline reference 가 25 라는 가정. */
 export const REFERENCE_CUTS = 25;
@@ -56,6 +57,18 @@ export const DEFAULT_DELTAS: SevenDeltas = {
  *
  * 기본값과 동일한 변수는 해당 어댑터 호출을 *skip* — 불필요한 round-trip 방지.
  */
+/** 가공비 6항목을 동일 배율로 스케일한 새 params 반환 (clone). */
+function scaleProcessing(p: CostParams, ratio: number): CostParams {
+  const next = cloneParams(p);
+  next.processing.panel.labor *= ratio;
+  next.processing.panel.expense *= ratio;
+  next.processing.panel.depreciation *= ratio;
+  next.processing.module.labor *= ratio;
+  next.processing.module.expense *= ratio;
+  next.processing.module.depreciation *= ratio;
+  return next;
+}
+
 export function applyMerged(reference: CostParams, deltas: SevenDeltas): CostParams {
   let p = reference;
 
@@ -65,6 +78,14 @@ export function applyMerged(reference: CostParams, deltas: SevenDeltas): CostPar
 
   if (deltas.materialDelta !== 0 || deltas.yieldDelta !== 0) {
     p = applyMaterialYieldChange(p, deltas.materialDelta, deltas.yieldDelta);
+  }
+
+  // v0.2 피드백: Module 수율 변동 시 가공비(고정비)도 단위당 분담이 변함 → 기준수율 ÷ 새수율 배율.
+  // engine.ts 어댑터(27 골든 픽스처 보호)는 그대로 두고 sandbox 병합 경로에서만 결합한다.
+  if (deltas.yieldDelta !== 0) {
+    const baseYield = reference.yields.module;
+    const newYield = baseYield + deltas.yieldDelta;
+    if (newYield > 0) p = scaleProcessing(p, baseYield / newYield);
   }
 
   if (deltas.newCuts !== REFERENCE_CUTS || deltas.newMask !== REFERENCE_MASK) {

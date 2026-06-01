@@ -103,7 +103,7 @@ export default function CostTreeView({
       source: e.from,
       target: e.to,
       type: "smoothstep",
-      animated: changedNodeIds.has(e.from) || changedNodeIds.has(e.to)
+      animated: changedNodeIds.has(e.to)
     }));
     return layoutTree(raw as Node[], edges) as Node<CostTreeNodeData>[];
   }, [result, params, changedNodeIds]);
@@ -115,7 +115,7 @@ export default function CostTreeView({
         source: e.from,
         target: e.to,
         type: "smoothstep",
-        animated: changedNodeIds.has(e.from) || changedNodeIds.has(e.to)
+        animated: changedNodeIds.has(e.to)
       })),
     [changedNodeIds]
   );

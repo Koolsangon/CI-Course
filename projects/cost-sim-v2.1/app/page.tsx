@@ -15,12 +15,10 @@ const cards = [
     label: "자유 실험실",
     sublabel: "Sandbox",
     description:
-      "슬라이더를 움직이며 Loading·재료비·수율·면취수·Mask·Tact의 인과관계를 실시간으로 추적합니다. COP·COM·SGA 원가 트리가 즉시 반응합니다.",
+      "슬라이더를 움직이며 Loading율/재료비/수율/면취수/Mask 수/Tact time 변경 시 COP/COM/영업이익의 변동 여부를 확인합니다.",
     features: [
-      "4개 케이스 시나리오 전환",
-      "실시간 원가 트리 시각화",
-      "수식 인스펙터 — 변화율 추적",
-      "변수별 종속관계 설명"
+      "4개 시나리오별 원가 트리 시각화",
+      "변수별 종속 관계 및 영향도 확인"
     ],
     accent: "from-[hsl(345_100%_32%/0.08)] to-[hsl(345_100%_32%/0.02)]",
     border: "border-[hsl(345_100%_32%/0.2)] hover:border-[hsl(345_100%_32%/0.5)]",
@@ -33,12 +31,12 @@ const cards = [
     label: "원가 계산 워크시트",
     sublabel: "Worksheet",
     description:
-      "엑셀 워크시트처럼 빈 셀에 직접 값을 입력하고 채점합니다. 시뮬레이션에서 관찰한 원리를 수식으로 검증하세요.",
+      "Loading율/재료비/수율/면취수/Mask 수/Tact time 변경으로 인한 결과를 직접 계산해 봅니다.",
     features: [
-      "4개 문제 — Loading, 재료비·수율, 면취수·Mask, Tact·투자",
-      "Yellow 셀 입력 → Blue 셀 자동 계산",
-      "즉시 채점 — O/X 판정 + 점수",
-      "기준값 → 시뮬레이션 비교"
+      "4개 시나리오별 COP Table 계산",
+      "노란셀 수식 입력, 초록셀 자동계산",
+      "힌트 사용 가능",
+      "계산 완료 후 채점 가능"
     ],
     accent: "from-[hsl(123_46%_34%/0.08)] to-[hsl(123_46%_34%/0.02)]",
     border: "border-[hsl(123_46%_34%/0.2)] hover:border-[hsl(123_46%_34%/0.5)]",

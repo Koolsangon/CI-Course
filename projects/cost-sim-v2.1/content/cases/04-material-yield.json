@@ -1,25 +1,49 @@
 {
   "id": "04-material-yield",
   "title": "재료비 절감 & 수율 하락",
-  "scenario": "원재료 업체를 변경하여 Module 재료비를 5% 절감했으나, Module 수율 또한 4% 감소 하였습니다.",
+  "scenario": "설계 변경을 통해 Module 재료비 5% 절감 가능할 것 같은데, Module 수율은 4%p 하락할 것 같단 말이지... 설계 변경을 해야할까 말아야 할까?",
   "adapter": "material-yield",
   "reference": {
     "price": 200,
-    "yields": { "tft": 0.99, "cf": 1.0, "cell": 0.95, "module": 0.972 },
-    "bom": { "tft": 6.0, "cf": 5.0, "cell": 1.5, "module": 75.0 },
-    "processing": {
-      "panel": { "labor": 21.3, "expense": 11.5, "depreciation": 16.2 },
-      "module": { "labor": 8.7, "expense": 5.3, "depreciation": 7.5 }
+    "yields": {
+      "tft": 0.99,
+      "cf": 1.0,
+      "cell": 0.95,
+      "module": 0.972
     },
-    "sga": { "direct_dev": 4.7, "transport": 0.3, "business_unit": 16.0, "operation": 1.2, "corporate_oh": 6.2 },
-    "loading": 0.70
+    "bom": {
+      "tft": 6.0,
+      "cf": 5.0,
+      "cell": 1.5,
+      "module": 75.0
+    },
+    "processing": {
+      "panel": {
+        "labor": 21.3,
+        "expense": 11.5,
+        "depreciation": 16.2
+      },
+      "module": {
+        "labor": 8.7,
+        "expense": 5.3,
+        "depreciation": 7.5
+      }
+    },
+    "sga": {
+      "direct_dev": 4.7,
+      "transport": 0.3,
+      "business_unit": 16.0,
+      "operation": 1.2,
+      "corporate_oh": 6.2
+    },
+    "loading": 0.7
   },
   "variables": [
     {
       "key": "material_change_pct",
       "ko": "Module 재료비 변동률",
-      "min": -0.20,
-      "max": 0.20,
+      "min": -0.2,
+      "max": 0.2,
       "step": 0.005,
       "default": -0.05,
       "unit": "%",
@@ -29,7 +53,7 @@
     {
       "key": "module_yield_change",
       "ko": "Module 수율 변동률",
-      "min": -0.10,
+      "min": -0.1,
       "max": 0.05,
       "step": 0.005,
       "default": -0.04,
@@ -48,35 +72,96 @@
       {
         "title": "1. Module 재료비 변동",
         "lines": [
-          { "label": "Module Net 재료비", "expr_template": "75.0 × {slider:material_change_pct_inv}" },
-          { "label": "소요재료비 TFT",    "expr_template": "6.0 ÷ 91.4%" },
-          { "label": "소요재료비 CF",     "expr_template": "5.0 ÷ 100.0% ÷ 95.0% ÷ 97.2%" },
-          { "label": "소요재료비 Cell",   "expr_template": "1.5 ÷ 95.0% ÷ 97.2%" },
-          { "label": "소요재료비 Module", "expr_template": "{module_net} ÷ 97.2%" }
+          {
+            "label": "Module Net 재료비",
+            "expr_template": "75.0 × {slider:material_change_pct_inv}"
+          },
+          {
+            "label": "소요재료비 TFT",
+            "expr_template": "6.0 ÷ 91.4%"
+          },
+          {
+            "label": "소요재료비 CF",
+            "expr_template": "5.0 ÷ 100.0% ÷ 95.0% ÷ 97.2%"
+          },
+          {
+            "label": "소요재료비 Cell",
+            "expr_template": "1.5 ÷ 95.0% ÷ 97.2%"
+          },
+          {
+            "label": "소요재료비 Module",
+            "expr_template": "{module_net} ÷ 97.2%"
+          }
         ]
       },
       {
         "title": "2. Module 수율 변동",
         "lines": [
-          { "label": "Module 수율",       "expr_template": "97.2% − {slider:module_yield_drop_abs}" },
-          { "label": "소요재료비 TFT",    "expr_template": "6.0 ÷ {cum_yield_new}" },
-          { "label": "소요재료비 CF",     "expr_template": "5.0 ÷ 100.0% ÷ 95.0% ÷ {module_yield_new}" },
-          { "label": "소요재료비 Cell",   "expr_template": "1.5 ÷ 95.0% ÷ {module_yield_new}" },
-          { "label": "소요재료비 Module", "expr_template": "{module_net} ÷ {module_yield_new}" },
-          { "label": "Panel 노무비",      "expr_template": "21.3 × 97.2% ÷ {module_yield_new}" },
-          { "label": "Panel 경비",        "expr_template": "11.5 × 97.2% ÷ {module_yield_new}" },
-          { "label": "Panel 감상비",      "expr_template": "16.2 × 97.2% ÷ {module_yield_new}" },
-          { "label": "Module 노무비",     "expr_template": "8.7 × 97.2% ÷ {module_yield_new}" },
-          { "label": "Module 경비",       "expr_template": "5.3 × 97.2% ÷ {module_yield_new}" },
-          { "label": "Module 감상비",     "expr_template": "7.5 × 97.2% ÷ {module_yield_new}" }
+          {
+            "label": "Module 수율",
+            "expr_template": "97.2% − {slider:module_yield_drop_abs}"
+          },
+          {
+            "label": "소요재료비 TFT",
+            "expr_template": "6.0 ÷ {cum_yield_new}"
+          },
+          {
+            "label": "소요재료비 CF",
+            "expr_template": "5.0 ÷ 100.0% ÷ 95.0% ÷ {module_yield_new}"
+          },
+          {
+            "label": "소요재료비 Cell",
+            "expr_template": "1.5 ÷ 95.0% ÷ {module_yield_new}"
+          },
+          {
+            "label": "소요재료비 Module",
+            "expr_template": "{module_net} ÷ {module_yield_new}"
+          },
+          {
+            "label": "Panel 노무비",
+            "expr_template": "21.3 × 97.2% ÷ {module_yield_new}"
+          },
+          {
+            "label": "Panel 경비",
+            "expr_template": "11.5 × 97.2% ÷ {module_yield_new}"
+          },
+          {
+            "label": "Panel 감상비",
+            "expr_template": "16.2 × 97.2% ÷ {module_yield_new}"
+          },
+          {
+            "label": "Module 노무비",
+            "expr_template": "8.7 × 97.2% ÷ {module_yield_new}"
+          },
+          {
+            "label": "Module 경비",
+            "expr_template": "5.3 × 97.2% ÷ {module_yield_new}"
+          },
+          {
+            "label": "Module 감상비",
+            "expr_template": "7.5 × 97.2% ÷ {module_yield_new}"
+          }
         ]
       }
     ],
-    "result_fields": ["processing_cost", "com", "cop", "operating_profit"]
+    "result_fields": [
+      "processing_cost",
+      "com",
+      "cop",
+      "operating_profit"
+    ]
   },
   "tree_info": [
-    { "label": "Module 수율",       "field": "module_yield_pct", "format": "percent1" },
-    { "label": "Net 재료비(Module)", "field": "module_net_bom",   "format": "dollar1" }
+    {
+      "label": "Module 수율",
+      "field": "module_yield_pct",
+      "format": "percent1"
+    },
+    {
+      "label": "Net 재료비(Module)",
+      "field": "module_net_bom",
+      "format": "dollar1"
+    }
   ],
   "phases": {
     "hook": "재료비 5% 절감. 좋은 거래처럼 보이지만, 수율이 떨어진다면?",
@@ -87,9 +172,9 @@
       "tolerance": 0.3,
       "hint": "소요재료비 = Σ(BOM/누적수율). 수율이 줄면 분모가 줄어 결과는 커집니다.",
       "hints": {
-        "l1": "이 문제는 두 변화(BOM 절감, 수율 하락)가 같은 셀에 동시에 작용합니다. 두 변화가 결과를 같은 방향으로 미는지, 반대 방향으로 미는지 먼저 머릿속으로 그려 보세요.",
-        "l2": "소요재료비는 단계별 BOM을 누적수율로 나눠 더한 값입니다. BOM 절감은 분자를 작게 만들지만, Module 수율 하락은 누적수율(TFT × CF × Cell × Module)을 작게 만들어 결과를 키웁니다. 즉 두 효과는 서로 상쇄되는 방향이에요.",
-        "l3": "공식은 다음과 같습니다 — 새 소요재료비 = Σ(BOM_새 / 누적수율_새). Module BOM은 5% 줄여 적용하고, 누적수율은 Module 수율을 −4%p 한 뒤 다시 곱해 구한 값을 분모로 씁니다. Reference의 BOM·수율 값을 직접 넣어 계산해 보세요. (정답 숫자는 직접 계산해 주세요.)"
+        "l1": "BOM 재료비 절감은 소요재료비를 감소시키고, Module 수율 하락은 소요재료비와 가공비를 증가시킵니다.",
+        "l2": "소요재료비는 단계별 BOM 재료비를 단계별 누적수율로 나눠 더한 값으로, BOM 재료비가 절감하면 분자가 감소합니다. Module 수율이 하락하면 같은 비용을 더 작은 단위에 분담시켜야 해서 분모가 증가합니다.",
+        "l3": "소요재료비 = BOM 재료비 ÷ 단계별 누적 수율\n변경 가공비 = 기존 가공비 × (기존 수율 ÷ 변경 수율)"
       }
     },
     "reflect": "절감 효과가 거의 사라진 이유를 한 문장으로 설명하세요."

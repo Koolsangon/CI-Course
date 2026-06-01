@@ -1,28 +1,92 @@
 {
   "id": "05-cuts-mask",
-  "title": "면취수 · Mask 복합 변화",
-  "scenario": "원판 설계 변경으로 면취수가 25 → 29로 늘었습니다. 그런데 정밀도 때문에 Mask가 6 → 7로 늘어납니다.",
+  "title": "면취수 & Mask 수 변경",
+  "scenario": "설계 변경을 통해 면취수가 29면취까지 증가 가능할것 같은데, Mask도 1ea 증가할 것 같단 말이지... 설계 변경을 해야할까 말아야 할까?",
   "adapter": "cuts-mask",
   "reference": {
     "price": 200,
-    "yields": { "tft": 0.99, "cf": 1.0, "cell": 0.95, "module": 0.972 },
-    "bom": { "tft": 6.0, "cf": 5.0, "cell": 1.5, "module": 75.0 },
-    "processing": {
-      "panel": { "labor": 21.3, "expense": 11.5, "depreciation": 16.2 },
-      "module": { "labor": 8.7, "expense": 5.3, "depreciation": 7.5 }
+    "yields": {
+      "tft": 0.99,
+      "cf": 1.0,
+      "cell": 0.95,
+      "module": 0.972
     },
-    "sga": { "direct_dev": 4.7, "transport": 0.3, "business_unit": 16.0, "operation": 1.2, "corporate_oh": 6.2 },
-    "loading": 0.70
+    "bom": {
+      "tft": 6.0,
+      "cf": 5.0,
+      "cell": 1.5,
+      "module": 75.0
+    },
+    "processing": {
+      "panel": {
+        "labor": 21.3,
+        "expense": 11.5,
+        "depreciation": 16.2
+      },
+      "module": {
+        "labor": 8.7,
+        "expense": 5.3,
+        "depreciation": 7.5
+      }
+    },
+    "sga": {
+      "direct_dev": 4.7,
+      "transport": 0.3,
+      "business_unit": 16.0,
+      "operation": 1.2,
+      "corporate_oh": 6.2
+    },
+    "loading": 0.7
   },
   "variables": [
-    { "key": "old_cuts", "ko": "기준 면취수", "min": 10, "max": 40, "step": 1, "default": 25, "unit": "개", "format": "int", "description": "기준 면취수 — 비교 기준점" },
-    { "key": "new_cuts", "ko": "새 면취수", "min": 10, "max": 40, "step": 1, "default": 29, "unit": "개", "format": "int", "description": "면취수 변경 → TFT·CF·Cell BOM(기준÷신규 비율) + Panel 가공비 → COM → COP → 영업이익" },
-    { "key": "old_mask", "ko": "기준 Mask", "min": 3, "max": 10, "step": 1, "default": 6, "unit": "장", "format": "int", "description": "기준 Mask — 비교 기준점" },
-    { "key": "new_mask", "ko": "새 Mask", "min": 3, "max": 10, "step": 1, "default": 7, "unit": "장", "format": "int", "description": "Mask 변경 → Panel 가공비(노무비·경비·감상비) × (신규÷기준) → COM → COP → 영업이익" }
+    {
+      "key": "old_cuts",
+      "ko": "기준 면취수",
+      "min": 10,
+      "max": 40,
+      "step": 1,
+      "default": 25,
+      "unit": "개",
+      "format": "int",
+      "description": "기준 면취수 — 비교 기준점"
+    },
+    {
+      "key": "new_cuts",
+      "ko": "새 면취수",
+      "min": 10,
+      "max": 40,
+      "step": 1,
+      "default": 29,
+      "unit": "개",
+      "format": "int",
+      "description": "면취수 변경 → TFT·CF·Cell BOM(기준÷신규 비율) + Panel 가공비 → COM → COP → 영업이익"
+    },
+    {
+      "key": "old_mask",
+      "ko": "기준 Mask",
+      "min": 3,
+      "max": 10,
+      "step": 1,
+      "default": 6,
+      "unit": "장",
+      "format": "int",
+      "description": "기준 Mask — 비교 기준점"
+    },
+    {
+      "key": "new_mask",
+      "ko": "새 Mask",
+      "min": 3,
+      "max": 10,
+      "step": 1,
+      "default": 7,
+      "unit": "장",
+      "format": "int",
+      "description": "Mask 변경 → Panel 가공비(노무비·경비·감상비) × (신규÷기준) → COM → COP → 영업이익"
+    }
   ],
   "expected": {
     "tft_bom_cuts": 5.172,
-    "cf_bom_cuts": 4.310,
+    "cf_bom_cuts": 4.31,
     "cell_bom_cuts": 1.293,
     "panel_labor_cuts_only": 18.36,
     "panel_labor_cuts_and_mask": 21.42
@@ -36,9 +100,9 @@
       "tolerance": 0.1,
       "hint": "21.3 × (25/29) × (7/6) = ?",
       "hints": {
-        "l1": "이 셀은 두 변수(면취수, Mask)에 동시에 영향을 받습니다. 각각이 노무비를 키우는 방향인지, 줄이는 방향인지 먼저 떠올려 보세요.",
-        "l2": "면취수가 늘어나면 한 장당 비용 분담이 줄어 노무비가 작아집니다(반비례). Mask가 늘어나면 공정 부담이 커져 노무비가 커집니다(정비례). 두 효과는 곱셈으로 합쳐집니다.",
-        "l3": "공식은 다음과 같습니다 — 새 Panel 노무비 = 기준 노무비 × (기준 면취수 ÷ 새 면취수) × (새 Mask ÷ 기준 Mask). Reference 값에 두 비율을 차례로 곱해서 직접 계산해 보세요. (정답 숫자는 직접 계산해 주세요.)"
+        "l1": "면취 수 증가는 BOM 재료비와 Panel 가공비를 감소시키고, Mask 증가는 BOM 재료비(TFT)와 Panel 가공비를 증가시킵니다.",
+        "l2": "면취 수가 증가하면 동일한 재료비를 더 많은 단위에 분담시키므로 분자가 감소합니다. Mask 수가 증가하면 같은 비용을 더 적게 분담시켜야 하므로 분모가 증가합니다.",
+        "l3": "변경 BOM 재료비 = 기존 BOM 재료비 × (기존 면취수 ÷ 변경 면취수)\n소요재료비 = BOM 재료비 ÷ 단계별 누적 수율\n변경 Panel 가공비 = 기존 Panel 가공비 × (기존 Mask 수 ÷ 변경 Mask 수)"
       }
     },
     "reflect": "면취수 효과를 Mask가 얼마나 상쇄했는지 요약해보세요."

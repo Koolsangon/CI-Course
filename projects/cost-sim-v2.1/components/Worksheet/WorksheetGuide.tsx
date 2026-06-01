@@ -29,34 +29,13 @@ const COMMON_STEPS: GuideStep[] = [
   }
 ];
 
-const PROBLEM_HINTS: Record<string, { title: string; hint: string }> = {
-  "p1-loading": {
-    title: "Loading 변화 문제",
-    hint: "핵심 수식: 가공비 항목 = 기준값 × (기준Loading ÷ 새Loading)\n예) Panel 노무비 = 21.30 × (0.70 ÷ 0.50)"
-  },
-  "p4-material-yield": {
-    title: "재료비 vs 수율 문제",
-    hint: "①열: Module BOM에 변화율 적용 → 소요재료비 재계산\n②열: Module 수율 변경 → 누적수율 변화 → 소요재료비 재계산"
-  },
-  "p5-cuts-mask": {
-    title: "면취수 · Mask 문제",
-    hint: "①열: BOM × (기준÷신규 면취수), Panel 가공비 × (기준÷신규 면취수)\n②열: ①에 Mask 비율(신규÷기준) 추가 적용 → Panel 가공비만 변동"
-  },
-  "p6-tact-investment": {
-    title: "Tact 지연 vs 개조투자 문제",
-    hint: "①열 (Tact 1.2배): Module 가공비(노무비·경비·감상비) × 1.2\n②열 (+ 투자 13억): Module 감상비 = 7.5 + 13억 ÷ 300K ÷ 1,480 (환율). 노무비·경비는 base 로 복귀"
-  }
-};
-
 interface WorksheetGuideProps {
-  problemId: string;
   onClose: () => void;
 }
 
-export default function WorksheetGuide({ problemId, onClose }: WorksheetGuideProps) {
+export default function WorksheetGuide({ onClose }: WorksheetGuideProps) {
   const [step, setStep] = useState(0);
-  const meta = PROBLEM_HINTS[problemId];
-  const totalSteps = COMMON_STEPS.length + 1; // +1 for problem-specific hint
+  const totalSteps = COMMON_STEPS.length;
   const isLastStep = step === totalSteps - 1;
 
   function next() {
@@ -67,13 +46,7 @@ export default function WorksheetGuide({ problemId, onClose }: WorksheetGuidePro
     }
   }
 
-  const currentStep = step === 0 && meta
-    ? {
-        icon: <Calculator className="h-8 w-8" />,
-        title: meta.title,
-        description: meta.hint
-      }
-    : COMMON_STEPS[step === 0 ? 0 : step - 1]!;
+  const currentStep = COMMON_STEPS[step]!;
 
   return (
     <AnimatePresence>

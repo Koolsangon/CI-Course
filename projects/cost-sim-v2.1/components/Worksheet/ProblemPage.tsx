@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect, useMemo } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, Calculator, Lightbulb, Timer, Trophy } from "lucide-react";
+import { ArrowLeft, Calculator, ClipboardList, Lightbulb, Timer, Trophy } from "lucide-react";
 import type { ProblemDef } from "@/content/problems/types";
 import {
   gradeYellowCells,
@@ -269,9 +269,10 @@ export default function ProblemPage({
         >
           <ArrowLeft className="h-4 w-4" />
         </Link>
+        <ClipboardList className="h-4 w-4 flex-shrink-0 text-[hsl(var(--success))]" />
         <div className="min-w-0 flex-1">
           <h1 className="text-sm font-bold text-[hsl(var(--fg))]">
-            🗒 원가 계산 워크시트
+            원가 계산 워크시트
             {gameMode && roundN !== undefined && (
               <span className="ml-2 rounded-md bg-[hsl(var(--accent)/0.15)] px-1.5 py-0.5 text-[10px] font-bold text-[hsl(var(--accent))] tabular-nums">
                 R{roundN}

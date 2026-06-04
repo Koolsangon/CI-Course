@@ -46,6 +46,18 @@ export default function WorksheetTable({
   const findGrade = (rowId: string, colId: string) =>
     grades?.find((g) => g.rowId === rowId && g.colId === colId);
 
+  // 노란 셀 문항 번호 — 컬럼 순서대로, 각 컬럼 내 행을 위→아래로 1부터 매긴다.
+  const cellNumbers: Record<string, number> = {};
+  let yellowSeq = 0;
+  for (const col of problem.columns) {
+    for (const row of problem.rows) {
+      if (row.cells[col.id]?.type === "yellow") {
+        yellowSeq++;
+        cellNumbers[`${col.id}:${row.id}`] = yellowSeq;
+      }
+    }
+  }
+
   return (
     <div className="overflow-x-auto rounded-2xl border border-[hsl(var(--border))] shadow-card">
       <table className="w-full border-collapse text-sm">
@@ -111,6 +123,7 @@ export default function WorksheetTable({
                     isActive={isActive}
                     isRefColumn={isRef}
                     format={row.format}
+                    number={cellNumbers[`${col.id}:${row.id}`]}
                     draft={isActive ? draft : undefined}
                     onDraftChange={onDraftChange}
                     onCommit={onCommit}

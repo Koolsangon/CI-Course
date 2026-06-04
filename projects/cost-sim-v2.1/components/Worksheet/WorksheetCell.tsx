@@ -13,6 +13,8 @@ interface WorksheetCellProps {
   isActive?: boolean;
   isRefColumn?: boolean;
   format?: CellFormat;
+  /** 노란 셀 문항 번호 (①②…) — 셀 좌측에 표시. yellow 셀에만 전달된다. */
+  number?: number;
   /** active yellow 셀에서 부모가 소유하는 입력 수식 텍스트. */
   draft?: string;
   onDraftChange?: (v: string) => void;
@@ -36,6 +38,12 @@ function fmt(n: number, format?: CellFormat): string {
   return n.toFixed(1);
 }
 
+/** 1~20 → ①..⑳ (유니코드 circled number), 그 외 → (n). */
+function circledNumber(n: number): string {
+  if (n >= 1 && n <= 20) return String.fromCharCode(0x2460 + n - 1);
+  return `(${n})`;
+}
+
 export default function WorksheetCell({
   type,
   value,
@@ -46,6 +54,7 @@ export default function WorksheetCell({
   isActive,
   isRefColumn,
   format,
+  number,
   draft,
   onDraftChange,
   onCommit,
@@ -83,7 +92,7 @@ export default function WorksheetCell({
     );
   }
 
-  // yellow — 입력 셀.
+  // yellow — 입력 셀. 좌측에 문항 번호(①…), 우측에 값/입력란.
   const gradeBorder = graded
     ? correct
       ? "ring-2 ring-[hsl(var(--success))]"
@@ -101,43 +110,52 @@ export default function WorksheetCell({
   return (
     <td
       data-test={userValue !== undefined ? "yellow-filled" : "yellow-empty"}
-      className={`relative border border-[hsl(var(--border))] px-3 py-2 text-right tabular-nums text-sm ${cellStyles.yellow} ${gradeBorder} ${activeRing} cursor-pointer select-none`}
+      className={`relative border border-[hsl(var(--border))] px-2 py-2 tabular-nums text-sm ${cellStyles.yellow} ${gradeBorder} ${activeRing} cursor-pointer select-none`}
       onClick={onCellClick}
     >
-      {isActive ? (
-        <div className="flex items-baseline justify-end gap-0.5">
-          {unitPrefix && <span className="text-[hsl(var(--muted))]">{unitPrefix}</span>}
-          <input
-            ref={inputRef}
-            type="text"
-            inputMode="text"
-            value={draft ?? ""}
-            onChange={(e) => onDraftChange?.(e.target.value)}
-            /* input 내부 클릭은 td 로 버블되지 않게 — 자기 자신을 참조 추가하지 않음. */
-            onClick={(e) => e.stopPropagation()}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") {
-                e.preventDefault();
-                onCommit?.();
-              }
-            }}
-            onBlur={() => onCommit?.()}
-            placeholder="예: 6*25/29"
-            aria-label="셀 값 입력 — 직접 입력하거나 다른 셀을 클릭해 값을 더하세요"
-            className="min-w-0 flex-1 bg-transparent text-right font-medium tabular-nums text-[hsl(var(--fg))] placeholder:text-[hsl(var(--muted)/0.4)] outline-none cursor-text"
-          />
-          {unitSuffix && <span className="text-[hsl(var(--muted))]">{unitSuffix}</span>}
+      <div className="flex items-center gap-1.5">
+        {number !== undefined && (
+          <span className="flex-shrink-0 text-[12px] font-bold leading-none text-[hsl(var(--warn))]">
+            {circledNumber(number)}
+          </span>
+        )}
+        <div className="min-w-0 flex-1 text-right">
+          {isActive ? (
+            <div className="flex items-baseline justify-end gap-0.5">
+              {unitPrefix && <span className="text-[hsl(var(--muted))]">{unitPrefix}</span>}
+              <input
+                ref={inputRef}
+                type="text"
+                inputMode="text"
+                value={draft ?? ""}
+                onChange={(e) => onDraftChange?.(e.target.value)}
+                /* input 내부 클릭은 td 로 버블되지 않게 — 자기 자신을 참조 추가하지 않음. */
+                onClick={(e) => e.stopPropagation()}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    onCommit?.();
+                  }
+                }}
+                onBlur={() => onCommit?.()}
+                placeholder="예: 6*25/29"
+                aria-label="셀 값 입력 — 직접 입력하거나 다른 셀을 클릭해 값을 더하세요"
+                className="w-full min-w-0 bg-transparent text-right font-medium tabular-nums text-[hsl(var(--fg))] placeholder:text-[hsl(var(--muted)/0.4)] outline-none cursor-text"
+              />
+              {unitSuffix && <span className="text-[hsl(var(--muted))]">{unitSuffix}</span>}
+            </div>
+          ) : userValue !== undefined ? (
+            <span className="font-medium text-[hsl(var(--fg))]">{fmt(userValue, format)}</span>
+          ) : (
+            <span className="text-[hsl(var(--muted)/0.4)]">?</span>
+          )}
         </div>
-      ) : userValue !== undefined ? (
-        <span className="font-medium text-[hsl(var(--fg))]">{fmt(userValue, format)}</span>
-      ) : (
-        <span className="text-[hsl(var(--muted)/0.4)]">?</span>
-      )}
+      </div>
       {graded && !correct && (
-        <div className="text-[11px] font-bold text-[hsl(var(--danger))]">X</div>
+        <div className="text-right text-[11px] font-bold text-[hsl(var(--danger))]">X</div>
       )}
       {graded && correct && (
-        <div className="text-[11px] font-bold text-[hsl(var(--success))]">O</div>
+        <div className="text-right text-[11px] font-bold text-[hsl(var(--success))]">O</div>
       )}
     </td>
   );

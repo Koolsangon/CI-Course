@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="ko" class="no-js">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>CI-Course 인수인계 · 처음 오신 분을 위한 온보딩 가이드</title>
+<meta name="description" content="GitHub도 Claude Code도 처음인 팀원을 위한 단계별 인수인계 가이드. 계정 가입부터 코드 수정, 라이브 배포까지." />
+
+<!-- Fonts: Pretendard (KR body/heading) + IBM Plex Mono (code/labels) -->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css" />
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Newsreader:ital,opsz@0,6..72;1,6..72&display=swap" rel="stylesheet" />
+
+<style>
+:root{
+  --paper:#F4EFE4;
+  --paper-card:#FBF7EE;
+  --paper-sunk:#EFE8D8;
+  --ink:#1B1D29;
+  --ink-soft:#54566A;
+  --ink-faint:#8A8B9C;
+  --teal:#0E6E63;
+  --teal-bright:#13A294;
+  --teal-ink:#0A4A43;
+  --amber:#C2710B;
+  --amber-soft:#F4E6C9;
+  --coral:#C23B26;
+  --coral-soft:#F6DDD5;
+  --line:rgba(27,29,41,.12);
+  --line-strong:rgba(27,29,41,.22);
+  --term-bg:#15171F;
+  --term-bar:#20232E;
+  --term-text:#E6E8EE;
+  --term-dim:#8B90A0;
+  --term-green:#62E6C8;
+  --term-amber:#F2C879;
+  --shadow-sm:0 1px 2px rgba(27,29,41,.06), 0 2px 8px rgba(27,29,41,.05);
+  --shadow-md:0 8px 30px rgba(27,29,41,.10);
+  --shadow-lg:0 24px 60px rgba(27,29,41,.16);
+  --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  --sans:"Pretendard Variable",Pretendard,-apple-system,system-ui,sans-serif;
+  --serif:"Newsreader",Georgia,serif;
+  --maxw:1180px;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+
+body{
+  font-family:var(--sans);
+  background:var(--paper);
+  color:var(--ink);
+  line-height:1.72;
+  font-size:17px;
+  letter-spacing:-.011em;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+  overflow-x:hidden;
+}
+
+/* Blueprint grid + grain background */
+body::before{
+  content:"";
+  position:fixed;inset:0;z-index:-2;
+  background-image:
+    linear-gradient(var(--line) 1px,transparent 1px),
+    linear-gradient(90deg,var(--line) 1px,transparent 1px);
+  background-size:34px 34px;
+  background-position:center;
+  -webkit-mask-image:radial-gradient(ellipse 120% 90% at 50% 0%,#000 35%,transparent 78%);
+  mask-image:radial-gradient(ellipse 120% 90% at 50% 0%,#000 35%,transparent 78%);
+  opacity:.6;
+  pointer-events:none;
+}
+body::after{
+  content:"";
+  position:fixed;inset:0;z-index:-1;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.035'/%3E%3C/svg%3E");
+  pointer-events:none;mix-blend-mode:multiply;
+}
+
+/* Scroll progress bar */
+#progress{
+  position:fixed;top:0;left:0;height:3px;width:0%;
+  background:linear-gradient(90deg,var(--teal),var(--teal-bright));
+  z-index:100;transition:width .08s linear;
+  box-shadow:0 0 12px rgba(19,162,148,.6);
+}
+
+a{color:var(--teal-ink);text-decoration:none;border-bottom:1px solid rgba(14,110,99,.32);transition:.18s}
+a:hover{color:var(--teal-bright);border-color:var(--teal-bright)}
+
+/* Layout shell */
+.shell{max-width:var(--maxw);margin:0 auto;padding:0 28px}
+
+/* ============ HERO ============ */
+.hero{position:relative;padding:74px 0 40px}
+.kicker{
+  font-family:var(--mono);font-size:12.5px;font-weight:600;letter-spacing:.18em;
+  text-transform:uppercase;color:var(--teal-ink);
+  display:inline-flex;align-items:center;gap:10px;
+  background:rgba(14,110,99,.08);border:1px solid rgba(14,110,99,.22);
+  padding:7px 14px;border-radius:100px;
+}
+.kicker .blink{width:7px;height:7px;border-radius:50%;background:var(--teal-bright);box-shadow:0 0 0 0 rgba(19,162,148,.6);animation:blink 2.4s infinite}
+@keyframes blink{0%{box-shadow:0 0 0 0 rgba(19,162,148,.5)}70%{box-shadow:0 0 0 8px rgba(19,162,148,0)}100%{box-shadow:0 0 0 0 rgba(19,162,148,0)}}
+
+.hero h1{
+  font-size:clamp(2.3rem,5.6vw,4rem);
+  line-height:1.08;font-weight:800;letter-spacing:-.03em;
+  margin:26px 0 0;max-width:16ch;
+}
+.hero h1 .em{
+  font-family:var(--serif);font-style:italic;font-weight:500;
+  color:var(--teal);letter-spacing:-.01em;
+}
+.hero .lede{
+  font-size:clamp(1.05rem,2.1vw,1.32rem);
+  color:var(--ink-soft);margin-top:26px;max-width:54ch;line-height:1.66;font-weight:430;
+}
+.hero .meta-row{
+  display:flex;flex-wrap:wrap;gap:10px;margin-top:32px;
+}
+.tag{
+  font-family:var(--mono);font-size:12.5px;font-weight:500;
+  background:var(--paper-card);border:1px solid var(--line-strong);
+  padding:8px 13px;border-radius:8px;color:var(--ink-soft);
+  display:inline-flex;align-items:center;gap:7px;box-shadow:var(--shadow-sm);
+}
+.tag b{color:var(--ink);font-weight:600}
+.tag .ic{color:var(--teal)}
+
+/* Journey map */
+.journey{
+  margin:54px 0 8px;
+  display:grid;grid-template-columns:repeat(5,1fr);gap:14px;position:relative;
+}
+.journey::before{
+  content:"";position:absolute;top:33px;left:8%;right:8%;height:2px;
+  background:repeating-linear-gradient(90deg,var(--line-strong) 0 7px,transparent 7px 14px);
+  z-index:0;
+}
+.jstep{position:relative;z-index:1;text-align:center}
+.jstep .num{
+  width:66px;height:66px;margin:0 auto 14px;border-radius:18px;
+  background:var(--paper-card);border:1.5px solid var(--line-strong);
+  display:flex;align-items:center;justify-content:center;
+  font-size:26px;box-shadow:var(--shadow-sm);transition:.3s;
+}
+.jstep:hover .num{transform:translateY(-4px);border-color:var(--teal);box-shadow:var(--shadow-md)}
+.jstep .jt{font-weight:700;font-size:15px;letter-spacing:-.02em}
+.jstep .jd{font-size:13px;color:var(--ink-faint);margin-top:3px;line-height:1.45}
+
+/* ============ MAIN GRID (sidebar + content) ============ */
+.layout{display:grid;grid-template-columns:228px 1fr;gap:48px;margin-top:30px;align-items:start}
+
+/* Sidebar nav */
+.sidebar{position:sticky;top:24px;align-self:start}
+.sidebar .nav-title{
+  font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--ink-faint);font-weight:600;margin:0 0 14px 14px;
+}
+.nav a{
+  display:flex;gap:12px;align-items:baseline;
+  padding:8px 14px;border-radius:9px;border:none;
+  color:var(--ink-soft);font-size:14.5px;font-weight:500;line-height:1.35;
+  transition:.16s;position:relative;
+}
+.nav a .n{font-family:var(--mono);font-size:11.5px;color:var(--ink-faint);font-weight:600;min-width:18px}
+.nav a:hover{background:var(--paper-card);color:var(--ink)}
+.nav a.active{background:var(--ink);color:#fff}
+.nav a.active .n{color:var(--teal-bright)}
+
+.sidebar .progress-card{
+  margin:20px 8px 0;padding:16px;border-radius:14px;
+  background:var(--paper-card);border:1px solid var(--line);box-shadow:var(--shadow-sm);
+}
+.progress-card .pc-top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px}
+.progress-card .pc-label{font-size:12px;color:var(--ink-faint);font-weight:600}
+.progress-card .pc-num{font-family:var(--mono);font-size:13px;font-weight:600;color:var(--teal-ink)}
+.progress-card .bar{height:7px;border-radius:100px;background:var(--paper-sunk);overflow:hidden}
+.progress-card .bar i{display:block;height:100%;width:0%;border-radius:100px;background:linear-gradient(90deg,var(--teal),var(--teal-bright));transition:width .4s cubic-bezier(.4,0,.2,1)}
+
+/* Content */
+.content{min-width:0;max-width:760px}
+
+section{padding:30px 0 16px;scroll-margin-top:24px}
+.sec-head{display:flex;align-items:center;gap:16px;margin-bottom:8px}
+.sec-num{
+  font-family:var(--mono);font-weight:700;font-size:14px;color:#fff;
+  background:var(--ink);width:34px;height:34px;border-radius:9px;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.sec-num.teal{background:var(--teal)}
+.sec-num.amber{background:var(--amber)}
+.sec-num.coral{background:var(--coral)}
+h2{font-size:clamp(1.55rem,3.2vw,2.05rem);font-weight:800;letter-spacing:-.025em;line-height:1.18}
+.sec-sub{color:var(--ink-soft);font-size:1.04rem;margin:10px 0 0;max-width:60ch}
+.time-pill{
+  font-family:var(--mono);font-size:11.5px;font-weight:600;color:var(--amber);
+  background:var(--amber-soft);padding:4px 10px;border-radius:100px;margin-left:auto;flex-shrink:0;
+  border:1px solid rgba(194,113,11,.25);
+}
+
+h3{font-size:1.16rem;font-weight:730;letter-spacing:-.02em;margin:30px 0 6px;display:flex;align-items:center;gap:9px}
+h3 .step-dot{font-family:var(--mono);font-size:13px;color:var(--teal);font-weight:700}
+p{margin:12px 0;color:#34364a}
+.content ul,.content ol{margin:12px 0 12px 4px;padding-left:22px}
+.content li{margin:7px 0;color:#34364a}
+strong{font-weight:680;color:var(--ink)}
+.hl{background:linear-gradient(transparent 58%,rgba(19,162,148,.26) 58%);padding:0 2px;font-weight:600}
+
+.divider{height:1px;background:var(--line);margin:46px 0;border:0;position:relative}
+.divider::after{content:"◆";position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);background:var(--paper);padding:0 14px;color:var(--ink-faint);font-size:10px}
+
+/* Why box */
+.why{
+  background:rgba(14,110,99,.06);border-left:3px solid var(--teal);
+  padding:13px 18px;border-radius:0 10px 10px 0;margin:16px 0;font-size:15px;color:var(--teal-ink);
+}
+.why b{color:var(--teal-ink)}
+
+/* Callout boxes */
+.box{border-radius:14px;padding:18px 20px;margin:22px 0;box-shadow:var(--shadow-sm);border:1px solid}
+.box .bt{font-weight:700;display:flex;align-items:center;gap:9px;font-size:15.5px;margin-bottom:4px}
+.box p{margin:6px 0}
+.box.tip{background:rgba(14,110,99,.07);border-color:rgba(14,110,99,.25)}
+.box.tip .bt{color:var(--teal-ink)}
+.box.warn{background:var(--amber-soft);border-color:rgba(194,113,11,.32)}
+.box.warn .bt{color:#8a4f06}
+.box.danger{background:var(--coral-soft);border-color:rgba(194,59,38,.32)}
+.box.danger .bt{color:#962b1a}
+.box .ic{font-size:18px}
+
+/* Terminal / code block */
+.code{border-radius:13px;overflow:hidden;margin:16px 0;box-shadow:var(--shadow-md);border:1px solid #2c2f3b}
+.code__bar{
+  background:var(--term-bar);display:flex;align-items:center;gap:8px;
+  padding:10px 14px;border-bottom:1px solid #2c2f3b;
+}
+.code__dots{display:flex;gap:6px}
+.code__dots i{width:11px;height:11px;border-radius:50%;display:block}
+.code__dots i:nth-child(1){background:#E5564B}
+.code__dots i:nth-child(2){background:#E8B53D}
+.code__dots i:nth-child(3){background:#54B85A}
+.code__lang{font-family:var(--mono);font-size:11.5px;color:var(--term-dim);font-weight:500;letter-spacing:.04em;margin-left:4px}
+.code__copy{
+  margin-left:auto;font-family:var(--mono);font-size:11.5px;font-weight:600;
+  background:#2f3340;color:var(--term-text);border:1px solid #3c4150;
+  padding:5px 12px;border-radius:7px;cursor:pointer;transition:.16s;
+}
+.code__copy:hover{background:#3a3f4e;color:#fff}
+.code__copy.done{background:var(--teal);border-color:var(--teal);color:#fff}
+.code pre{
+  background:var(--term-bg);color:var(--term-text);
+  padding:16px 18px;overflow-x:auto;font-family:var(--mono);
+  font-size:13.5px;line-height:1.85;
+}
+.code pre .c{color:var(--term-dim)}      /* comment */
+.code pre .p{color:var(--term-green)}    /* prompt/path */
+.code pre .k{color:var(--term-amber)}    /* keyword highlight */
+.code .out{color:var(--term-dim);font-style:normal}
+
+/* Inline code */
+code:not(pre code){
+  font-family:var(--mono);font-size:.86em;background:var(--paper-sunk);
+  padding:2px 6px;border-radius:5px;color:var(--teal-ink);border:1px solid var(--line);
+}
+
+/* Checklist */
+.checklist{list-style:none;padding:0;margin:18px 0}
+.checklist li{
+  display:flex;gap:13px;align-items:flex-start;padding:13px 16px;margin:8px 0;
+  background:var(--paper-card);border:1px solid var(--line);border-radius:11px;
+  cursor:pointer;transition:.18s;list-style:none;color:#34364a;
+}
+.checklist li:hover{border-color:var(--teal);box-shadow:var(--shadow-sm)}
+.checklist input{display:none}
+.checklist .cbox{
+  width:23px;height:23px;border-radius:7px;border:2px solid var(--line-strong);
+  flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;
+  transition:.18s;background:#fff;
+}
+.checklist .cbox svg{width:14px;height:14px;stroke:#fff;stroke-width:3.4;fill:none;stroke-dasharray:24;stroke-dashoffset:24;transition:stroke-dashoffset .25s .05s}
+.checklist input:checked + .cbox{background:var(--teal);border-color:var(--teal)}
+.checklist input:checked + .cbox svg{stroke-dashoffset:0}
+.checklist input:checked ~ .ctext{color:var(--ink-faint);text-decoration:line-through;text-decoration-color:var(--line-strong)}
+.checklist .ctext{font-size:15px;line-height:1.5}
+.checklist .ctext b{color:var(--ink)}
+.checklist .day{font-family:var(--mono);font-size:11px;color:var(--teal);font-weight:600;letter-spacing:.06em}
+
+/* Tables */
+.tw{overflow-x:auto;margin:18px 0;border-radius:12px;border:1px solid var(--line);box-shadow:var(--shadow-sm)}
+table{width:100%;border-collapse:collapse;font-size:14.5px;background:var(--paper-card);min-width:480px}
+th{background:var(--ink);color:#fff;text-align:left;padding:12px 16px;font-weight:600;font-size:13px;letter-spacing:.01em}
+td{padding:12px 16px;border-top:1px solid var(--line);color:#3a3c50;vertical-align:top}
+tr:nth-child(even) td{background:rgba(27,29,41,.018)}
+td code{font-size:.82em}
+
+/* Definition chips */
+.defs{display:grid;grid-template-columns:repeat(auto-fit,minmax(168px,1fr));gap:12px;margin:20px 0}
+.def{background:var(--paper-card);border:1px solid var(--line);border-radius:12px;padding:14px 16px;box-shadow:var(--shadow-sm);transition:.2s}
+.def:hover{transform:translateY(-3px);box-shadow:var(--shadow-md);border-color:var(--teal)}
+.def .dterm{font-family:var(--mono);font-weight:700;font-size:13.5px;color:var(--teal-ink);margin-bottom:4px}
+.def .ddef{font-size:13.5px;color:var(--ink-soft);line-height:1.5}
+
+/* Routine cards */
+.routine{counter-reset:r;margin:20px 0}
+.rc{
+  display:flex;gap:16px;align-items:flex-start;padding:16px 18px;margin:10px 0;
+  background:var(--paper-card);border:1px solid var(--line);border-radius:13px;
+  box-shadow:var(--shadow-sm);position:relative;transition:.2s;
+}
+.rc:hover{border-color:var(--teal);box-shadow:var(--shadow-md)}
+.rc::before{
+  counter-increment:r;content:counter(r);
+  font-family:var(--mono);font-weight:700;font-size:15px;color:#fff;background:var(--teal);
+  width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.rc .rcb{font-weight:700;font-size:15px}
+.rc .rcd{font-size:14px;color:var(--ink-soft);margin-top:2px}
+.rc .rcd code{font-size:.85em}
+
+/* Final CTA */
+.outro{
+  margin:50px 0 30px;padding:44px 40px;border-radius:22px;
+  background:linear-gradient(150deg,#1B1D29,#222639 60%,#0E2421);
+  color:#EDEFF4;box-shadow:var(--shadow-lg);position:relative;overflow:hidden;
+}
+.outro::before{
+  content:"";position:absolute;inset:0;
+  background-image:linear-gradient(rgba(255,255,255,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.04) 1px,transparent 1px);
+  background-size:30px 30px;-webkit-mask-image:radial-gradient(circle at 80% 10%,#000,transparent 70%);mask-image:radial-gradient(circle at 80% 10%,#000,transparent 70%);
+}
+.outro h2{color:#fff;position:relative}
+.outro p{color:#C3C7D4;position:relative;max-width:54ch}
+.outro .links{display:flex;flex-wrap:wrap;gap:12px;margin-top:24px;position:relative}
+.outro .links a{
+  background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.16);color:#fff;
+  padding:11px 18px;border-radius:11px;font-weight:600;font-size:14.5px;
+  display:inline-flex;align-items:center;gap:8px;transition:.2s;
+}
+.outro .links a:hover{background:var(--teal);border-color:var(--teal);transform:translateY(-2px)}
+.outro .links a.solid{background:var(--teal-bright);border-color:var(--teal-bright)}
+.outro .links a.solid:hover{background:#16C2B0}
+
+footer{text-align:center;padding:36px 0 60px;color:var(--ink-faint);font-size:13.5px;font-family:var(--mono)}
+footer a{color:var(--ink-soft)}
+
+/* Reveal animation */
+.reveal{opacity:0;transform:translateY(22px);transition:opacity .6s cubic-bezier(.2,.6,.2,1),transform .6s cubic-bezier(.2,.6,.2,1)}
+.reveal.in{opacity:1;transform:none}
+/* Safety: if JS is off/failed or when printing, never hide content */
+html.no-js .reveal{opacity:1;transform:none}
+@media print{.reveal{opacity:1!important;transform:none!important}}
+@media (prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;transition:none}}
+
+/* Back to top */
+#top{
+  position:fixed;right:24px;bottom:24px;z-index:50;
+  width:46px;height:46px;border-radius:13px;border:1px solid var(--line-strong);
+  background:var(--paper-card);box-shadow:var(--shadow-md);cursor:pointer;
+  display:flex;align-items:center;justify-content:center;color:var(--ink);
+  opacity:0;transform:translateY(12px) scale(.9);pointer-events:none;transition:.3s;font-size:18px;
+}
+#top.show{opacity:1;transform:none;pointer-events:auto}
+#top:hover{background:var(--ink);color:#fff;border-color:var(--ink)}
+
+/* Responsive */
+@media (max-width:980px){
+  .layout{grid-template-columns:1fr;gap:0}
+  .sidebar{display:none}
+  .content{max-width:none}
+  .journey{grid-template-columns:repeat(2,1fr);gap:22px 14px}
+  .journey::before{display:none}
+}
+@media (max-width:560px){
+  body{font-size:16px}
+  .shell{padding:0 18px}
+  .hero{padding:46px 0 26px}
+  .journey{grid-template-columns:1fr}
+  .sec-head{flex-wrap:wrap}
+  .time-pill{margin-left:0;order:3;flex-basis:100%}
+  .outro{padding:30px 22px}
+}
+</style>
+</head>
+<body>
+
+<div id="progress"></div>
+
+<div class="shell">
+
+  <!-- ===================== HERO ===================== -->
+  <header class="hero">
+    <span class="kicker"><span class="blink"></span>ONBOARDING · CI-COURSE · 개발원가 시뮬레이션</span>
+    <h1>GitHub도 Claude도 처음이신가요?<br /><span class="em">괜찮습니다.</span></h1>
+    <p class="lede">이 가이드 하나로 <strong>계정 가입 → 도구 설치 → 프로젝트 내려받기 → 코드 수정 → 라이브 배포</strong>까지, 한 번도 안 해보셨어도 한 단계씩 그대로 따라오시면 됩니다. 어려운 용어는 그때그때 풀어드립니다.</p>
+    <div class="meta-row">
+      <span class="tag"><span class="ic">◈</span><b>프로젝트</b> LG Display CI 원가 시뮬레이션 게임</span>
+      <span class="tag"><span class="ic">⌘</span><b>기술</b> Next.js · TypeScript · AWS</span>
+      <span class="tag"><span class="ic">⊞</span> Windows 기준</span>
+      <span class="tag"><span class="ic">◷</span> 처음 세팅 약 1~2시간</span>
+    </div>
+
+    <!-- Journey map -->
+    <nav class="journey" aria-label="전체 여정 요약">
+      <a class="jstep" href="#s1"><div class="num">🪪</div><div class="jt">계정</div><div class="jd">GitHub · Claude 가입</div></a>
+      <a class="jstep" href="#s2"><div class="num">🧰</div><div class="jt">도구 설치</div><div class="jd">Git · Node · Claude Code</div></a>
+      <a class="jstep" href="#s4"><div class="num">📥</div><div class="jt">받기</div><div class="jd">clone · pull</div></a>
+      <a class="jstep" href="#s6"><div class="num">🤖</div><div class="jt">수정 · 빌드</div><div class="jd">Claude Code · npm</div></a>
+      <a class="jstep" href="#s7"><div class="num">🚀</div><div class="jt">배포</div><div class="jd">push → 자동 라이브</div></a>
+    </nav>
+  </header>
+
+  <!-- ===================== LAYOUT ===================== -->
+  <div class="layout">
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <p class="nav-title">목차</p>
+      <nav class="nav">
+        <a href="#s0"><span class="n">00</span>큰 그림 먼저 보기</a>
+        <a href="#s1"><span class="n">01</span>GitHub 가입 &amp; 권한</a>
+        <a href="#s2"><span class="n">02</span>도구 3가지 설치</a>
+        <a href="#s3"><span class="n">03</span>Claude Code 준비</a>
+        <a href="#s4"><span class="n">04</span>프로젝트 내려받기</a>
+        <a href="#s5"><span class="n">05</span>로컬에서 실행</a>
+        <a href="#s6"><span class="n">06</span>수정하고 빌드</a>
+        <a href="#s7"><span class="n">07</span>저장하고 배포</a>
+        <a href="#s8"><span class="n">08</span>매일 작업 루틴</a>
+        <a href="#s9"><span class="n">09</span>문제 해결</a>
+        <a href="#s10"><span class="n">10</span>보안 · 절대 금지</a>
+        <a href="#s11"><span class="n">11</span>체크리스트 &amp; 자료</a>
+      </nav>
+      <div class="progress-card">
+        <div class="pc-top"><span class="pc-label">내 진행률</span><span class="pc-num" id="pcNum">0%</span></div>
+        <div class="bar"><i id="pcBar"></i></div>
+      </div>
+    </aside>
+
+    <!-- Content -->
+    <main class="content">
+
+      <!-- ===== 00 큰 그림 ===== -->
+      <section id="s0" class="reveal">
+        <div class="sec-head"><span class="sec-num teal">00</span><h2>먼저, 큰 그림을 봅시다</h2></div>
+        <p class="sec-sub">명령어를 외울 필요는 없습니다. 지금 우리가 무엇을, 왜 하는지 흐름만 잡으면 나머지는 복사·붙여넣기로 따라올 수 있습니다.</p>
+
+        <div class="why"><b>이 프로젝트는?</b> &nbsp;LG Display CI(원가혁신) 과정 교육생이 <strong>개발원가 계산을 게임으로 익히는 웹 시뮬레이션</strong>입니다. 우리가 만질 코드는 이 웹사이트이고, 최종 목표는 <strong>고친 내용을 실제 라이브 사이트에 반영</strong>하는 것입니다.</div>
+
+        <h3>이번에 익히는 5개의 동작</h3>
+        <p>아래 다섯 가지가 전부입니다. 각각이 뒤 섹션의 한 단계와 1:1로 연결됩니다.</p>
+        <div class="routine">
+          <div class="rc"><div><div class="rcb">계정과 도구를 준비한다</div><div class="rcd">GitHub·Claude에 가입하고, 컴퓨터에 Git·Node·Claude Code를 깐다. <b>딱 한 번만</b> 하면 됩니다.</div></div></div>
+          <div class="rc"><div><div class="rcb">프로젝트를 내려받는다 <code>clone</code></div><div class="rcd">GitHub라는 클라우드 창고에 보관된 코드 전체를 내 컴퓨터로 복제합니다.</div></div></div>
+          <div class="rc"><div><div class="rcb">내 컴퓨터에서 실행해 본다 <code>npm run dev</code></div><div class="rcd">고치기 전에, 사이트가 내 컴퓨터에서 잘 뜨는지 눈으로 확인합니다.</div></div></div>
+          <div class="rc"><div><div class="rcb">Claude Code로 고치고 점검한다</div><div class="rcd">AI에게 한국어로 "이렇게 바꿔줘"라고 부탁하면 코드를 수정해 줍니다. 그 뒤 빌드로 이상 없는지 확인합니다.</div></div></div>
+          <div class="rc"><div><div class="rcb">올리면 자동으로 배포된다 <code>push</code></div><div class="rcd">고친 내용을 GitHub에 올리면(push), AWS가 알아서 라이브 사이트에 반영합니다.</div></div></div>
+        </div>
+
+        <h3>먼저 알아둘 용어 8개</h3>
+        <div class="defs">
+          <div class="def"><div class="dterm">GitHub</div><div class="ddef">코드를 보관·공유하는 클라우드 창고. 여기에 프로젝트가 저장돼 있습니다.</div></div>
+          <div class="def"><div class="dterm">Git</div><div class="ddef">내 컴퓨터에서 코드 변경 이력을 관리하는 도구. GitHub와 짝꿍입니다.</div></div>
+          <div class="def"><div class="dterm">clone</div><div class="ddef">창고의 프로젝트를 통째로 내 컴퓨터에 복제(처음 1회).</div></div>
+          <div class="def"><div class="dterm">pull</div><div class="ddef">창고의 최신 변경분만 내 컴퓨터로 당겨받기(작업 전마다).</div></div>
+          <div class="def"><div class="dterm">commit</div><div class="ddef">내 변경을 "한 묶음"으로 저장하며 설명을 붙이는 것.</div></div>
+          <div class="def"><div class="dterm">push</div><div class="ddef">내 commit을 창고(GitHub)로 올리기. 여기서 자동 배포가 시작됩니다.</div></div>
+          <div class="def"><div class="dterm">빌드 build</div><div class="ddef">사람이 쓴 코드를 브라우저가 실행 가능한 형태로 변환·검증.</div></div>
+          <div class="def"><div class="dterm">Claude Code</div><div class="ddef">터미널에서 한국어로 부탁하면 코드를 읽고 고쳐주는 AI 도우미.</div></div>
+        </div>
+
+        <div class="box tip"><div class="bt"><span class="ic">💡</span>터미널이 뭐죠?</div><p>까만 화면에 글자로 명령을 입력하는 창입니다. Windows에서는 <strong>PowerShell</strong>이 그 역할을 합니다. 시작 메뉴에서 <code>PowerShell</code>을 검색해 실행하면 됩니다. 이 가이드의 까만 코드 상자는 전부 이 PowerShell 창에 붙여넣는 명령입니다. (상자 오른쪽 <b>복사</b> 버튼을 누르면 편합니다.)</p></div>
+      </section>
+
+      <hr class="divider" />
+
+      <!-- ===== 01 GitHub ===== -->
+      <section id="s1" class="reveal">
+        <div class="sec-head"><span class="sec-num">01</span><h2>GitHub 가입 &amp; 권한 받기</h2><span class="time-pill">약 10분</span></div>
+        <p class="sec-sub">코드 창고에 들어갈 출입증을 만드는 단계입니다. 그리고 우리 프로젝트에 글을 쓸 수 있는 권한까지 받습니다.</p>
+
+        <h3><span class="step-dot">1.1</span>계정 만들기</h3>
+        <ol>
+          <li><a href="https://github.com/signup" target="_blank" rel="noopener">github.com/signup</a> 접속</li>
+          <li><strong>이메일 → 비밀번호 → 사용자 이름(username)</strong> 순서로 입력. 이 username은 동료들에게 알려줄 이름이니 적어두세요.</li>
+          <li>가입 이메일로 온 <strong>인증 코드</strong>를 입력하면 완료.</li>
+        </ol>
+        <div class="box tip"><div class="bt"><span class="ic">📝</span>적어둘 것</div><p>내 GitHub <strong>username</strong>과 가입 <strong>이메일</strong>. 다음 단계와 권한 요청에 씁니다.</p></div>
+
+        <h3><span class="step-dot">1.2</span>프로젝트 저장소(repo) 권한 요청</h3>
+        <p>우리 프로젝트는 <code>github.com/Koolsangon/CI-Course</code> 에 있습니다. <strong>고친 코드를 올리려면(push) 쓰기 권한</strong>이 필요합니다.</p>
+        <div class="why"><b>이렇게 요청하세요</b> &nbsp;원작자(Sam)에게 메시지로: <em>"제 GitHub username은 OOO 입니다. <code>Koolsangon/CI-Course</code> 저장소에 Collaborator(쓰기) 권한 부탁드립니다."</em> → 초대 수락 이메일이 오면 <strong>Accept</strong>를 누르면 끝.</div>
+        <div class="box warn"><div class="bt"><span class="ic">⚠️</span>권한이 없어도 받기는 됩니다</div><p>이 저장소는 공개라 <strong>clone(받기)·pull(갱신)은 권한 없이도</strong> 가능합니다. 다만 <strong>push(올리기)</strong>는 Collaborator 권한이 있어야 하니, 배포까지 하려면 1.2를 꼭 완료하세요.</p></div>
+      </section>
+
+      <hr class="divider" />
+
+      <!-- ===== 02 Tools ===== -->
+      <section id="s2" class="reveal">
+        <div class="sec-head"><span class="sec-num">02</span><h2>도구 3가지 설치하기</h2><span class="time-pill">약 20분</span></div>
+        <p class="sec-sub">Git · Node.js · (선택)VS Code. 모두 "다음 → 다음"으로 설치되는 일반 프로그램입니다. 딱 한 번만 깔면 됩니다.</p>
+
+        <h3><span class="step-dot">2.1</span>Git 설치 — 버전관리 도구</h3>
+        <ol>
+          <li><a href="https://git-scm.com/download/win" target="_blank" rel="noopener">git-scm.com/download/win</a> 에서 <strong>64-bit 설치 파일</strong> 다운로드</li>
+          <li>실행 후 옵션은 <strong>전부 기본값으로 Next</strong> 눌러 설치 (바꿀 것 없습니다)</li>
+          <li>설치 후 <strong>PowerShell을 새로 열어</strong> 확인:</li>
+        </ol>
+        <div class="code" data-lang="PowerShell">
+          <pre><code><span class="c"># 버전 번호가 나오면 설치 성공</span>
+git --version
+<span class="out">git version 2.47.0.windows.1</span></code></pre>
+        </div>
+
+        <h3><span class="step-dot">2.2</span>Node.js 설치 — 프로젝트 실행 엔진</h3>
+        <p>이 프로젝트는 <strong>Node.js 20 버전</strong>이 필요합니다. <code>npm</code>(패키지 관리 도구)도 함께 깔립니다.</p>
+        <ol>
+          <li><a href="https://nodejs.org" target="_blank" rel="noopener">nodejs.org</a> 접속 → <strong>"LTS" 버전</strong>(왼쪽, 안정 버전) 다운로드</li>
+          <li>"다음 → 다음"으로 설치</li>
+          <li>PowerShell을 새로 열어 확인:</li>
+        </ol>
+        <div class="code" data-lang="PowerShell">
+          <pre><code>node --version
+<span class="out">v20.18.0</span>
+npm --version
+<span class="out">10.8.2</span></code></pre>
+        </div>
+        <div class="box tip"><div class="bt"><span class="ic">💡</span>v20이 아니어도 v20 이상이면 보통 OK</div><p>숫자가 <code>v20</code> 또는 <code>v22</code>처럼 나오면 됩니다. 명령이 "인식되지 않습니다"라고 나오면 PowerShell 창을 <strong>완전히 닫았다 다시 여세요</strong>. 설치 직후엔 새 창에서만 인식됩니다.</p></div>
+
+        <h3><span class="step-dot">2.3</span>Git 최초 1회 설정</h3>
+        <p>내가 누구인지 Git에 알려줍니다. (커밋에 이름표로 들어갑니다. GitHub 가입 정보와 같게 적으세요.)</p>
+        <div class="code" data-lang="PowerShell">
+          <pre><code>git config --global user.name <span class="k">"홍길동"</span>
+git config --global user.email <span class="k">"my-email@example.com"</span></code></pre>
+        </div>
+
+        <h3><span class="step-dot">2.4</span>(선택) VS Code — 코드 편집기</h3>
+        <p>꼭 필요하진 않지만, 코드를 눈으로 보기 편합니다. <a href="https://code.visualstudio.com" target="_blank" rel="noopener">code.visualstudio.com</a> 에서 설치하면 됩니다.</p>
+      </section>
+
+      <hr class="divider" />
+
+      <!-- ===== 03 Claude Code ===== -->
+      <section id="s3" class="reveal">
+        <div class="sec-head"><span class="sec-num">03</span><h2>Claude Code 준비하기</h2><span class="time-pill">약 15분</span></div>
+        <p class="sec-sub">코드를 직접 외워 짤 필요 없이, 한국어로 부탁하면 고쳐주는 AI 도우미를 설치합니다.</p>
+
+        <h3><span class="step-dot">3.1</span>Claude 계정 만들기</h3>
+        <ol>
+          <li><a href="https://claude.ai" target="_blank" rel="noopener">claude.ai</a> 접속 → Google 계정 또는 이메일로 가입</li>
+          <li>Claude Code를 원활히 쓰려면 <strong>Claude Pro(또는 Max) 구독</strong>을 권장합니다. <em>(회사에서 계정/요금제를 제공한다면 그 안내를 따르세요.)</em></li>
+        </ol>
+        <div class="box tip"><div class="bt"><span class="ic">💳</span>요금제는 회사 정책 확인</div><p>구독 결제 전, 회사에서 지원하는 Claude 계정이나 API 키가 있는지 먼저 확인하세요. 원작자(Sam)에게 물어보면 됩니다.</p></div>
+
+        <h3><span class="step-dot">3.2</span>Claude Code 설치</h3>
+        <p>PowerShell에 아래를 붙여넣습니다. <code>-g</code>는 "컴퓨터 전체에서 쓸 수 있게 설치"라는 뜻입니다.</p>
+        <div class="code" data-lang="PowerShell">
+          <pre><code>npm install -g @anthropic-ai/claude-code</code></pre>
+        </div>
+
+        <h3><span class="step-dot">3.3</span>실행하고 로그인</h3>
+        <p>아무 폴더에서나 <code>claude</code> 라고 치면 실행됩니다. 처음 실행하면 로그인 안내가 뜹니다.</p>
+        <div class="code" data-lang="PowerShell">
+          <pre><code>claude
+<span class="out"># 안내에 따라 브라우저가 열리면 Claude 계정으로 로그인 → 인증 완료</span></code></pre>
+        </div>
+        <div class="box tip"><div class="bt"><span class="ic">🔗</span>버전은 계속 바뀝니다</div><p>설치/로그인 방식이 바뀌면 공식 문서를 보세요 → <a href="https://docs.claude.com/en/docs/claude-code" target="_blank" rel="noopener">docs.claude.com/en/docs/claude-code</a>. 종료는 <code>/exit</code> 또는 <code>Ctrl + C</code> 입니다.</p></div>
+      </section>
+
+      <hr class="divider" />
+
+      <!-- ===== 04 clone ===== -->
+      <section id="s4" class="reveal">
+        <div class="sec-head"><span class="sec-num teal">04</span><h2>프로젝트 내려받기</h2><span class="time-pill">약 10분</span></div>
+        <p class="sec-sub">드디어 코드를 내 컴퓨터로 가져옵니다. 처음엔 <code>clone</code>(통째 복제), 이후엔 <code>pull</code>(최신만 갱신)입니다.</p>
+
+        <h3><span class="step-dot">4.1</span>작업 폴더 정하기</h3>
+        <p>받을 위치를 정합니다. <strong>경로에 한글·공백이 없는 영어 폴더</strong>를 권장합니다(도구 오류가 적습니다). 예: <code>C:\Work</code></p>
+        <div class="code" data-lang="PowerShell">
+          <pre><code><span class="c"># C 드라이브에 Work 폴더를 만들고 그 안으로 이동</span>
+mkdir C:\Work
+cd C:\Work</code></pre>
+        </div>
+
+        <h3><span class="step-dot">4.2</span>복제하기 (clone)</h3>
+        <div class="code" data-lang="PowerShell">
+          <pre><code>git clone https://github.com/Koolsangon/CI-Course.git
+<span class="out"># → C:\Work\CI-Course 폴더가 생깁니다</span></code></pre>
+        </div>
+        <p>받은 뒤, 우리가 실제로 작업할 <strong>메인 프로젝트 폴더</strong>로 이동합니다:</p>
+        <div class="code" data-lang="PowerShell">
+          <pre><code>cd CI-Course\projects\cost-sim-v2.1</code></pre>
+        </div>
+        <div class="why"><b>왜 이 폴더인가요?</b> &nbsp;저장소 안에는 여러 버전이 있지만, <strong>현재 살아있는(라이브) 버전은 <code>projects/cost-sim-v2.1</code></strong> 입니다. 앞으로 모든 명령은 이 폴더 안에서 실행합니다.</div>
+
+        <h3><span class="step-dot">4.3</span>나중에 최신 받기 (pull)</h3>
+        <p>다른 사람이(또는 원작자가) 코드를 바꿨을 수 있습니다. <strong>작업을 시작하기 전엔 항상</strong> 최신을 당겨받으세요.</p>
+        <div class="code" data-lang="PowerShell">
+          <pre><code><span class="c"># CI-Course 폴더 안 어디서든</span>
+git pull</code></pre>
+        </div>
+
+        <div class="box danger"><div class="bt"><span class="ic">🔐</span>AWS 키 파일은 별도로 받으세요</div><p>AWS 접속에 쓰는 <code>sam-cli_accessKeys.csv</code> 같은 비밀 파일은 <strong>보안상 GitHub에 올라가 있지 않습니다</strong>(이미 차단 설정됨). 원작자에게 <strong>이메일·메신저 등 별도 채널</strong>로 받아 <code>CI-Course</code> 폴더에 두세요. 이 파일은 <strong>절대 push하면 안 됩니다.</strong></p></div>
+      </section>
+
+      <hr class="divider" />
+
+      <!-- ===== 05 run ===== -->
+      <section id="s5" class="reveal">
+        <div class="sec-head"><span class="sec-num teal">05</span><h2>내 컴퓨터에서 실행해 보기</h2><span class="time-pill">약 10분</span></div>
+        <p class="sec-sub">고치기 전에, 사이트가 내 컴퓨터에서 정상으로 뜨는지 먼저 확인합니다. 이게 되면 환경 세팅은 성공입니다.</p>
+
+        <h3><span class="step-dot">5.1</span>부품(라이브러리) 설치 — <code>npm ci</code></h3>
+        <p>프로젝트가 쓰는 외부 부품들을 한 번에 내려받습니다. <strong>처음 1회</strong>, 그리고 부품 목록이 바뀌었을 때 실행합니다. (몇 분 걸릴 수 있어요.)</p>
+        <div class="code" data-lang="PowerShell">
+          <pre><code><span class="c"># 반드시 cost-sim-v2.1 폴더 안에서</span>
+npm ci</code></pre>
+        </div>
+
+        <h3><span class="step-dot">5.2</span>개발 서버 켜기 — <code>npm run dev</code></h3>
+        <div class="code" data-lang="PowerShell">
+          <pre><code>npm run dev
+<span class="out">▲ Next.js 14.2.15
+- Local:  http://localhost:3000</span></code></pre>
+        </div>
+        <p>브라우저를 열고 주소창에 <a href="http://localhost:3000" target="_blank" rel="noopener">http://localhost:3000</a> 을 입력하세요. 게임 화면이 뜨면 <span class="hl">성공입니다 🎉</span></p>
+        <div class="box tip"><div class="bt"><span class="ic">⏹️</span>서버 끄기</div><p>실행 중인 PowerShell 창에서 <code>Ctrl + C</code> 를 누르면 서버가 꺼집니다. 다시 켜려면 <code>npm run dev</code> 를 또 입력하면 됩니다.</p></div>
+      </section>
+
+      <hr class="divider" />
+
+      <!-- ===== 06 edit + build ===== -->
+      <section id="s6" class="reveal">
+        <div class="sec-head"><span class="sec-num">06</span><h2>Claude Code로 수정하고 빌드</h2><span class="time-pill">핵심</span></div>
+        <p class="sec-sub">이제 진짜 수정·보완 작업입니다. 코드를 직접 짜는 게 아니라, AI에게 한국어로 부탁하고 결과를 확인합니다.</p>
+
+        <h3><span class="step-dot">6.1</span>Claude Code 켜기</h3>
+        <div class="code" data-lang="PowerShell">
+          <pre><code><span class="c"># cost-sim-v2.1 폴더 안에서 실행해야 이 프로젝트를 이해합니다</span>
+cd C:\Work\CI-Course\projects\cost-sim-v2.1
+claude</code></pre>
+        </div>
+
+        <h3><span class="step-dot">6.2</span>한국어로 부탁하기</h3>
+        <p>그냥 하고 싶은 걸 말로 적으면 됩니다. Claude가 관련 파일을 찾아 고쳐줍니다.</p>
+        <div class="code" data-lang="Claude Code (예시 프롬프트)">
+          <pre><code><span class="p">&gt;</span> 메인 화면의 게임 제목을 "개발원가 워게임"으로 바꿔줘
+<span class="p">&gt;</span> 라운드 제한시간 기본값을 10분에서 12분으로 바꿔줘
+<span class="p">&gt;</span> 시작 버튼 색을 더 진한 초록색으로 바꿔줘
+<span class="p">&gt;</span> 방금 바꾼 내용 빌드해서 문제없는지 확인해줘</code></pre>
+        </div>
+        <div class="box tip"><div class="bt"><span class="ic">🤝</span>Claude가 명령어도 대신 실행해 줍니다</div><p>아래 6.3의 검증 명령(<code>npm run build</code> 등)을 외우기 부담스러우면, Claude에게 <strong>"빌드해서 통과하는지 확인해줘"</strong> 라고 부탁하세요. Claude가 직접 실행하고 결과를 알려줍니다. 파일을 바꾸기 전에는 <strong>무엇을 바꿀지 먼저 보여주고 승인</strong>을 받습니다.</p></div>
+
+        <h3><span class="step-dot">6.3</span>바꾼 뒤 3종 점검 (중요)</h3>
+        <p>코드를 바꿨으면 올리기 전에 이상 없는지 꼭 확인합니다. 셋 다 통과해야 안전합니다.</p>
+        <div class="code" data-lang="PowerShell">
+          <pre><code>npm run typecheck   <span class="c"># 타입 오류 검사 (0 errors 목표)</span>
+npm test            <span class="c"># 자동 테스트 (전부 PASS 목표)</span>
+npm run build       <span class="c"># 실제 배포용 빌드가 되는지 (Compiled 성공)</span></code></pre>
+        </div>
+        <div class="box danger"><div class="bt"><span class="ic">⛔</span>여기는 건드리지 마세요 — <code>lib/cost-engine/</code></div><p>원가를 계산하는 <strong>핵심 로직</strong>입니다. 27개의 "정답 검증(골든 픽스처)"이 걸려 있어, 잘못 손대면 게임 채점이 틀어집니다. Claude에게도 <em>"<code>lib/cost-engine</code> 폴더는 수정하지 말고 진행해줘"</em> 라고 미리 일러두세요.</p></div>
+      </section>
+
+      <hr class="divider" />
+
+      <!-- ===== 07 deploy ===== -->
+      <section id="s7" class="reveal">
+        <div class="sec-head"><span class="sec-num teal">07</span><h2>저장하고 배포하기</h2><span class="time-pill">약 5분 + 빌드 대기</span></div>
+        <p class="sec-sub">고친 내용을 GitHub에 올리면 끝입니다. 그 다음은 AWS가 <strong>자동으로</strong> 라이브 사이트에 반영합니다.</p>
+
+        <h3><span class="step-dot">7.1</span>변경 저장 (add → commit)</h3>
+        <div class="code" data-lang="PowerShell">
+          <pre><code><span class="c"># 1) 바뀐 파일 전부 담기</span>
+git add .
+
+<span class="c"># 2) 무엇을 바꿨는지 설명을 붙여 한 묶음으로 저장</span>
+git commit -m <span class="k">"제목 문구 수정 및 제한시간 12분으로 변경"</span></code></pre>
+        </div>
+
+        <h3><span class="step-dot">7.2</span>올리기 (push)</h3>
+        <div class="code" data-lang="PowerShell">
+          <pre><code>git push</code></pre>
+        </div>
+        <div class="why"><b>여기서 자동 배포가 시작됩니다</b> &nbsp;<code>master</code> 브랜치에 push되면 <strong>AWS Amplify</strong>가 변경을 감지해 알아서 빌드하고 라이브에 반영합니다. 보통 <strong>몇 분</strong> 걸립니다.</div>
+
+        <h3><span class="step-dot">7.3</span>배포 확인</h3>
+        <ul>
+          <li><strong>라이브 사이트</strong>에서 결과 확인 → <a href="https://master.d26yr76roz76fk.amplifyapp.com" target="_blank" rel="noopener">master.d26yr76roz76fk.amplifyapp.com</a></li>
+          <li>진행 상태가 궁금하면 <strong>AWS Amplify 콘솔</strong>에서 빌드 로그를 볼 수 있습니다 (앱 ID <code>d26yr76roz76fk</code>).</li>
+        </ul>
+        <div class="box warn"><div class="bt"><span class="ic">⚠️</span>처음 push할 때</div><p>GitHub 로그인 창이 뜰 수 있습니다. <strong>GitHub 계정으로 로그인</strong>하면 이후엔 기억됩니다. "권한 없음(403)" 오류가 나면 <strong>01.2의 Collaborator 권한</strong>이 아직 안 된 것이니 원작자에게 확인하세요.</p></div>
+        <div class="box danger"><div class="bt"><span class="ic">🚫</span>절대 금지: <code>git push --force</code></div><p>다른 사람의 작업을 덮어쓰며 이력을 망가뜨릴 수 있습니다. 이 명령은 <strong>절대 사용하지 마세요.</strong></p></div>
+      </section>
+
+      <hr class="divider" />
+
+      <!-- ===== 08 routine ===== -->
+      <section id="s8" class="reveal">
+        <div class="sec-head"><span class="sec-num teal">08</span><h2>이제부터 매일 작업 루틴</h2><span class="time-pill">반복</span></div>
+        <p class="sec-sub">처음 세팅(01~03)은 끝났습니다. 다음부터는 <strong>이 6단계만 반복</strong>하면 됩니다. 인쇄해서 모니터 옆에 붙여두세요.</p>
+        <div class="routine">
+          <div class="rc"><div><div class="rcb">최신 받기</div><div class="rcd"><code>git pull</code> — 시작 전 항상. 남이 바꾼 걸 먼저 당겨받습니다.</div></div></div>
+          <div class="rc"><div><div class="rcb">(필요시) 부품 갱신</div><div class="rcd"><code>npm ci</code> — 부품 목록이 바뀌었다는 안내가 뜨거나 오류가 날 때만.</div></div></div>
+          <div class="rc"><div><div class="rcb">수정하기</div><div class="rcd"><code>claude</code> 로 부탁하거나, <code>npm run dev</code> 로 화면 보며 확인.</div></div></div>
+          <div class="rc"><div><div class="rcb">점검하기</div><div class="rcd"><code>npm run build</code> (또는 Claude에게 "빌드 확인해줘") — 통과해야 올립니다.</div></div></div>
+          <div class="rc"><div><div class="rcb">저장 &amp; 올리기</div><div class="rcd"><code>git add .</code> → <code>git commit -m "설명"</code> → <code>git push</code></div></div></div>
+          <div class="rc"><div><div class="rcb">배포 확인</div><div class="rcd">몇 분 뒤 <strong>라이브 URL</strong>에서 결과 확인. 끝!</div></div></div>
+        </div>
+      </section>
+
+      <hr class="divider" />
+
+      <!-- ===== 09 troubleshooting ===== -->
+      <section id="s9" class="reveal">
+        <div class="sec-head"><span class="sec-num amber">09</span><h2>자주 막히는 곳 &amp; 해결</h2></div>
+        <p class="sec-sub">대부분의 문제는 아래 표로 해결됩니다. 그래도 안 되면 11번 섹션의 연락처로 문의하세요.</p>
+        <div class="tw">
+          <table>
+            <thead><tr><th>증상</th><th>원인</th><th>해결</th></tr></thead>
+            <tbody>
+              <tr><td><code>git</code> / <code>node</code>가 "인식되지 않습니다"</td><td>설치 직후라 창이 모름</td><td>PowerShell 창을 <strong>닫았다 새로 열기</strong>. 그래도 안 되면 재부팅.</td></tr>
+              <tr><td>개발 서버가 이상하게 동작</td><td>임시 캐시(.next) 오염</td><td><code>Remove-Item -Recurse -Force .next</code> 후 <code>npm run dev</code> 다시</td></tr>
+              <tr><td><code>npm ci</code> 오류</td><td>Node 버전 안 맞음 / 부품 목록 변경</td><td>Node가 <strong>v20 이상</strong>인지 확인, 다시 <code>npm ci</code></td></tr>
+              <tr><td>push할 때 권한 거부 (403)</td><td>저장소 쓰기 권한 없음</td><td><strong>01.2 Collaborator 권한</strong> 받았는지 원작자에게 확인</td></tr>
+              <tr><td><code>git pull</code> 시 충돌(conflict)</td><td>같은 부분을 동시에 수정</td><td>혼자 해결하지 말고 <strong>Claude에게 "pull 충돌 해결해줘"</strong> 부탁 또는 원작자 문의</td></tr>
+              <tr><td>라이브 룸 데이터가 사라짐</td><td>DynamoDB 환경변수 미설정</td><td>운영 담당자/원작자에게 <code>DYNAMODB_TABLE_NAME</code> 설정 확인 요청</td></tr>
+              <tr><td>사내 노트북에서 라이브 URL 안 열림</td><td>회사 방화벽</td><td>IT에 <code>*.amplifyapp.com</code> 화이트리스트 요청</td></tr>
+              <tr><td>Amplify 배포는 됐는데 화면이 깨짐</td><td>플랫폼이 정적(WEB)으로 설정됨</td><td>Amplify 콘솔에서 <strong>WEB_COMPUTE(SSR)</strong> 인지 확인</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <hr class="divider" />
+
+      <!-- ===== 10 security ===== -->
+      <section id="s10" class="reveal">
+        <div class="sec-head"><span class="sec-num coral">10</span><h2>보안 · 절대 금지 5계명</h2></div>
+        <p class="sec-sub">딱 다섯 가지만 지키면 사고는 거의 없습니다. 헷갈리면 <strong>멈추고 물어보세요.</strong></p>
+        <div class="box danger"><div class="bt"><span class="ic">1️⃣</span>비밀 파일을 올리지 않는다</div><p><code>sam-cli_accessKeys.csv</code>, <code>.env</code> 같은 키·비밀번호 파일은 <strong>절대 commit/push 금지</strong>. (다행히 이미 자동 차단 설정돼 있지만, 새 비밀 파일을 만들면 주의하세요.)</p></div>
+        <div class="box danger"><div class="bt"><span class="ic">2️⃣</span>원가 엔진을 함부로 고치지 않는다</div><p><code>lib/cost-engine/</code>는 채점의 심장입니다. 수정이 꼭 필요하면 원작자와 상의하고, 반드시 <code>npm test</code> 27개 통과를 확인하세요.</p></div>
+        <div class="box danger"><div class="bt"><span class="ic">3️⃣</span><code>git push --force</code> 를 쓰지 않는다</div><p>이력을 파괴하는 명령입니다. 어떤 경우에도 사용하지 마세요.</p></div>
+        <div class="box danger"><div class="bt"><span class="ic">4️⃣</span><code>outputs/</code> 폴더를 임의로 지우지 않는다</div><p>최종 산출물 결재함입니다. 삭제·덮어쓰기는 <strong>승인 후에만</strong>.</p></div>
+        <div class="box danger"><div class="bt"><span class="ic">5️⃣</span>막히면 멈추고 묻는다</div><p>"이거 올려도 되나?" 싶으면 <strong>push 전에</strong> 물어보세요. 되돌리는 것보다 묻는 게 훨씬 쉽습니다.</p></div>
+        <div class="box tip"><div class="bt"><span class="ic">📖</span>운영 계약서 필독</div><p>저장소 루트의 <code>CLAUDE.md</code>에 프로젝트의 모든 규칙이 정리돼 있습니다. 작업 시작 전 한 번 읽어보세요.</p></div>
+      </section>
+
+      <hr class="divider" />
+
+      <!-- ===== 11 checklist ===== -->
+      <section id="s11" class="reveal">
+        <div class="sec-head"><span class="sec-num teal">11</span><h2>인수 체크리스트 &amp; 참고 자료</h2></div>
+        <p class="sec-sub">아래 항목을 누르면 체크되고, 진행률은 자동 저장됩니다(이 브라우저 기준). 며칠에 걸쳐 천천히 완료해도 됩니다.</p>
+
+        <ul class="checklist" id="checklist">
+          <li><label><input type="checkbox" data-k="c1"><span class="cbox"><svg viewBox="0 0 24 24"><path d="M4 12l5 5L20 6"/></svg></span><span class="ctext"><span class="day">DAY 1</span> &nbsp;GitHub 가입 + <code>Koolsangon/CI-Course</code> Collaborator 권한 받기</span></label></li>
+          <li><label><input type="checkbox" data-k="c2"><span class="cbox"><svg viewBox="0 0 24 24"><path d="M4 12l5 5L20 6"/></svg></span><span class="ctext"><span class="day">DAY 1</span> &nbsp;Git · Node.js(v20+) 설치 및 <code>--version</code> 확인</span></label></li>
+          <li><label><input type="checkbox" data-k="c3"><span class="cbox"><svg viewBox="0 0 24 24"><path d="M4 12l5 5L20 6"/></svg></span><span class="ctext"><span class="day">DAY 1</span> &nbsp;Claude 계정 + Claude Code 설치 후 <code>claude</code> 로그인</span></label></li>
+          <li><label><input type="checkbox" data-k="c4"><span class="cbox"><svg viewBox="0 0 24 24"><path d="M4 12l5 5L20 6"/></svg></span><span class="ctext"><span class="day">DAY 1</span> &nbsp;AWS 키 파일을 별도 채널로 수령 (커밋 금지 숙지)</span></label></li>
+          <li><label><input type="checkbox" data-k="c5"><span class="cbox"><svg viewBox="0 0 24 24"><path d="M4 12l5 5L20 6"/></svg></span><span class="ctext"><span class="day">DAY 2</span> &nbsp;<code>git clone</code> → <code>npm ci</code> → <code>npm run dev</code> 로 localhost:3000 확인</span></label></li>
+          <li><label><input type="checkbox" data-k="c6"><span class="cbox"><svg viewBox="0 0 24 24"><path d="M4 12l5 5L20 6"/></svg></span><span class="ctext"><span class="day">DAY 2</span> &nbsp;<code>npm test</code> 전부 통과(녹색) 확인</span></label></li>
+          <li><label><input type="checkbox" data-k="c7"><span class="cbox"><svg viewBox="0 0 24 24"><path d="M4 12l5 5L20 6"/></svg></span><span class="ctext"><span class="day">DAY 2</span> &nbsp;<code>CLAUDE.md</code> · <code>CONTEXT.md</code> · 인수인계서 정독</span></label></li>
+          <li><label><input type="checkbox" data-k="c8"><span class="cbox"><svg viewBox="0 0 24 24"><path d="M4 12l5 5L20 6"/></svg></span><span class="ctext"><span class="day">DAY 3</span> &nbsp;Claude Code로 <strong>아주 작은 수정</strong>(예: 글자 하나) 연습</span></label></li>
+          <li><label><input type="checkbox" data-k="c9"><span class="cbox"><svg viewBox="0 0 24 24"><path d="M4 12l5 5L20 6"/></svg></span><span class="ctext"><span class="day">DAY 3</span> &nbsp;<code>build</code> 통과 후 <code>add → commit → push</code> 로 첫 배포 성공</span></label></li>
+          <li><label><input type="checkbox" data-k="c10"><span class="cbox"><svg viewBox="0 0 24 24"><path d="M4 12l5 5L20 6"/></svg></span><span class="ctext"><span class="day">DAY 3</span> &nbsp;라이브 URL에서 내 변경 사항이 반영됐는지 눈으로 확인</span></label></li>
+        </ul>
+
+        <h3>더 깊이 보고 싶을 때 (저장소 안 문서)</h3>
+        <div class="tw">
+          <table>
+            <thead><tr><th>문서</th><th>위치</th><th>용도</th></tr></thead>
+            <tbody>
+              <tr><td>실무 인수인계서</td><td><code>outputs/인수인계서-CI-Course-20260526.md</code></td><td>운영·강의 포함 전체 인수</td></tr>
+              <tr><td>상세 기술 인수인계서</td><td><code>projects/cost-sim-v2.1/docs/handover-sim-v2.1.md</code></td><td>개발자 딥다이브(825줄)</td></tr>
+              <tr><td>신규 AWS 계정 배포</td><td><code>projects/cost-sim-v2.1/docs/new-account-deploy-guide.md</code></td><td>처음부터 직접 배포 환경 구축</td></tr>
+              <tr><td>DynamoDB 설정</td><td><code>projects/cost-sim-v2.1/docs/dynamodb-setup.md</code></td><td>실시간 데이터 저장 설정</td></tr>
+              <tr><td>운영 계약(규칙)</td><td><code>CLAUDE.md</code></td><td>절대 금지·폴더 규칙</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ===== OUTRO ===== -->
+      <div class="outro reveal">
+        <h2>준비 끝. 이제 당신 차례입니다.</h2>
+        <p>막히는 건 당연합니다 — 누구나 처음이 있었습니다. 천천히 한 단계씩, 그리고 <strong>헷갈리면 push 전에 물어보기.</strong> 그거면 충분합니다.</p>
+        <div class="links">
+          <a class="solid" href="https://master.d26yr76roz76fk.amplifyapp.com" target="_blank" rel="noopener">🌐 라이브 사이트 열기</a>
+          <a href="https://github.com/Koolsangon/CI-Course" target="_blank" rel="noopener">🐙 GitHub 저장소</a>
+          <a href="https://docs.claude.com/en/docs/claude-code" target="_blank" rel="noopener">📘 Claude Code 공식 문서</a>
+          <a href="#s0">↑ 처음으로</a>
+        </div>
+      </div>
+
+      <footer>
+        CI-Course 온보딩 가이드 · 대상: Windows · 가입 → 배포 풀 사이클<br />
+        긴급 문의: 원작자 Sam Ahn (Telegram / 메신저 DM) · 라이브 <a href="https://master.d26yr76roz76fk.amplifyapp.com" target="_blank" rel="noopener">master.d26yr76roz76fk.amplifyapp.com</a>
+      </footer>
+
+    </main>
+  </div>
+</div>
+
+<button id="top" aria-label="맨 위로">↑</button>
+
+<script>
+(function(){
+  "use strict";
+  // JS is alive — remove the no-js safety so reveal animations can run
+  document.documentElement.classList.remove('no-js');
+
+  // ---- Scroll progress bar ----
+  var bar = document.getElementById('progress');
+  var topBtn = document.getElementById('top');
+  function onScroll(){
+    var h = document.documentElement;
+    var sc = h.scrollTop || document.body.scrollTop;
+    var max = (h.scrollHeight - h.clientHeight) || 1;
+    var pct = Math.min(100, (sc / max) * 100);
+    bar.style.width = pct + '%';
+    if(sc > 480){ topBtn.classList.add('show'); } else { topBtn.classList.remove('show'); }
+  }
+  window.addEventListener('scroll', onScroll, {passive:true});
+  onScroll();
+
+  topBtn.addEventListener('click', function(){ window.scrollTo({top:0, behavior:'smooth'}); });
+
+  // ---- Reveal on scroll ----
+  var revealEls = document.querySelectorAll('.reveal');
+  if('IntersectionObserver' in window){
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); }
+      });
+    }, {threshold:0.08, rootMargin:'0px 0px -40px 0px'});
+    revealEls.forEach(function(el){ io.observe(el); });
+  } else {
+    revealEls.forEach(function(el){ el.classList.add('in'); });
+  }
+
+  // ---- Scroll spy (sidebar) ----
+  var navLinks = Array.prototype.slice.call(document.querySelectorAll('.nav a'));
+  var sections = navLinks.map(function(a){ return document.querySelector(a.getAttribute('href')); });
+  if('IntersectionObserver' in window){
+    var spy = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if(e.isIntersecting){
+          var id = '#' + e.target.id;
+          navLinks.forEach(function(a){ a.classList.toggle('active', a.getAttribute('href') === id); });
+        }
+      });
+    }, {rootMargin:'-20% 0px -70% 0px', threshold:0});
+    sections.forEach(function(s){ if(s) spy.observe(s); });
+  }
+
+  // ---- Copy buttons (inject) ----
+  document.querySelectorAll('.code').forEach(function(block){
+    var lang = block.getAttribute('data-lang') || 'shell';
+    var pre = block.querySelector('pre');
+    var bar = document.createElement('div');
+    bar.className = 'code__bar';
+    bar.innerHTML = '<span class="code__dots"><i></i><i></i><i></i></span><span class="code__lang">'+ lang +'</span><button class="code__copy" type="button">복사</button>';
+    block.insertBefore(bar, pre);
+    var btn = bar.querySelector('.code__copy');
+    btn.addEventListener('click', function(){
+      // copy only command lines (strip comment/output styling but keep text)
+      var clone = pre.querySelector('code').cloneNode(true);
+      // remove output spans entirely from copy
+      clone.querySelectorAll('.out').forEach(function(o){ o.remove(); });
+      var text = clone.textContent.replace(/\n{2,}/g,'\n').trim();
+      var done = function(){
+        btn.textContent = '복사됨 ✓'; btn.classList.add('done');
+        setTimeout(function(){ btn.textContent = '복사'; btn.classList.remove('done'); }, 1600);
+      };
+      if(navigator.clipboard && navigator.clipboard.writeText){
+        navigator.clipboard.writeText(text).then(done).catch(function(){ fallback(text); done(); });
+      } else { fallback(text); done(); }
+    });
+  });
+  function fallback(text){
+    var ta = document.createElement('textarea');
+    ta.value = text; ta.style.position='fixed'; ta.style.opacity='0';
+    document.body.appendChild(ta); ta.select();
+    try{ document.execCommand('copy'); }catch(e){}
+    document.body.removeChild(ta);
+  }
+
+  // ---- Checklist persistence ----
+  var KEY = 'ci-course-onboarding-v1';
+  var boxes = Array.prototype.slice.call(document.querySelectorAll('#checklist input[type=checkbox]'));
+  var pcBar = document.getElementById('pcBar');
+  var pcNum = document.getElementById('pcNum');
+  var saved = {};
+  try{ saved = JSON.parse(localStorage.getItem(KEY) || '{}'); }catch(e){ saved = {}; }
+
+  function update(){
+    var done = 0;
+    boxes.forEach(function(b){ if(b.checked) done++; });
+    var pct = boxes.length ? Math.round(done / boxes.length * 100) : 0;
+    if(pcBar) pcBar.style.width = pct + '%';
+    if(pcNum) pcNum.textContent = pct + '%';
+  }
+  boxes.forEach(function(b){
+    var k = b.getAttribute('data-k');
+    if(saved[k]) b.checked = true;
+    b.addEventListener('change', function(){
+      saved[k] = b.checked;
+      try{ localStorage.setItem(KEY, JSON.stringify(saved)); }catch(e){}
+      update();
+    });
+  });
+  update();
+})();
+</script>
+</body>
+</html>

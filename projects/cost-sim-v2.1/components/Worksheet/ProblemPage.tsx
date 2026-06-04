@@ -221,6 +221,14 @@ export default function ProblemPage({
     if (v !== null) handleAnswer(ac.colId, ac.rowId, v);
   }
 
+  // Enter / blur — draft 를 확정하고 입력 모드를 닫아 셀에 계산 결과(숫자)를 표시한다.
+  function commitAndClose() {
+    commitDraft();
+    setActiveCell(null);
+    setActiveCellLabel("");
+    setDraft("");
+  }
+
   function handleCellClick(
     colId: string,
     rowId: string,
@@ -427,7 +435,7 @@ export default function ProblemPage({
             activeCell={activeCell}
             draft={draft}
             onDraftChange={setDraft}
-            onCommit={commitDraft}
+            onCommit={commitAndClose}
             onCellClick={handleCellClick}
           />
 

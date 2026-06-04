@@ -119,7 +119,6 @@ export default function WorksheetCell({
               if (e.key === "Enter") {
                 e.preventDefault();
                 onCommit?.();
-                (e.target as HTMLInputElement).blur();
               }
             }}
             onBlur={() => onCommit?.()}

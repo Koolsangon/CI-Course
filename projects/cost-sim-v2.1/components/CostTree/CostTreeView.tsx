@@ -19,26 +19,12 @@ import type { TreeInfoEntry } from "@/lib/cases";
 
 const nodeTypes = { cost: CostTreeNode };
 
-// BOM/params 변동 노드를 직접 비교 — diff()는 CostResult만 보므로
-// params.bom 변경(면취수·재료비)은 여기서 감지
-const REFERENCE_BOM = { tft: 6.0, cf: 5.0, cell: 1.5, module: 75.0 };
-const REFERENCE_YIELDS = { tft: 0.99, cf: 1.0, cell: 0.95, module: 0.972 };
-
-function getParamsChangedNodes(params: CostParams): Set<string> {
-  const set = new Set<string>();
-  if (Math.abs(params.bom.tft - REFERENCE_BOM.tft) > 1e-6) set.add("bom_tft");
-  if (Math.abs(params.bom.cf - REFERENCE_BOM.cf) > 1e-6) set.add("bom_cf");
-  if (Math.abs(params.bom.cell - REFERENCE_BOM.cell) > 1e-6) set.add("bom_cell");
-  if (Math.abs(params.bom.module - REFERENCE_BOM.module) > 1e-6) set.add("bom_module");
-  // 수율 변동 시 소요재료비·COM·COP도 이미 diff()에 잡히지만 BOM 관련 시각 일관성
-  if (Math.abs(params.yields.module - REFERENCE_YIELDS.module) > 1e-6) set.add("material");
-  return set;
-}
-
 export interface CostTreeViewProps {
   result: CostResult;
   params: CostParams;
   changedPaths?: DeltaTrace[];
+  /** 직전 params 대비 변동된 bom/yield 노드 id (store.lastParamDelta). 절대 비교가 아니라 누적 없이 강조. */
+  changedParamNodes?: string[];
   treeInfo?: TreeInfoEntry[];
 }
 
@@ -68,21 +54,23 @@ export default function CostTreeView({
   result,
   params,
   changedPaths = [],
+  changedParamNodes = [],
   treeInfo
 }: CostTreeViewProps) {
   const changedNodeIds = useMemo(() => {
     const set = new Set<string>();
-    // diff() 기반: CostResult 필드 변동 노드
+    // diff() 기반: CostResult 필드 변동 노드 (직전 대비)
     for (const trace of changedPaths) {
       const nodeId = FIELD_TO_NODE[trace.path];
       if (nodeId) set.add(nodeId);
     }
-    // params 기반: BOM/수율 노드는 params 직접 비교
-    for (const nodeId of getParamsChangedNodes(params)) {
+    // params 기반: bom/yield 노드 (직전 대비 — store.lastParamDelta).
+    // 절대 비교가 아니라서 다른 슬라이더를 움직이면 이전 파라미터 강조가 누적되지 않는다.
+    for (const nodeId of changedParamNodes) {
       set.add(nodeId);
     }
     return set;
-  }, [changedPaths, params]);
+  }, [changedPaths, changedParamNodes]);
 
   const nodes: Node<CostTreeNodeData>[] = useMemo(() => {
     const raw: Node<CostTreeNodeData>[] = TREE_NODES.map((def) => ({

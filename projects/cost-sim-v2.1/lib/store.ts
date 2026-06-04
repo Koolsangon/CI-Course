@@ -29,6 +29,8 @@ export interface StoreState {
   params: CostParams;
   result: CostResult;
   lastDelta: DeltaTrace[];
+  /** CostTree 강조용 — 직전 params 대비 변동된 bom/yield 노드 id (절대 비교가 아니라 누적 방지). */
+  lastParamDelta: string[];
   /** Current slider values for the active case (used by inspector / tree-info card). */
   sliderValues: Record<string, number>;
 
@@ -60,6 +62,23 @@ export interface StoreState {
   resetHintLevel: (problemId: string) => void;
 }
 
+/**
+ * CostTree 강조용 — 직전 params 대비 변동된 bom/yield 노드 id.
+ * diff() 는 CostResult 만 보므로 params.bom / yields.module 변동은 여기서 직접 비교한다.
+ * 절대(reference) 비교가 아닌 *직전 대비* 라서, 다른 슬라이더를 움직이면 이전 파라미터의
+ * 강조가 누적되지 않고 해제된다 (예: Mask 변경 후 Tact 를 움직이면 BOM TFT 강조 해제).
+ */
+function paramNodeDelta(prev: CostParams, next: CostParams): string[] {
+  const out: string[] = [];
+  const eps = 1e-6;
+  if (Math.abs(prev.bom.tft - next.bom.tft) > eps) out.push("bom_tft");
+  if (Math.abs(prev.bom.cf - next.bom.cf) > eps) out.push("bom_cf");
+  if (Math.abs(prev.bom.cell - next.bom.cell) > eps) out.push("bom_cell");
+  if (Math.abs(prev.bom.module - next.bom.module) > eps) out.push("bom_module");
+  if (Math.abs(prev.yields.module - next.yields.module) > eps) out.push("material");
+  return out;
+}
+
 const DEFAULT_PARAMS = cloneParams(ALL_REFERENCES[1]);
 
 export const useStore = create<StoreState>()(
@@ -70,6 +89,7 @@ export const useStore = create<StoreState>()(
   params: DEFAULT_PARAMS,
   result: calculate(DEFAULT_PARAMS),
   lastDelta: [],
+  lastParamDelta: [],
   sliderValues: {},
 
   worksheetAnswers: {},
@@ -105,6 +125,7 @@ export const useStore = create<StoreState>()(
       params: next,
       result: calculate(next),
       lastDelta: [],
+      lastParamDelta: [],
       sliderValues: {}
     });
   },
@@ -113,13 +134,15 @@ export const useStore = create<StoreState>()(
 
   setParams: (next) => {
     const prevResult = get().result;
+    const prevParams = get().params;
     const nextParams =
       typeof next === "function" ? next(get().params) : cloneParams(next);
     const nextResult = calculate(nextParams);
     set({
       params: nextParams,
       result: nextResult,
-      lastDelta: diff(prevResult, nextResult)
+      lastDelta: diff(prevResult, nextResult),
+      lastParamDelta: paramNodeDelta(prevParams, nextParams)
     });
   },
 
@@ -127,10 +150,10 @@ export const useStore = create<StoreState>()(
     const caseId = get().caseId;
     const preset = caseId ? ALL_REFERENCES[Number(caseId[0]) as 1 | 2 | 3 | 4 | 5 | 6] : DEFAULT_PARAMS;
     const p = cloneParams(preset);
-    set({ params: p, result: calculate(p), lastDelta: [] });
+    set({ params: p, result: calculate(p), lastDelta: [], lastParamDelta: [] });
   },
 
-  clearDelta: () => set({ lastDelta: [] }),
+  clearDelta: () => set({ lastDelta: [], lastParamDelta: [] }),
 
   setWorksheetAnswer: (problemId, columnId, cellId, value) => {
     const { worksheetAnswers } = get();

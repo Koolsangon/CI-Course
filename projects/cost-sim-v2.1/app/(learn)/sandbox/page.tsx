@@ -16,6 +16,7 @@ export default function SandboxPage() {
   const result = useStore((s) => s.result);
   const params = useStore((s) => s.params);
   const lastDelta = useStore((s) => s.lastDelta);
+  const lastParamDelta = useStore((s) => s.lastParamDelta);
 
   const focusMode = !leftOpen && !rightOpen;
   const toggleFocus = () => {
@@ -93,6 +94,7 @@ export default function SandboxPage() {
             result={result}
             params={params}
             changedPaths={lastDelta}
+            changedParamNodes={lastParamDelta}
           />
         </div>
 

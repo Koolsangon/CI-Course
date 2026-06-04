@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Home } from "lucide-react";
 import { loadRoomContext, type RoomContext } from "@/lib/player";
+import { GAME_MODE_ENABLED } from "@/lib/features";
 
 /**
  * 학습자가 룸 입장 후 다른 페이지(/sandbox, /cases, ProblemPage 연습 모드)에 진입했을 때
@@ -19,7 +20,7 @@ export default function RoomBadge() {
     setCtx(loadRoomContext());
   }, []);
 
-  if (!ctx) return null;
+  if (!GAME_MODE_ENABLED || !ctx) return null;
 
   return (
     <Link

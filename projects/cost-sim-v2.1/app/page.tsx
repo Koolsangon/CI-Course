@@ -7,6 +7,7 @@ import { motion } from "framer-motion";
 import { TreePine, ClipboardList, ArrowRight, Zap, Play, Gamepad2, LogIn } from "lucide-react";
 import { IntroSequence, INTRO_SEEN_KEY } from "@/components/Intro/IntroSequence";
 import { saveRoomContext } from "@/lib/player";
+import { GAME_MODE_ENABLED } from "@/lib/features";
 
 const cards = [
   {
@@ -210,7 +211,8 @@ export default function HomePage() {
           })}
         </motion.div>
 
-        {/* 강사 룸 입장 — 게임 모드 흐름 진입점 (plan.md S12) */}
+        {/* 강사 룸 입장 — 게임 모드 흐름 진입점. GAME_MODE_ENABLED=false 시 숨김. */}
+        {GAME_MODE_ENABLED && (
         <motion.form
           onSubmit={handleJoin}
           initial={{ opacity: 0, y: 20 }}
@@ -266,6 +268,7 @@ export default function HomePage() {
             룸 입장 후 자동으로 메뉴 화면으로 이동. 강사 신호를 기다립니다.
           </p>
         </motion.form>
+        )}
 
         {/* Footer + intro replay */}
         <motion.div

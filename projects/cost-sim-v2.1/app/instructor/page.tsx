@@ -6,6 +6,8 @@ import Link from "next/link";
 import { ArrowLeft, ChevronRight, Plus, Power, PowerOff, RefreshCw, Trash2 } from "lucide-react";
 import { getAdminToken, loadAdminTokens, removeAdminToken, saveAdminToken } from "@/lib/instructor";
 import type { RoomSnapshot } from "@/lib/room/types";
+import { GAME_MODE_ENABLED } from "@/lib/features";
+import GameDisabledNotice from "@/components/Room/GameDisabledNotice";
 
 type RoomStatus =
   | { kind: "loading" }
@@ -18,6 +20,13 @@ function classifyStatus(snapshot: RoomSnapshot): "active" | "disabled" {
 }
 
 export default function InstructorIndexPage() {
+  // GAME_MODE_ENABLED=false 시 강사 뷰 전체 차단 — 내부 컴포넌트를 마운트하지 않아
+  // 룸 API 폴링 등 부작용도 발생하지 않는다.
+  if (!GAME_MODE_ENABLED) return <GameDisabledNotice />;
+  return <InstructorIndexContent />;
+}
+
+function InstructorIndexContent() {
   const router = useRouter();
   const [tokens, setTokens] = useState<Record<string, string>>({});
   const [statuses, setStatuses] = useState<Record<string, RoomStatus>>({});

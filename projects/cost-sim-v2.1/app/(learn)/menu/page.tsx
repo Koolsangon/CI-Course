@@ -12,6 +12,7 @@ import {
   rankPlayers,
   rankTeams
 } from "@/lib/room/time-aggregator";
+import { GAME_MODE_ENABLED } from "@/lib/features";
 
 function formatTime(seconds: number): string {
   const m = Math.floor(seconds / 60);
@@ -24,7 +25,8 @@ export default function MenuPage() {
   const [ctx, setCtx] = useState<RoomContext | null>(null);
 
   useEffect(() => {
-    setCtx(loadRoomContext());
+    // GAME_MODE_ENABLED=false 시 룸 컨텍스트를 로드하지 않아 게임 섹션 전체를 숨긴다.
+    if (GAME_MODE_ENABLED) setCtx(loadRoomContext());
   }, []);
 
   const { snapshot, notFound } = useRoomState(ctx?.code ?? null);

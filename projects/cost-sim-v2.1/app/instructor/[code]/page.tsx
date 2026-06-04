@@ -14,6 +14,8 @@ import {
   rankPlayers,
   rankTeams
 } from "@/lib/room/time-aggregator";
+import { GAME_MODE_ENABLED } from "@/lib/features";
+import GameDisabledNotice from "@/components/Room/GameDisabledNotice";
 
 const DEFAULT_ROUND_CASES = CASE_ORDER; // ["01-loading", "04-material-yield", "05-cuts-mask", "06-tact-investment"]
 
@@ -24,6 +26,12 @@ function formatTime(seconds: number): string {
 }
 
 export default function InstructorRoomPage() {
+  // GAME_MODE_ENABLED=false 시 강사 룸 제어 화면 차단 (내부 컴포넌트 미마운트).
+  if (!GAME_MODE_ENABLED) return <GameDisabledNotice />;
+  return <InstructorRoomContent />;
+}
+
+function InstructorRoomContent() {
   const params = useParams<{ code: string }>();
   const router = useRouter();
   const code = params?.code;

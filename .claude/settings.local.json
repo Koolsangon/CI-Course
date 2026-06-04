@@ -126,7 +126,8 @@
       "PowerShell(Get-Command *)",
       "PowerShell($userPath = [Environment]::GetEnvironmentVariable\\(\"Path\", \"User\"\\); $machinePath = [Environment]::GetEnvironmentVariable\\(\"Path\", \"Machine\"\\); $ghDir = \"C:\\\\Program Files\\\\GitHub CLI\"; $inUser = $userPath -split ';' | Where-Object { $_ -ieq $ghDir -or $_ -ieq \"$ghDir\\\\\" }; $inMachine = $machinePath -split ';' | Where-Object { $_ -ieq $ghDir -or $_ -ieq \"$ghDir\\\\\" }; \"User PATH contains GitHub CLI dir: $\\([bool]$inUser\\)\"; \"Machine PATH contains GitHub CLI dir: $\\([bool]$inMachine\\)\"; \"Current session PATH contains GitHub CLI dir: $\\([bool]\\($env:Path -split ';' | Where-Object { $_ -ieq $ghDir -or $_ -ieq \"$ghDir\\\\\" }\\)\\)\")",
       "mcp__plugin_oh-my-claudecode_t__state_list_active",
-      "mcp__plugin_oh-my-claudecode_t__state_clear"
+      "mcp__plugin_oh-my-claudecode_t__state_clear",
+      "Skill(browse)"
     ]
   }
 }

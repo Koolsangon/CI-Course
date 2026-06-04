@@ -36,19 +36,18 @@ export default function GradingPanel({
                 {weighted ? (
                   <>
                     <span className="text-lg font-bold tabular-nums text-[hsl(var(--fg))]">
-                      {weighted.weightedScore.toFixed(1)} / {total}
+                      {total > 0 ? Math.round((weighted.weightedScore / total) * 100) : 0}점
+                      <span className="ml-0.5 text-sm font-normal text-[hsl(var(--muted))]">/ 100점</span>
                     </span>
                     <span className="text-xs text-[hsl(var(--muted))] tabular-nums">
-                      (정답 {weighted.rawScore}/{total}
-                      {weighted.hintPenalty > 0
-                        ? ` · 힌트 차감 −${weighted.hintPenalty.toFixed(1)}`
-                        : ""}
-                      )
+                      (정답 {weighted.rawScore}/{total}문항
+                      {weighted.hintPenalty > 0 ? " · 힌트 차감 반영" : ""})
                     </span>
                   </>
                 ) : (
                   <span className="text-lg font-bold tabular-nums text-[hsl(var(--fg))]">
-                    {score}/{total}
+                    {total > 0 ? Math.round(((score ?? 0) / total) * 100) : 0}점
+                    <span className="ml-0.5 text-sm font-normal text-[hsl(var(--muted))]">/ 100점</span>
                   </span>
                 )}
               </div>

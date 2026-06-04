@@ -15,17 +15,17 @@ const COMMON_STEPS: GuideStep[] = [
   {
     icon: <MousePointerClick className="h-8 w-8" />,
     title: "노란색 셀을 클릭하세요",
-    description: "답을 입력할 노란색 셀을 클릭하면 하단에 계산기가 열립니다."
+    description: "답을 입력할 노란색 셀을 클릭하면 바로 그 자리에서 입력할 수 있습니다."
   },
   {
     icon: <Calculator className="h-8 w-8" />,
-    title: "수식을 조합하세요",
-    description: "테이블의 다른 셀을 클릭하여 값을 가져오거나, 숫자를 직접 입력하고, 연산 버튼(+, −, ×, ÷)으로 수식을 만드세요."
+    title: "수식을 입력하세요",
+    description: "키보드로 숫자와 +, −, ×, ÷, ( ) 를 입력하거나, 표의 다른 셀을 클릭해 그 값을 수식에 더하세요. 예: 6 × 25 ÷ 29"
   },
   {
     icon: <CheckCircle2 className="h-8 w-8" />,
-    title: "계산하기 → 채점하기",
-    description: "수식이 완성되면 '계산하기'로 결과를 셀에 입력합니다. 모든 셀을 채운 후 '채점하기'로 정답을 확인하세요."
+    title: "Enter → 채점하기",
+    description: "Enter 를 누르면 계산 결과가 셀에 입력됩니다. 모든 셀을 채운 후 '채점하기'로 정답을 확인하세요."
   }
 ];
 

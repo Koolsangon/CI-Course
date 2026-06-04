@@ -6,13 +6,6 @@ import { ArrowLeft, ArrowRight, ClipboardList } from "lucide-react";
 import { CASE_ORDER, getCase } from "@/lib/cases";
 import RoomBadge from "@/components/Room/RoomBadge";
 
-const PROBLEM_META: Record<string, { tag: string }> = {
-  "01-loading": { tag: "1열 · 6셀" },
-  "04-material-yield": { tag: "2열 · 4셀" },
-  "05-cuts-mask": { tag: "2열 · 9셀" },
-  "06-tact-investment": { tag: "2열 · 4셀" }
-};
-
 export default function CasesListClient() {
   return (
     <main className="flex min-h-screen flex-col bg-[hsl(var(--bg))]">
@@ -47,7 +40,6 @@ export default function CasesListClient() {
         <div className="flex flex-col gap-4">
           {CASE_ORDER.map((caseId, i) => {
             const caseDef = getCase(caseId);
-            const meta = PROBLEM_META[caseId];
             if (!caseDef) return null;
             return (
               <motion.div
@@ -66,11 +58,6 @@ export default function CasesListClient() {
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2">
                       <span className="text-base font-bold text-[hsl(var(--fg))]">{caseDef.title}</span>
-                      {meta && (
-                        <span className="rounded-full bg-[hsl(var(--surface-200))] px-2 py-0.5 text-[10px] font-medium text-[hsl(var(--muted))]">
-                          {meta.tag}
-                        </span>
-                      )}
                     </div>
                     <p className="mt-0.5 text-xs text-[hsl(var(--muted))] line-clamp-1">{caseDef.scenario}</p>
                   </div>

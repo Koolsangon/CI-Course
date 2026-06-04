@@ -10,8 +10,10 @@ interface WorksheetTableProps {
   answers: Record<string, Record<string, number>>;
   grades: GradeResult[] | null;
   activeCell: { colId: string; rowId: string } | null;
-  calculatorMode: boolean;
-  onAnswer: (colId: string, rowId: string, value: number) => void;
+  /** 현재 active 셀의 입력 수식 텍스트 (부모 소유). */
+  draft: string;
+  onDraftChange: (v: string) => void;
+  onCommit: () => void;
   onCellClick: (colId: string, rowId: string, value: number | undefined, label: string, type: string) => void;
 }
 
@@ -36,8 +38,9 @@ export default function WorksheetTable({
   answers,
   grades,
   activeCell,
-  calculatorMode,
-  onAnswer,
+  draft,
+  onDraftChange,
+  onCommit,
   onCellClick
 }: WorksheetTableProps) {
   const findGrade = (rowId: string, colId: string) =>
@@ -94,8 +97,6 @@ export default function WorksheetTable({
                   : undefined;
                 const isRef = col.id === "ref";
                 const isActive = activeCell?.colId === col.id && activeCell?.rowId === row.id;
-                const isSelectable = calculatorMode && !isActive;
-
                 const displayValue = getCellDisplayValue(problem, col.id, row.id, answers);
 
                 return (
@@ -107,17 +108,13 @@ export default function WorksheetTable({
                     userValue={cell.type === "yellow" ? answers[col.id]?.[row.id] : undefined}
                     graded={!!grade}
                     correct={grade?.correct}
-                    expected={grade?.expected}
                     isActive={isActive}
-                    isSelectable={isSelectable}
                     isRefColumn={isRef}
                     format={row.format}
+                    draft={isActive ? draft : undefined}
+                    onDraftChange={onDraftChange}
+                    onCommit={onCommit}
                     onCellClick={() => onCellClick(col.id, row.id, displayValue, row.label, cell.type)}
-                    onAnswer={
-                      cell.type === "yellow"
-                        ? (v) => onAnswer(col.id, row.id, v)
-                        : undefined
-                    }
                   />
                 );
               })}

@@ -3,8 +3,8 @@
 import { useState, useRef, useEffect, useMemo } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, Calculator, ClipboardList, Lightbulb, Timer, Trophy } from "lucide-react";
-import type { ProblemDef } from "@/content/problems/types";
+import { ArrowLeft, ClipboardList, Lightbulb, Timer, Trophy } from "lucide-react";
+import type { ProblemDef, CellFormat } from "@/content/problems/types";
 import {
   gradeYellowCells,
   computeWeightedScore,
@@ -16,8 +16,8 @@ import {
 } from "@/lib/worksheet-engine";
 import WorksheetTable from "./WorksheetTable";
 import GradingPanel from "./GradingPanel";
-import CellCalculator, { evaluateTokens, type FormulaToken } from "./CellCalculator";
 import WorksheetGuide from "./WorksheetGuide";
+import { parseFormula } from "@/lib/formula-parser";
 import { getYellowCount } from "@/lib/worksheet-engine";
 import CellHintModal from "./CellHintModal";
 import { getCase } from "@/lib/cases";
@@ -53,7 +53,6 @@ export default function ProblemPage({
   const hintPenaltyEnabled = useStore((s) => s.hintPenaltyEnabled);
   const storeHintLevel = useStore((s) => s.getHintLevel(problem.id));
   const storeSetHintLevel = useStore((s) => s.setHintLevel);
-  const storeResetHintLevel = useStore((s) => s.resetHintLevel);
   const [elapsed, setElapsed] = useState(0);
   const [submitted, setSubmitted] = useState(false);
   const [roomCtx, setRoomCtx] = useState<RoomContext | null>(null);
@@ -88,16 +87,17 @@ export default function ProblemPage({
 
   const [showGuide, setShowGuide] = useState(true);
   const [activeCell, setActiveCell] = useState<{ colId: string; rowId: string } | null>(null);
-  const [calculatorMode, setCalculatorMode] = useState(false);
-  const [formulaTokens, setFormulaTokens] = useState<FormulaToken[]>([]);
+  const [draft, setDraft] = useState("");
   const [activeCellLabel, setActiveCellLabel] = useState("");
   const [hintOpen, setHintOpen] = useState(false);
 
   // Refs to avoid stale closures in callbacks
   const activeCellRef = useRef(activeCell);
   activeCellRef.current = activeCell;
-  const formulaTokensRef = useRef(formulaTokens);
-  formulaTokensRef.current = formulaTokens;
+  const draftRef = useRef(draft);
+  draftRef.current = draft;
+  const answersRef = useRef(answers);
+  answersRef.current = answers;
 
   const yellowCount = getYellowCount(problem);
 
@@ -183,17 +183,42 @@ export default function ProblemPage({
     setGrades(null);
     setScore(null);
     setActiveCell(null);
-    setCalculatorMode(false);
-    setFormulaTokens([]);
-    setHintLevelLocal(0);
-    storeResetHintLevel(problem.id);
+    setDraft("");
     setWeighted(null);
+    // 다시 풀기를 눌러도 힌트는 "본 것"으로 유지한다 — hintLevel 을 리셋하지 않음.
   }
 
   function bumpHintLevel() {
     const next = hintLevel >= 3 ? hintLevel : ((hintLevel + 1) as HintLevel);
     setHintLevelLocal(next);
     storeSetHintLevel(problem.id, next);
+  }
+
+  // 숫자 → 입력 텍스트. percent 행은 ×100 표시 (0.932 → "93.2").
+  function draftFromValue(n: number, format?: CellFormat): string {
+    if (format === "percent") return String(Math.round(n * 1000) / 10);
+    return String(n);
+  }
+
+  // 입력 수식 → 저장값. percent 행에서 "%" 없이 1 초과로 입력하면 ÷100 보정.
+  function resolveDraft(raw: string, format?: CellFormat): number | null {
+    const parsed = parseFormula(raw);
+    if (parsed === null) return null;
+    if (format === "percent" && !raw.includes("%") && parsed > 1) return parsed / 100;
+    return parsed;
+  }
+
+  function rowFormat(rowId: string): CellFormat | undefined {
+    return problem.rows.find((r) => r.id === rowId)?.format;
+  }
+
+  // 현재 active 셀의 draft 를 평가하여 answer 로 확정 (Enter / blur / 다른 셀로 이동 시).
+  function commitDraft() {
+    const ac = activeCellRef.current;
+    const d = draftRef.current;
+    if (!ac || !d.trim()) return;
+    const v = resolveDraft(d, rowFormat(ac.rowId));
+    if (v !== null) handleAnswer(ac.colId, ac.rowId, v);
   }
 
   function handleCellClick(
@@ -203,60 +228,21 @@ export default function ProblemPage({
     label: string,
     type: string
   ) {
-    if (!calculatorMode) {
-      if (type === "yellow") {
-        setActiveCell({ colId, rowId });
-        setCalculatorMode(true);
-        setFormulaTokens([]);
-        setActiveCellLabel(label);
-      }
-    } else {
+    if (type === "yellow") {
+      // 노란 셀 클릭 — 입력 대상을 이 셀로 전환. 이전 셀 입력은 먼저 확정한다.
       const ac = activeCellRef.current;
+      if (ac && (ac.colId !== colId || ac.rowId !== rowId)) commitDraft();
       if (ac?.colId === colId && ac?.rowId === rowId) return;
-      if (value === undefined) return;
-      setFormulaTokens((prev) => [
-        ...prev,
-        { type: "value", value, label }
-      ]);
+      setActiveCell({ colId, rowId });
+      setActiveCellLabel(label);
+      const existing = answersRef.current[colId]?.[rowId];
+      setDraft(existing !== undefined ? draftFromValue(existing, rowFormat(rowId)) : "");
+    } else {
+      // 참조 셀(보라/파랑) 클릭 — active 셀의 수식 끝에 그 값을 더한다.
+      const ac = activeCellRef.current;
+      if (!ac || value === undefined) return;
+      setDraft((prev) => prev + String(value));
     }
-  }
-
-  function handleAddOp(op: string) {
-    setFormulaTokens((prev) => [...prev, { type: "op", value: op }]);
-  }
-
-  function handleAddParen(p: string) {
-    setFormulaTokens((prev) => [...prev, { type: "paren", value: p }]);
-  }
-
-  function handleAddNumber(n: number) {
-    setFormulaTokens((prev) => [...prev, { type: "value", value: n }]);
-  }
-
-  function handleDeleteLast() {
-    setFormulaTokens((prev) => prev.slice(0, -1));
-  }
-
-  function handleClearFormula() {
-    setFormulaTokens([]);
-  }
-
-  function handleCalculate() {
-    const ac = activeCellRef.current;
-    const tokens = formulaTokensRef.current;
-    if (!ac) return;
-    const result = evaluateTokens(tokens);
-    if (result === null) return;
-    handleAnswer(ac.colId, ac.rowId, result);
-    setActiveCell(null);
-    setCalculatorMode(false);
-    setFormulaTokens([]);
-  }
-
-  function handleCloseCalculator() {
-    setActiveCell(null);
-    setCalculatorMode(false);
-    setFormulaTokens([]);
   }
 
   return (
@@ -305,13 +291,7 @@ export default function ProblemPage({
         </button>
       </header>
 
-      <main
-        className={
-          calculatorMode && activeCell
-            ? "mx-auto w-full max-w-5xl flex-1 px-4 pt-6 pb-80"
-            : "mx-auto w-full max-w-5xl flex-1 px-4 pt-6 pb-24"
-        }
-      >
+      <main className="mx-auto w-full max-w-5xl flex-1 px-4 pt-6 pb-28">
         <div className="flex flex-col gap-6">
           {/* 문항별 질문 카드 — 섹션별 시각 분리로 가독성 강조. */}
           <div className="mx-auto w-full max-w-3xl rounded-2xl border-2 border-[hsl(var(--accent)/0.35)] bg-[hsl(var(--accent)/0.06)] px-6 py-5 shadow-card">
@@ -356,7 +336,7 @@ export default function ProblemPage({
                     {problem.scenarioSections.assumptions.map((a, i) => (
                       <span
                         key={i}
-                        className="inline-flex items-center rounded-full border border-[hsl(var(--border))] bg-[hsl(var(--surface-100))] px-2.5 py-0.5 text-xs text-[hsl(var(--fg)/0.8)]"
+                        className="inline-flex items-center whitespace-nowrap rounded-full border border-[hsl(var(--border))] bg-[hsl(var(--surface-100))] px-2.5 py-0.5 text-xs text-[hsl(var(--fg)/0.8)]"
                       >
                         {a}
                       </span>
@@ -445,8 +425,9 @@ export default function ProblemPage({
             answers={answers}
             grades={grades}
             activeCell={activeCell}
-            calculatorMode={calculatorMode}
-            onAnswer={handleAnswer}
+            draft={draft}
+            onDraftChange={setDraft}
+            onCommit={commitDraft}
             onCellClick={handleCellClick}
           />
 
@@ -469,27 +450,20 @@ export default function ProblemPage({
         </div>
       </main>
 
-      <div className="fixed bottom-0 left-0 right-0 z-20 border-t border-[hsl(var(--border))] bg-[hsl(var(--surface-100)/0.92)] pb-[env(safe-area-inset-bottom)] backdrop-blur-md">
-        <div className="mx-auto w-full max-w-5xl px-4 py-3">
-          {calculatorMode && activeCell ? (
-            <CellCalculator
-              targetLabel={activeCellLabel}
-              tokens={formulaTokens}
-              onAddOp={handleAddOp}
-              onAddParen={handleAddParen}
-              onAddNumber={handleAddNumber}
-              onDeleteLast={handleDeleteLast}
-              onClear={handleClearFormula}
-              onCalculate={handleCalculate}
-              onClose={handleCloseCalculator}
-            />
-          ) : (
-            <div className="flex items-center justify-center rounded-2xl border border-dashed border-[hsl(var(--border))] bg-[hsl(var(--surface-200)/0.4)] px-4 py-3">
-              <Calculator className="h-3.5 w-3.5 text-[hsl(var(--muted))]" />
-            </div>
-          )}
+      {activeCell && (
+        <div className="fixed bottom-0 left-0 right-0 z-20 border-t border-[hsl(var(--border))] bg-[hsl(var(--surface-100)/0.95)] pb-[env(safe-area-inset-bottom)] backdrop-blur-md">
+          <div className="mx-auto flex w-full max-w-5xl flex-wrap items-center gap-x-2 gap-y-1 px-4 py-3 text-xs text-[hsl(var(--muted))]">
+            <span className="rounded-md bg-[hsl(var(--warn)/0.15)] px-2 py-0.5 font-semibold text-[hsl(var(--warn))]">
+              {activeCellLabel}
+            </span>
+            <span>
+              입력 중 — 다른 셀을 클릭하면 값이 더해지고,{" "}
+              <span className="font-mono font-semibold text-[hsl(var(--fg)/0.8)]">+ − * / ( )</span> 는 키보드로,{" "}
+              <span className="font-semibold text-[hsl(var(--fg)/0.8)]">Enter</span> 로 확정합니다.
+            </span>
+          </div>
         </div>
-      </div>
+      )}
 
       <CellHintModal
         open={hintOpen}

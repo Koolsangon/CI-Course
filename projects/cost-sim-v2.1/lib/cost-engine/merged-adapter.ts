@@ -90,6 +90,15 @@ export function applyMerged(reference: CostParams, deltas: SevenDeltas): CostPar
 
   if (deltas.newCuts !== REFERENCE_CUTS || deltas.newMask !== REFERENCE_MASK) {
     p = applyCutsMaskChange(p, REFERENCE_CUTS, deltas.newCuts, REFERENCE_MASK, deltas.newMask);
+    // Mask 증가분만큼 TFT BOM 재료비가 오른다 (1 Mask 증가 = TFT 재료비 +$0.1).
+    // engine.ts 어댑터(27 골든 픽스처 보호)는 Mask 를 Panel 가공비에만 반영하므로,
+    // 소요재료비·BOM 재료비 변동이 트리에 강조되도록 sandbox 병합 경로에서만 가산한다
+    // (위 yieldDelta→가공비 결합과 동일 패턴). applyCutsMaskChange 가 새 bom 객체를
+    // 반환하므로 직접 가산해도 reference 는 오염되지 않는다.
+    const maskDelta = deltas.newMask - REFERENCE_MASK;
+    if (maskDelta !== 0) {
+      p.bom.tft += 0.1 * maskDelta;
+    }
   }
 
   if (deltas.tactMult !== 1.0 || deltas.investmentDelta !== 0) {

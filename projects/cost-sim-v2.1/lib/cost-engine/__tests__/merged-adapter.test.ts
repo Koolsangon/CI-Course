@@ -75,8 +75,10 @@ describe("applyMerged — 단일 변수 = 기존 어댑터 매칭", () => {
     expect(actual).toEqual(expected);
   });
 
-  it("newCuts + newMask → applyCutsMaskChange 와 동일", () => {
+  it("newCuts + newMask → applyCutsMaskChange + Mask→TFT BOM 가산", () => {
     const expected = applyCutsMaskChange(REFERENCE_CASE1, REFERENCE_CUTS, 29, REFERENCE_MASK, 7);
+    // sandbox 병합 경로: Mask 증가분 × $0.1 을 TFT BOM 에 가산 (소요재료비 강조용).
+    expected.bom.tft += 0.1 * (7 - REFERENCE_MASK);
     const actual = applyMerged(REFERENCE_CASE1, withDelta({ newCuts: 29, newMask: 7 }));
     expect(actual).toEqual(expected);
   });
@@ -106,6 +108,7 @@ describe("applyMerged — 다변량 순서 검증", () => {
     expected = applyMaterialYieldChange(expected, -0.05, -0.02);
     expected = scaleProc(expected, yieldRatio(-0.02));
     expected = applyCutsMaskChange(expected, REFERENCE_CUTS, 29, REFERENCE_MASK, 7);
+    expected.bom.tft += 0.1 * (7 - REFERENCE_MASK);
     expected = applyTactInvestmentChange(expected, 1.2, 1.9);
     const actual = applyMerged(REFERENCE_CASE1, {
       loading: 0.6,

@@ -1,5 +1,61 @@
 # handoff.md - 인수인계 메모
 
+## 2026-06-05 (워크시트 입력 개편·넘버링·힌트 + sandbox Mask 강조 + 게임 기능 숨김 + 라이브 배포)
+
+### 본 세션
+
+사용자 다건 요청을 순차 처리. 각 건마다 commit + `git push origin master` → **AWS Amplify 자동 배포(라이브 반영)** 까지 완료. Amplify Job 43~47 모두 SUCCEED.
+
+- **라이브**: https://master.d26yr76roz76fk.amplifyapp.com
+- **배포 방식**: master push → Amplify 자동 빌드. 상태 조회 `aws amplify get-job --app-id d26yr76roz76fk --branch-name master --job-id N --region ap-northeast-2 --query 'job.summary.status'` (자격증명 user/sam-cli 환경 설정됨). CloudFront 캐시는 수분 내 자동 갱신(JS 청크 해시 비교로 확인).
+
+#### 1. 워크시트 6건 일괄 수정 + sandbox Mask 강조 (commit `d924da0`, Amplify Job 43)
+- **셀 입력 통합**: 노란 셀 직접 입력 + 참조 셀 클릭 시 수식에 값 추가(`onMouseDown preventDefault` 로 active input 포커스 유지) + 노란셀 간 입력 대상 이동 + 키보드 사칙연산. **별도 계산기(CellCalculator.tsx) 삭제**. 입력 상태는 ProblemPage 가 `draft`(문자열) 소유, `parseFormula` 평가.
+- 다시 풀기 후에도 힌트 본 상태 유지 (handleReset 에서 hintLevel 리셋 제거)
+- p5 가정 문구를 task→`assumptions` chip 분리 (whitespace-nowrap, "1 Mask" 줄바꿈 방지)
+- 워크시트 점수 100점 만점 환산 (GradingPanel: weightedScore/total×100)
+- 케이스 목록 "N열·M셀" 태그 삭제 (CasesListClient)
+- **sandbox Mask 강조 버그**: Mask 슬라이더만 바꾸면 소요재료비·BOM TFT 가 안 변해 트리 강조가 안 되던 문제 → `lib/cost-engine/merged-adapter.ts` 에서 "1 Mask 증가 = TFT BOM +$0.1" 가산 추가. **engine.ts(27 골든 픽스처/Python 패리티)는 불변**, sandbox 병합 경로에서만 결합(기존 yieldDelta→가공비 패턴 답습). merged-adapter.test.ts 2건 기대값 갱신.
+
+#### 2. 워크시트 Enter 시 계산값 표시 (commit `44916c8`, Job 44)
+- Enter/blur 후 셀이 active 로 남아 입력란에 수식이 그대로 보이고 계산 결과가 안 나오던 버그 → `commitAndClose`(값 확정 + 입력 모드 닫기). 참조 셀 클릭(preventDefault)은 입력 유지.
+
+#### 3. 노란셀 문항 넘버링 + 3단계 힌트 갱신 (commit `9e43989`, Job 45)
+- 노란 셀 좌측에 문항 번호 ①②… (WorksheetTable 에서 **컬럼 순 → 컬럼 내 행 위→아래** 계산 → WorksheetCell `circledNumber` 표시)
+- 케이스별 l3 힌트를 문항 번호별 적용 공식으로 교체 (content/cases/01·04·05·06.json)
+- 넘버링 규칙: 01(1~6), 04(좌1~2/우3~10), 05(좌1~7/우8~11), 06(좌1~3/우4)
+
+#### 4. 팀원 온보딩 가이드 + .gitignore (commit `50f881a`, Job 46)
+- `outputs/CI 과정 인수인계.html` — GitHub/Claude Code 처음 쓰는 팀원용 온보딩 가이드(가입→clone→수정→배포 풀 사이클, Windows 기준, 단일 HTML)
+- .gitignore: `.gstack/` 추가
+
+#### 5. 게임방(실시간 경쟁) 기능 숨김 (commit `9566bcc`, Job 47 SUCCEED)
+- **이유**: 룸 서버(/api/rooms, DynamoDB) 의존 + 타담당자 인계로 유지보수 불가 → **숨김(삭제 아님)**
+- **방식**: `lib/features.ts` 의 `GAME_MODE_ENABLED=false` 플래그로 일괄 가드
+  - 홈(app/page.tsx): "강사 룸 코드 입력" 폼 숨김
+  - 학습자 메뉴: 룸 컨텍스트 미로드 → 게임 섹션(종합발표/라운드결과/게임대기) 전체 숨김
+  - RoomBadge: 비표시
+  - 강사 뷰(/instructor, /instructor/[code]): `GameDisabledNotice` 로 차단 (wrapper 로 내부 컴포넌트 미마운트 → 룸 API 폴링 부작용 없음)
+- **상시 유지**: 자유 실험실(/sandbox), 원가 워크시트(/cases)
+- **복원**: `lib/features.ts` 의 `GAME_MODE_ENABLED` 만 `true` 로. 룸 코드·라우트·API·테스트 모두 보존됨. 단 실제 동작에는 룸 서버(DynamoDB) 환경변수 설정 필요(`docs/dynamodb-setup.md`).
+
+### 누적 검증
+
+- `npm run typecheck`: 0 에러 (전 commit)
+- `npm test` (vitest): **92/92 통과** (engine 골든 35 + merged-adapter 11 포함)
+- `npm run build`: 성공 (전 commit)
+- **라이브 검증**: 워크시트(태그제거·계산기없음·넘버링①~⑪·Enter 계산값), sandbox Mask 강조($90.9/$6.1 + 빨간 박스), 게임 숨김 — Amplify Job 43~47 모두 SUCCEED, CDN 캐시 갱신(JS 해시 MATCH) 확인.
+- **게임 숨김 빌드 검증**: 정적 HTML — index.html 룸폼 0건, instructor.html 비활성안내 1/방생성버튼 0.
+
+### 주의사항 / 알아둘 것
+
+- **cost-engine 불변 원칙**: `lib/cost-engine/engine.ts`(27 골든 픽스처, Python 오라클 패리티)는 직접 수정 금지. sandbox 전용 효과는 `merged-adapter.ts` 에서만 결합(yieldDelta·Mask 패턴 참고).
+- **워크시트 입력 시스템**: ProblemPage 가 `activeCell`+`draft`(문자열) 소유. 참조셀 `onMouseDown preventDefault` 가 핵심(클릭해도 active input blur 안 됨 → 연속 입력). Enter/blur = `commitAndClose`. percent 행은 `resolveDraft`/`draftFromValue` 로 ×100/÷100 보정.
+- **게임 기능 토글**: `lib/features.ts` `GAME_MODE_ENABLED`. 한 곳에서 홈·메뉴·RoomBadge·강사뷰 일괄 제어. 라우트(/instructor, /menu, /api/rooms)와 룸 코드(lib/room/*, lib/instructor.ts, lib/player.ts)는 그대로 보존.
+- **배포 모니터링**: 백그라운드 폴링 후 CloudFront 캐시는 cache-bust 쿼리(`?cb=...`)로 origin 새 빌드 즉시 테스트, 기본 URL 은 JS 청크 해시 비교로 갱신 확인.
+
+---
+
 ## 2026-05-22 (cost-sim-v2.1 워크시트 UX 고도화 — 스크리닝 4단계)
 
 ### 본 세션

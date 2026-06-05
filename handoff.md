@@ -1,10 +1,10 @@
 # handoff.md - 인수인계 메모
 
-## 2026-06-05 (워크시트 입력 개편·넘버링·힌트 + sandbox Mask 강조 + 게임 기능 숨김 + 라이브 배포)
+## 2026-06-05 (워크시트 입력 개편·넘버링·힌트 + sandbox Mask 강조/강조 누적 버그 + 게임 숨김 + 번호 배지 + 인스펙터 소수점·슬라이더 안내문 정리 + 라이브 배포)
 
 ### 본 세션
 
-사용자 다건 요청을 순차 처리. 각 건마다 commit + `git push origin master` → **AWS Amplify 자동 배포(라이브 반영)** 까지 완료. Amplify Job 43~47 모두 SUCCEED.
+사용자 다건 요청을 순차 처리. 각 건마다 commit + `git push origin master` → **AWS Amplify 자동 배포(라이브 반영)** 까지 완료.
 
 - **라이브**: https://master.d26yr76roz76fk.amplifyapp.com
 - **배포 방식**: master push → Amplify 자동 빌드. 상태 조회 `aws amplify get-job --app-id d26yr76roz76fk --branch-name master --job-id N --region ap-northeast-2 --query 'job.summary.status'` (자격증명 user/sam-cli 환경 설정됨). CloudFront 캐시는 수분 내 자동 갱신(JS 청크 해시 비교로 확인).
@@ -39,13 +39,31 @@
 - **상시 유지**: 자유 실험실(/sandbox), 원가 워크시트(/cases)
 - **복원**: `lib/features.ts` 의 `GAME_MODE_ENABLED` 만 `true` 로. 룸 코드·라우트·API·테스트 모두 보존됨. 단 실제 동작에는 룸 서버(DynamoDB) 환경변수 설정 필요(`docs/dynamodb-setup.md`).
 
+#### 6. sandbox 트리 강조 누적 버그 수정 (commit `b31f333`, Job 49 SUCCEED)
+- CostTreeView 가 params 를 고정 REFERENCE 와 절대 비교(`getParamsChangedNodes`)해 강조 노드를 정하던 탓에, 한 번 움직인 파라미터(Mask·면취수·재료비·수율)의 효과가 params 에 누적되어 **다른 슬라이더를 움직여도 이전 강조(빨간 테두리)가 계속 남았다**.
+- 수정: store 에 `lastParamDelta`(직전 params 대비 변동 bom/yield 노드) 추가, 모든 액션(setParams/clearDelta/resetCase/loadCase)에 반영. CostTreeView 는 절대 비교 제거 → `changedParamNodes`(lastParamDelta) 사용. sandbox page 가 전달.
+- 결과: 한 파라미터를 움직이면 그 파라미터 연관 노드만 강조 (Mask 후 Tact 이동 시 BOM TFT·소요재료비·Panel 강조 해제, Module 가공비만 강조).
+
+#### 7. 문항 번호 가독성 — 원형 배지로 통일 (commit `9dd54eb`)
+- 워크시트 셀 번호 ① 유니코드(글리프가 작아 흐림) → **`NumberBadge`**(주황 원 + 흰 숫자)로 교체. 워크시트(size=md 24px)·힌트(size=sm 20px) 동일 배지로 형식 통일.
+- CellHintModal: l3 의 ①②… 를 `renderHintBody` 로 NumberBadge 렌더 + 폰트 13px. content/cases 의 l3 는 ① 유니코드 유지(렌더 시 배지로 변환) — 워크시트 넘버링과 1:1.
+- 신규 `components/Worksheet/NumberBadge.tsx`. 변경: WorksheetCell, CellHintModal, content/cases 01·04·05·06.
+
+#### 8. 수식인스펙터 소수점 1자리·슬라이더 안내문 정리 (commit `873a2b1`)
+- **FormulaInspector**: `multX`/`dollar`/`fmtDollar` 포매터 모두 `toFixed(2)` → `toFixed(1)` (결과 4줄 $값, Tact 배수, 투자비 표시).
+- **ParamPanel** 슬라이더 아래 description 정리:
+  - Mask 수: "1 Mask 증가 = TFT 재료비 $0.1 증가"
+  - 투자비: "총 물동 300K, 환율 1,480 가정"
+  - Loading율 / Module 재료비 / Module 수율 / 면취수 / Tact time 배수: description 제거
+
 ### 누적 검증
 
 - `npm run typecheck`: 0 에러 (전 commit)
 - `npm test` (vitest): **92/92 통과** (engine 골든 35 + merged-adapter 11 포함)
 - `npm run build`: 성공 (전 commit)
-- **라이브 검증**: 워크시트(태그제거·계산기없음·넘버링①~⑪·Enter 계산값), sandbox Mask 강조($90.9/$6.1 + 빨간 박스), 게임 숨김 — Amplify Job 43~47 모두 SUCCEED, CDN 캐시 갱신(JS 해시 MATCH) 확인.
+- **라이브 검증**: 워크시트(태그제거·계산기없음·넘버링·Enter 계산값), sandbox Mask 강조($90.9/$6.1 + 빨간 박스), 게임 숨김, 강조 누적 버그 수정(#6) — Amplify **Job 43~49 모두 SUCCEED**, CDN 캐시 갱신(JS 해시 MATCH) 확인.
 - **게임 숨김 빌드 검증**: 정적 HTML — index.html 룸폼 0건, instructor.html 비활성안내 1/방생성버튼 0.
+- **#7·#8 배포**: commit `9dd54eb` + `873a2b1` 통합 push → Amplify **Job 50 SUCCEED** (인스펙터 소수점·슬라이더 안내문·NumberBadge 일괄 반영).
 
 ### 주의사항 / 알아둘 것
 

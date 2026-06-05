@@ -38,7 +38,6 @@ const VARS: VarDef[] = [
   {
     key: "loading",
     ko: "Loading율",
-    description: "설비 가동률. 가공비 6항목 분담의 분모.",
     min: 0.30,
     max: 1.00,
     step: 0.01,
@@ -48,7 +47,6 @@ const VARS: VarDef[] = [
   {
     key: "materialDelta",
     ko: "Module 재료비",
-    description: "Module BOM 절감/증가. 분자에 작용.",
     min: -0.20,
     max: 0.20,
     step: 0.005,
@@ -58,7 +56,6 @@ const VARS: VarDef[] = [
   {
     key: "yieldDelta",
     ko: "Module 수율",
-    description: "Module 수율 변화 (%p). 분모 (누적수율) 에 작용.",
     min: -0.10,
     max: 0.05,
     step: 0.005,
@@ -68,7 +65,6 @@ const VARS: VarDef[] = [
   {
     key: "newCuts",
     ko: "면취수",
-    description: `기준 ${REFERENCE_CUTS}개. 면취수 ↑ = 단위당 BOM·노무비 분담 ↓.`,
     min: 10,
     max: 40,
     step: 1,
@@ -78,7 +74,7 @@ const VARS: VarDef[] = [
   {
     key: "newMask",
     ko: "Mask 수",
-    description: `기준 ${REFERENCE_MASK}장. Mask ↑ = 공정 부담 ↑ → 노무비 ↑.`,
+    description: "1 Mask 증가 = TFT 재료비 $0.1 증가",
     min: 3,
     max: 10,
     step: 1,
@@ -88,7 +84,6 @@ const VARS: VarDef[] = [
   {
     key: "tactMult",
     ko: "Tact time 배수",
-    description: "Tact Time 배수. Module 가공비 6항목에 곱셈으로 작용.",
     min: 0.80,
     max: 1.50,
     step: 0.01,
@@ -98,7 +93,7 @@ const VARS: VarDef[] = [
   {
     key: "investmentDelta",
     ko: "투자비",
-    description: "Module 라인 투자 총액. 감가상각 자동 계산 (300K대·1,480원/$·5년 기준).",
+    description: "총 물동 300K, 환율 1,480 가정",
     min: 0,
     max: 30,
     step: 0.5,

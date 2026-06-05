@@ -40,10 +40,10 @@ function intStr(v: number): string {
   return Math.round(v).toString();
 }
 function multX(v: number): string {
-  return `${v.toFixed(2)}x`;
+  return `${v.toFixed(1)}x`;
 }
 function dollar(v: number): string {
-  return `$${v.toFixed(2)}`;
+  return `$${v.toFixed(1)}`;
 }
 
 const VAR_DISPLAYS: VarDisplay[] = [
@@ -105,7 +105,7 @@ const VAR_DISPLAYS: VarDisplay[] = [
 const RESULT_FIELDS = ["processing_cost", "com", "cop", "operating_profit"];
 
 function fmtDollar(n: number): string {
-  return `$${n.toFixed(2)}`;
+  return `$${n.toFixed(1)}`;
 }
 
 export default function FormulaInspector() {

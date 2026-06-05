@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import { X, Lightbulb, Lock } from "lucide-react";
 import { HINT_PENALTY, type HintLevel } from "@/lib/worksheet-engine";
+import NumberBadge from "./NumberBadge";
 
 interface CellHintModalProps {
   open: boolean;
@@ -24,6 +25,20 @@ function fmt(n: number): string {
 
 function pct(n: number): string {
   return `${Math.round(n * 100)}%`;
+}
+
+/** 힌트 본문의 ①②… 유니코드를 워크시트와 동일한 NumberBadge 배지로, \n 을 줄바꿈으로 렌더. */
+function renderHintBody(text: string) {
+  return text.split(/([①-⑳\n])/).map((part, i) => {
+    if (part === "\n") return <br key={i} />;
+    if (part.length === 1) {
+      const code = part.codePointAt(0)!;
+      if (code >= 0x2460 && code <= 0x2473) {
+        return <NumberBadge key={i} n={code - 0x2460 + 1} size="sm" />;
+      }
+    }
+    return <span key={i}>{part}</span>;
+  });
 }
 
 export default function CellHintModal({
@@ -137,9 +152,9 @@ export default function CellHintModal({
                   <div className="mb-1 text-[11px] font-semibold uppercase tracking-wider text-[hsl(var(--accent))]">
                     {h.label}
                   </div>
-                  <p className="whitespace-pre-wrap text-xs leading-relaxed text-[hsl(var(--fg)/0.9)]">
-                    {h.body}
-                  </p>
+                  <div className="text-[13px] leading-relaxed text-[hsl(var(--fg)/0.9)]">
+                    {renderHintBody(h.body)}
+                  </div>
                 </div>
               ))}
             </div>

@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import type { CellType, CellFormat } from "@/content/problems/types";
+import NumberBadge from "./NumberBadge";
 
 interface WorksheetCellProps {
   type: CellType;
@@ -36,12 +37,6 @@ function fmt(n: number, format?: CellFormat): string {
   if (format === "percent") return (n * 100).toFixed(1) + "%";
   if (format === "dollar") return "$" + n.toFixed(1);
   return n.toFixed(1);
-}
-
-/** 1~20 → ①..⑳ (유니코드 circled number), 그 외 → (n). */
-function circledNumber(n: number): string {
-  if (n >= 1 && n <= 20) return String.fromCharCode(0x2460 + n - 1);
-  return `(${n})`;
 }
 
 export default function WorksheetCell({
@@ -114,11 +109,7 @@ export default function WorksheetCell({
       onClick={onCellClick}
     >
       <div className="flex items-center gap-1.5">
-        {number !== undefined && (
-          <span className="flex-shrink-0 text-[12px] font-bold leading-none text-[hsl(var(--warn))]">
-            {circledNumber(number)}
-          </span>
-        )}
+        {number !== undefined && <NumberBadge n={number} size="md" />}
         <div className="min-w-0 flex-1 text-right">
           {isActive ? (
             <div className="flex items-baseline justify-end gap-0.5">

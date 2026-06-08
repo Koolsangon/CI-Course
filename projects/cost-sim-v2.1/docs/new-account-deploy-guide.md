@@ -7,8 +7,9 @@
 
 ## 목차
 
+0. [AWS 계정 신규 생성 및 결제 정보 등록](#0-aws-계정-신규-생성-및-결제-정보-등록)
 1. [사전 준비](#1-사전-준비)
-2. [GitHub 저장소 포크/클론](#2-github-저장소-포크클론)
+2. [GitHub 레포지토리 이전(Transfer) 받기](#2-github-레포지토리-이전transfer-받기)
 3. [DynamoDB 테이블 생성](#3-dynamodb-테이블-생성)
 4. [AWS Amplify 앱 생성](#4-aws-amplify-앱-생성)
 5. [GitHub 연결 및 빌드 설정](#5-github-연결-및-빌드-설정)
@@ -19,13 +20,63 @@
 
 ---
 
+## 0. AWS 계정 신규 생성 및 결제 정보 등록
+
+> ⚠️ 이 프로젝트의 AWS 비용은 **인계받는 분 본인의 계정과 결제 수단**으로 운영합니다.
+> 반드시 본인 이메일과 본인 결제 카드로 계정을 생성하세요.
+
+### 0-1. AWS 계정 생성
+
+1. [https://aws.amazon.com/ko/](https://aws.amazon.com/ko/) 접속 → **무료로 시작하기** 클릭
+2. **이메일 주소**: 인계받는 분 본인 업무 이메일 입력
+3. **계정 이름**: 예) `hanwhaocean-hrd` 또는 본인 이름 등 식별 가능한 이름
+4. 이메일 인증 코드 입력
+5. **비밀번호** 설정 (복잡한 비밀번호 권장)
+
+### 0-2. 연락처 정보 입력
+
+- 계정 유형: **개인** 또는 **전문가** (법인 카드 사용 시 **비즈니스** 선택)
+- 성명, 전화번호, 주소 입력 (본인 또는 소속 부서 정보)
+
+### 0-3. 결제 정보 (신용카드) 등록
+
+> 💳 **인계받는 분 본인의 카드**를 등록합니다. (이전 운영자 카드 사용 금지)
+
+- 카드 번호, 만료일, 카드 소유자 이름 입력
+- 주소 입력 후 **Verify and Continue** 클릭
+- AWS에서 1달러 미만 소액 인증이 진행됩니다 (자동 취소됨)
+
+### 0-4. 전화 인증
+
+- 전화번호 입력 → SMS 또는 음성 통화로 인증 코드 수신 → 입력
+
+### 0-5. 지원 플랜 선택
+
+- **Basic support (무료)** 선택 → **Complete sign up** 클릭
+
+### 0-6. 계정 활성화 확인
+
+- 가입 완료 이메일 수신 (수 분 소요)
+- [https://console.aws.amazon.com](https://console.aws.amazon.com) 접속 → 로그인 확인
+- 우측 상단 리전을 **아시아 태평양 (서울) ap-northeast-2** 로 변경
+
+### 0-7. 루트 계정 MFA 설정 (강력 권장)
+
+```
+AWS 콘솔 → 우측 상단 계정명 클릭 → Security credentials
+→ Multi-factor authentication (MFA) → Assign MFA device
+→ Authenticator app 선택 → QR코드 스캔 (Google Authenticator 등)
+```
+
+---
+
 ## 1. 사전 준비
 
 ### 필수 항목
 
 | 항목 | 버전/조건 | 확인 방법 |
 |---|---|---|
-| AWS 계정 | 신용카드 등록 완료 | console.aws.amazon.com |
+| AWS 계정 | 0단계에서 생성 완료 | console.aws.amazon.com |
 | GitHub 계정 | 없으면 github.com 가입 | — |
 | Node.js | 20.x 이상 | `node -v` |
 | AWS CLI | 2.x 이상 | `aws --version` |
@@ -34,7 +85,7 @@
 ### AWS CLI 초기 설정
 
 ```bash
-# AWS CLI 자격증명 설정 (IAM 사용자의 Access Key)
+# AWS CLI 자격증명 설정 (아래 1-1에서 생성한 IAM 사용자 키 사용)
 aws configure
 # AWS Access Key ID: AKIA...
 # AWS Secret Access Key: ...
@@ -45,35 +96,48 @@ aws configure
 aws sts get-caller-identity
 ```
 
-> 💡 **IAM 사용자 생성 방법**: IAM 콘솔 → Users → Create user → AdministratorAccess 권한 부여 → Access Key 생성
+### IAM 사용자 생성 방법
+
+```
+AWS 콘솔 → IAM → Users → Create user
+→ 사용자 이름: 예) ci-course-admin
+→ Permissions: AdministratorAccess 연결
+→ Access Key 생성 → CSV 다운로드 (안전한 곳에 보관)
+```
+
+> ⚠️ Access Key CSV 파일은 절대 Git에 커밋하지 마세요.
+> `.gitignore`에 `*_accessKeys.csv` 가 이미 등록되어 있습니다.
 
 ---
 
-## 2. GitHub 저장소 포크/클론
+## 2. GitHub 레포지토리 이전(Transfer) 받기
 
-### 옵션 A: 포크하여 본인 계정으로 가져오기 (권장)
+> 이 프로젝트는 **포크가 아닌 레포 이전(Transfer)** 방식으로 인수인계합니다.
+> 이전 후에는 인계받는 분의 GitHub 계정이 레포 오너가 되어 완전히 독립적으로 운영됩니다.
 
-1. 브라우저에서 https://github.com/Koolsangon/CI-Course 접속
-2. 우측 상단 **Fork** 버튼 클릭
-3. **Create fork** 클릭
-4. 포크된 저장소를 로컬에 클론:
+### 2-1. 이전 요청 (원래 오너 Sam이 진행)
+
+```
+github.com/Koolsangon/CI-Course 접속
+→ Settings → (맨 아래) Danger Zone
+→ Transfer ownership 클릭
+→ New owner: [인계받는 분 GitHub 계정명] 입력
+→ 레포 이름 입력 후 확인
+```
+
+### 2-2. 이전 수락 (인계받는 분이 진행)
+
+- GitHub 이메일 수신 → **Accept transfer** 클릭
+- 이후 레포 URL: `https://github.com/[인계받는분계정]/CI-Course`
+
+### 2-3. 로컬 클론
 
 ```bash
-git clone https://github.com/YOUR_GITHUB_USERNAME/CI-Course.git
+git clone https://github.com/[인계받는분계정]/CI-Course.git
 cd CI-Course
 ```
 
-### 옵션 B: 직접 클론 (읽기 전용)
-
-```bash
-git clone https://github.com/Koolsangon/CI-Course.git
-cd CI-Course
-```
-
-> ⚠️ 옵션 B는 Amplify의 자동 배포(push → 자동 빌드)를 사용할 수 없습니다.
-> 수동 배포만 가능합니다. **옵션 A 포크를 강력히 권장합니다.**
-
-### 로컬 실행 확인 (선택사항)
+### 2-4. 로컬 실행 확인 (선택사항)
 
 ```bash
 cd projects/cost-sim-v2.1
@@ -139,8 +203,8 @@ aws dynamodb describe-table \
 
 ### 4-3. 저장소 선택
 
-- **Repository**: `YOUR_GITHUB_USERNAME/CI-Course` 선택
-- **Branch**: `main` (또는 기본 브랜치)
+- **Repository**: `[인계받는분계정]/CI-Course` 선택
+- **Branch**: `master`
 - **Next**
 
 ---
@@ -159,8 +223,8 @@ aws dynamodb describe-table \
 
 ### 5-2. amplify.yml 빌드 설정
 
-Amplify가 자동 감지에 실패하면 **Edit** 클릭 후 아래 내용을 직접 입력합니다.
-또는 저장소 루트에 `amplify.yml` 파일을 생성하세요.
+레포 루트에 `amplify.yml` 이 이미 포함되어 있어 자동 감지됩니다.
+Amplify가 자동 감지에 실패하면 **Edit** 클릭 후 아래 내용을 직접 입력하세요.
 
 ```yaml
 version: 1
@@ -289,7 +353,7 @@ Amplify 콘솔 → 앱 선택 → App settings → Environment variables
 
 ### 7-2. 변수 적용 범위
 
-- Branch: `main` (또는 모든 브랜치)
+- Branch: `master` (또는 모든 브랜치)
 - 저장 후 **다음 배포 시 자동 적용**
 
 ---
@@ -310,7 +374,7 @@ Amplify 콘솔 → 앱 → Hosting → Deployments
 ```bash
 git add .
 git commit -m "deploy: add dynamodb config"
-git push origin main
+git push origin master
 ```
 
 ### 8-2. 빌드 로그 모니터링
@@ -332,13 +396,13 @@ Amplify 콘솔 → Deployments → 최신 배포 클릭
 
 ```
 Amplify 콘솔 → 앱 → Hosting
-→ 도메인 예: https://main.abcdefg1234567.amplifyapp.com
+→ 도메인 예: https://master.abcdefg1234567.amplifyapp.com
 ```
 
 ### 8-4. API 동작 확인
 
 ```bash
-export BASE_URL=https://main.abcdefg1234567.amplifyapp.com
+export BASE_URL=https://master.abcdefg1234567.amplifyapp.com
 
 # 방 생성 테스트
 curl -X POST "$BASE_URL/api/rooms" \
@@ -484,31 +548,18 @@ Amplify 콘솔 → 앱 → App settings → General
 
 배포 완료 전 확인 항목:
 
-- [ ] GitHub 저장소 포크 완료
-- [ ] `npm install @aws-sdk/client-dynamodb @aws-sdk/lib-dynamodb` 및 commit/push
+- [ ] **AWS 계정 생성** — 인계받는 분 이메일 + 본인 결제 카드 등록
+- [ ] **루트 계정 MFA** 설정 완료
+- [ ] **IAM 사용자** 생성 (`ci-course-admin`) + Access Key CSV 안전 보관
+- [ ] GitHub 레포 Transfer 수락 완료 (`[인계받는분계정]/CI-Course`)
+- [ ] 로컬 클론 + `npm run dev` 동작 확인
 - [ ] DynamoDB 테이블 `cost-sim-rooms` 생성 (`ACTIVE` 상태)
 - [ ] Amplify 앱 생성 (Platform: `WEB_COMPUTE`)
-- [ ] `amplify.yml` 에 `appRoot: projects/cost-sim-v2.1` 설정
+- [ ] `amplify.yml` 에 `appRoot: projects/cost-sim-v2.1` 설정 확인
 - [ ] IAM 역할에 DynamoDB 정책 추가
 - [ ] Amplify Compute role 연결
 - [ ] 환경변수 `DYNAMODB_TABLE_NAME`, `AWS_REGION` 설정
 - [ ] 배포 성공 (`✓ Verify` 확인)
 - [ ] `/api/rooms` POST 테스트 성공
 - [ ] DynamoDB 콘솔에서 데이터 확인
-
----
-
-## 부록: 비용 예상 (소규모 운영 기준)
-
-| 서비스 | 예상 월 비용 |
-|---|---|
-| AWS Amplify Hosting (WEB_COMPUTE) | ~$0.01/빌드분 + $0.00001/요청 |
-| DynamoDB (온디맨드) | 월 10,000 요청 미만 = 거의 $0 |
-| CloudWatch Logs | 5GB 무료 |
-| **합계** | **월 $1~5 이하 예상** |
-
-> 교육용 소규모 운영 기준. 동시 접속자 100명 이상 시 비용 재검토 권장.
-
----
-
-*이 가이드에 문제가 있거나 추가 도움이 필요하면 GitHub Issues를 통해 문의해 주세요.*
+- [ ] 새 라이브 URL 공유 (강의 운영팀에 전달)

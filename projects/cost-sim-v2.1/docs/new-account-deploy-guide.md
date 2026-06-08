@@ -9,7 +9,7 @@
 
 0. [AWS 계정 신규 생성 및 결제 정보 등록](#0-aws-계정-신규-생성-및-결제-정보-등록)
 1. [사전 준비](#1-사전-준비)
-2. [GitHub 레포지토리 이전(Transfer) 받기](#2-github-레포지토리-이전transfer-받기)
+2. [GitHub 저장소 포크 및 클론](#2-github-저장소-포크-및-클론)
 3. [DynamoDB 테이블 생성](#3-dynamodb-테이블-생성)
 4. [AWS Amplify 앱 생성](#4-aws-amplify-앱-생성)
 5. [GitHub 연결 및 빌드 설정](#5-github-연결-및-빌드-설정)
@@ -110,25 +110,27 @@ AWS 콘솔 → IAM → Users → Create user
 
 ---
 
-## 2. GitHub 레포지토리 이전(Transfer) 받기
+## 2. GitHub 저장소 포크 및 클론
 
-> 이 프로젝트는 **포크가 아닌 레포 이전(Transfer)** 방식으로 인수인계합니다.
-> 이전 후에는 인계받는 분의 GitHub 계정이 레포 오너가 되어 완전히 독립적으로 운영됩니다.
+> 이 프로젝트는 **Fork** 방식으로 인수인계합니다.
+> 원본 레포(`Koolsangon/CI-Course`)는 그대로 유지되고,
+> 인계받는 분의 GitHub 계정에 독립적인 복사본이 생성됩니다.
 
-### 2-1. 이전 요청 (원래 오너 Sam이 진행)
+### 2-1. GitHub 계정 준비
 
-```
-github.com/Koolsangon/CI-Course 접속
-→ Settings → (맨 아래) Danger Zone
-→ Transfer ownership 클릭
-→ New owner: [인계받는 분 GitHub 계정명] 입력
-→ 레포 이름 입력 후 확인
-```
+인계받는 분 전용 GitHub 계정이 없다면 새로 생성합니다:
+1. [https://github.com](https://github.com) → **Sign up**
+2. 업무용 이메일로 가입
+3. 계정 이름 예) `hanwhaocean-hrd` 또는 본인 이름
 
-### 2-2. 이전 수락 (인계받는 분이 진행)
+### 2-2. 포크 (Fork)
 
-- GitHub 이메일 수신 → **Accept transfer** 클릭
-- 이후 레포 URL: `https://github.com/[인계받는분계정]/CI-Course`
+1. 브라우저에서 [https://github.com/Koolsangon/CI-Course](https://github.com/Koolsangon/CI-Course) 접속
+2. 우측 상단 **Fork** 버튼 클릭
+3. Owner: **인계받는 분 계정** 선택 → **Create fork** 클릭
+4. 포크된 레포 URL: `https://github.com/[인계받는분계정]/CI-Course`
+
+> ✅ 이후 인계받는 분이 포크 레포에 push하면 Amplify가 자동으로 감지하여 배포합니다.
 
 ### 2-3. 로컬 클론
 
@@ -551,7 +553,7 @@ Amplify 콘솔 → 앱 → App settings → General
 - [ ] **AWS 계정 생성** — 인계받는 분 이메일 + 본인 결제 카드 등록
 - [ ] **루트 계정 MFA** 설정 완료
 - [ ] **IAM 사용자** 생성 (`ci-course-admin`) + Access Key CSV 안전 보관
-- [ ] GitHub 레포 Transfer 수락 완료 (`[인계받는분계정]/CI-Course`)
+- [ ] GitHub 저장소 포크 완료 (`[인계받는분계정]/CI-Course`)
 - [ ] 로컬 클론 + `npm run dev` 동작 확인
 - [ ] DynamoDB 테이블 `cost-sim-rooms` 생성 (`ACTIVE` 상태)
 - [ ] Amplify 앱 생성 (Platform: `WEB_COMPUTE`)

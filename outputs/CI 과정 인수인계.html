@@ -492,8 +492,8 @@ html.no-js .reveal{opacity:1;transform:none}
         <div class="box tip"><div class="bt"><span class="ic">📝</span>적어둘 것</div><p>내 GitHub <strong>username</strong>과 가입 <strong>이메일</strong>. 다음 단계와 권한 요청에 씁니다.</p></div>
 
         <h3><span class="step-dot">1.2</span>프로젝트 저장소(repo) 권한 요청</h3>
-        <p>우리 프로젝트는 <code>github.com/Koolsangon/CI-Course</code> 에 있습니다. <strong>고친 코드를 올리려면(push) 쓰기 권한</strong>이 필요합니다.</p>
-        <div class="why"><b>이렇게 요청하세요</b> &nbsp;원작자(Sam)에게 메시지로: <em>"제 GitHub username은 OOO 입니다. <code>Koolsangon/CI-Course</code> 저장소에 Collaborator(쓰기) 권한 부탁드립니다."</em> → 초대 수락 이메일이 오면 <strong>Accept</strong>를 누르면 끝.</div>
+        <p>우리 프로젝트는 <code>github.com/D-W-Kim/CI-Course</code> 에 있습니다. <strong>고친 코드를 올리려면(push) 쓰기 권한</strong>이 필요합니다.</p>
+        <div class="why"><b>이렇게 요청하세요</b> &nbsp;원작자(Sam)에게 메시지로: <em>"제 GitHub username은 OOO 입니다. <code>D-W-Kim/CI-Course</code> 저장소에 Collaborator(쓰기) 권한 부탁드립니다."</em> → 초대 수락 이메일이 오면 <strong>Accept</strong>를 누르면 끝.</div>
         <div class="box warn"><div class="bt"><span class="ic">⚠️</span>권한이 없어도 받기는 됩니다</div><p>이 저장소는 공개라 <strong>clone(받기)·pull(갱신)은 권한 없이도</strong> 가능합니다. 다만 <strong>push(올리기)</strong>는 Collaborator 권한이 있어야 하니, 배포까지 하려면 1.2를 꼭 완료하세요.</p></div>
       </section>
 
@@ -588,7 +588,7 @@ cd C:\Work</code></pre>
 
         <h3><span class="step-dot">4.2</span>복제하기 (clone)</h3>
         <div class="code" data-lang="PowerShell">
-          <pre><code>git clone https://github.com/Koolsangon/CI-Course.git
+          <pre><code>git clone https://github.com/D-W-Kim/CI-Course.git
 <span class="out"># → C:\Work\CI-Course 폴더가 생깁니다</span></code></pre>
         </div>
         <p>받은 뒤, 우리가 실제로 작업할 <strong>메인 프로젝트 폴더</strong>로 이동합니다:</p>
@@ -689,10 +689,10 @@ git commit -m <span class="k">"제목 문구 수정 및 제한시간 12분으로
 
         <h3><span class="step-dot">7.3</span>배포 확인</h3>
         <ul>
-          <li><strong>라이브 사이트</strong>에서 결과 확인 → <a href="https://master.d26yr76roz76fk.amplifyapp.com" target="_blank" rel="noopener">master.d26yr76roz76fk.amplifyapp.com</a></li>
-          <li>진행 상태가 궁금하면 <strong>AWS Amplify 콘솔</strong>에서 빌드 로그를 볼 수 있습니다 (앱 ID <code>d26yr76roz76fk</code>).</li>
+          <li><strong>라이브 사이트</strong>에서 결과 확인 → <a href="https://master.d3arok48ln7jvp.amplifyapp.com" target="_blank" rel="noopener">master.d3arok48ln7jvp.amplifyapp.com</a></li>
+          <li>진행 상태가 궁금하면 <strong>AWS Amplify 콘솔</strong>에서 빌드 로그를 볼 수 있습니다 (앱 ID <code>d3arok48ln7jvp</code>).</li>
         </ul>
-        <div class="box warn"><div class="bt"><span class="ic">⚠️</span>처음 push할 때</div><p>GitHub 로그인 창이 뜰 수 있습니다. <strong>GitHub 계정으로 로그인</strong>하면 이후엔 기억됩니다. "권한 없음(403)" 오류가 나면 <strong>01.2의 Collaborator 권한</strong>이 아직 안 된 것이니 원작자에게 확인하세요.</p></div>
+        <div class="box warn"><div class="bt"><span class="ic">⚠️</span>처음 push할 때</div><p>GitHub 로그인 창이 뜰 수 있습니다. <strong>GitHub 계정으로 로그인</strong>하면 이후엔 기억됩니다. "권한 없음(403)" 오류가 나면 Fork 레포(`D-W-Kim/CI-Course`)에 push 권한이 있는지 확인하세요.</p></div>
         <div class="box danger"><div class="bt"><span class="ic">🚫</span>절대 금지: <code>git push --force</code></div><p>다른 사람의 작업을 덮어쓰며 이력을 망가뜨릴 수 있습니다. 이 명령은 <strong>절대 사용하지 마세요.</strong></p></div>
       </section>
 
@@ -757,7 +757,7 @@ git commit -m <span class="k">"제목 문구 수정 및 제한시간 12분으로
         <p class="sec-sub">아래 항목을 누르면 체크되고, 진행률은 자동 저장됩니다(이 브라우저 기준). 며칠에 걸쳐 천천히 완료해도 됩니다.</p>
 
         <ul class="checklist" id="checklist">
-          <li><label><input type="checkbox" data-k="c1"><span class="cbox"><svg viewBox="0 0 24 24"><path d="M4 12l5 5L20 6"/></svg></span><span class="ctext"><span class="day">DAY 1</span> &nbsp;GitHub 가입 + <code>Koolsangon/CI-Course</code> Collaborator 권한 받기</span></label></li>
+          <li><label><input type="checkbox" data-k="c1"><span class="cbox"><svg viewBox="0 0 24 24"><path d="M4 12l5 5L20 6"/></svg></span><span class="ctext"><span class="day">DAY 1</span> &nbsp;GitHub 가입 + <code>D-W-Kim/CI-Course</code> Collaborator 권한 받기</span></label></li>
           <li><label><input type="checkbox" data-k="c2"><span class="cbox"><svg viewBox="0 0 24 24"><path d="M4 12l5 5L20 6"/></svg></span><span class="ctext"><span class="day">DAY 1</span> &nbsp;Git · Node.js(v20+) 설치 및 <code>--version</code> 확인</span></label></li>
           <li><label><input type="checkbox" data-k="c3"><span class="cbox"><svg viewBox="0 0 24 24"><path d="M4 12l5 5L20 6"/></svg></span><span class="ctext"><span class="day">DAY 1</span> &nbsp;Claude 계정 + Claude Code 설치 후 <code>claude</code> 로그인</span></label></li>
           <li><label><input type="checkbox" data-k="c4"><span class="cbox"><svg viewBox="0 0 24 24"><path d="M4 12l5 5L20 6"/></svg></span><span class="ctext"><span class="day">DAY 1</span> &nbsp;AWS 키 파일을 별도 채널로 수령 (커밋 금지 숙지)</span></label></li>
@@ -789,8 +789,8 @@ git commit -m <span class="k">"제목 문구 수정 및 제한시간 12분으로
         <h2>준비 끝. 이제 당신 차례입니다.</h2>
         <p>막히는 건 당연합니다 — 누구나 처음이 있었습니다. 천천히 한 단계씩, 그리고 <strong>헷갈리면 push 전에 물어보기.</strong> 그거면 충분합니다.</p>
         <div class="links">
-          <a class="solid" href="https://master.d26yr76roz76fk.amplifyapp.com" target="_blank" rel="noopener">🌐 라이브 사이트 열기</a>
-          <a href="https://github.com/Koolsangon/CI-Course" target="_blank" rel="noopener">🐙 GitHub 저장소</a>
+          <a class="solid" href="https://master.d3arok48ln7jvp.amplifyapp.com" target="_blank" rel="noopener">🌐 라이브 사이트 열기</a>
+          <a href="https://github.com/D-W-Kim/CI-Course" target="_blank" rel="noopener">🐙 GitHub 저장소</a>
           <a href="https://docs.claude.com/en/docs/claude-code" target="_blank" rel="noopener">📘 Claude Code 공식 문서</a>
           <a href="#s0">↑ 처음으로</a>
         </div>
@@ -798,7 +798,7 @@ git commit -m <span class="k">"제목 문구 수정 및 제한시간 12분으로
 
       <footer>
         CI-Course 온보딩 가이드 · 대상: Windows · 가입 → 배포 풀 사이클<br />
-        긴급 문의: 원작자 Sam Ahn (Telegram / 메신저 DM) · 라이브 <a href="https://master.d26yr76roz76fk.amplifyapp.com" target="_blank" rel="noopener">master.d26yr76roz76fk.amplifyapp.com</a>
+        긴급 문의: 원작자 Sam Ahn (Telegram / 메신저 DM) · 라이브 <a href="https://master.d3arok48ln7jvp.amplifyapp.com" target="_blank" rel="noopener">master.d3arok48ln7jvp.amplifyapp.com</a>
       </footer>
 
     </main>
